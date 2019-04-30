@@ -1,0 +1,38 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "babel-node app.js --presets es2015,stage-2"
+  },
+  "dependencies": {
+    "captchapng": "0.0.1",
+    "connect-multiparty": "^2.2.0",
+    "cookie-parser": "~1.4.3",
+    "crypto": "^1.0.1",
+    "debug": "~2.6.9",
+    "ejs": "~2.5.7",
+    "express": "~4.16.0",
+    "express-jwt": "^5.3.1",
+    "express-session": "^1.16.1",
+    "express-token": "^0.1.0",
+    "form-data": "^2.3.3",
+    "http-errors": "~1.6.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.2",
+    "morgan": "~1.9.0",
+    "multer": "^1.4.1",
+    "mysql": "^2.17.1",
+    "node-uuid": "^1.4.8",
+    "node-xlsx": "^0.14.1",
+    "nodemailer": "^6.1.1",
+    "string-random": "^0.1.3",
+    "svg-captcha": "^1.3.12"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1"
+  }
+}
