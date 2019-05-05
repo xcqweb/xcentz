@@ -22,11 +22,13 @@ import {
     DropdownItem,
     Table,
     Modal,
-    Tree 
+    Tree,
+    Tooltip 
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
 Vue.prototype.$Message = Message;
+Vue.prototype.$Modal = Modal;
 // Vue.prototype.$Modal = Modal;
 // Vue.prototype.$Notice = Notice;
 // Vue.prototype.$Spin = Spin;
@@ -53,7 +55,8 @@ let modules = [
     DropdownItem,
     Table,
     Modal,
-    Tree 
+    Tree,
+    Tooltip
 ]
 
 for(let item of modules){

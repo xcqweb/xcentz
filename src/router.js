@@ -41,14 +41,22 @@ let router = new Router({
       ]
     },
     //demo
-    {
-      path: '/demo',
-      name: 'Demo',
-      component: Demo
-    },
+   
     {
       path: '/',
       redirect:'/home'
+    },
+    {
+      path: '/',
+      component: HomeLayout,
+      children:[
+        {
+          path:'/demo',
+          component:Demo,
+          name:'home',
+          meta:{title:'演示'}
+        }
+      ]
     },
     //首页
     {

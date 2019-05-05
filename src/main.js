@@ -25,5 +25,8 @@ Vue.mixin({
 
 new Vue({
   router,
+  data:{
+    eventBus:new Vue()
+  },
   render: h => h(App)
 }).$mount('#app')

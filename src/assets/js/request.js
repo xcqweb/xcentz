@@ -35,7 +35,7 @@ instance.interceptors.response.use( (response) => {
 	response.data && response.data.errorCode && Message.message('success',{
 		content:errorCodes[response.data.errorCode],
 		top: 50,
-		duration: 5
+		duration: 3
 	})
 	return response
 	
@@ -43,7 +43,7 @@ instance.interceptors.response.use( (response) => {
 	error.response.data && error.response.data.errorCode && Message.message('error',{
 		content: errorCodes[error.response.data.errorCode],
 		top: 50,
-		duration: 5
+		duration: 3
 	})
 
 	if(error.response && error.response.status==401){

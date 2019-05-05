@@ -46,10 +46,28 @@ export function getCode(params){
     })
 }
 
+//校验登录验证码
+export function checkCode(params){
+    return request({
+        url:'/users/checkCode',
+        method:'get',
+        params
+    })
+}
+
 //获取邮箱验证码
 export function getEmailCode(params){
     return request({
         url:'/users/getEmailCode',
+        method:'get',
+        params
+    })
+}
+
+//校验邮箱验证码
+export function checkEmailCode(params){
+    return request({
+        url:'/users/checkEmailCode',
         method:'get',
         params
     })
@@ -106,7 +124,16 @@ export function addMenu(params){
 export function removeMenu(params){
     return request({
         url:'/users/removeMenu',
-        method:'post',
+        method:'delete',
+        data:params
+    })
+}
+
+//编辑菜单
+export function editMenu(params){
+    return request({
+        url:'/users/editMenu',
+        method:'put',
         data:params
     })
 }

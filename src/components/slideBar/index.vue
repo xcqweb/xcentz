@@ -1,31 +1,37 @@
 <template>
-    <div class="slideBar">
-        <Menu theme="dark" :active-name="$route.path" :open-names='openName' accordion @on-select='selectItem' ref="menu">
-            <!-- <Submenu name="1">
+    <div>
+
+    
+    <div class="collapseMenu slideBar" v-show="isCollapse">
+        <div :name="item.id" v-for="(item,index) in menus" @mouseover="collapseMenu(item,index)" @click="goPage(item)" class="ivu-menu-submenu" style="height:49px;line-height:49px;color:#fff;background:#515a6e;cursor:pointer;">
+            <Icon :type="item.icon" />
+        </div>
+        <!-- collapse -->
+        <p class="collapse" @click="collapseHandler">
+            <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
+            <span class="txt">Collapse sidebar</span>
+        </p>
+    </div>
+
+
+    <div class="slideBar" v-show='!isCollapse'>
+        <Menu theme="dark" :active-name="activeName" @on-select='selectItem' ref="menu">
+            <Submenu :name="item.id" v-for="item in menus" v-if="item.children">
                 <template slot="title">
-                    <Icon type="ios-paper" />
-                    内容管理
+                    <Icon :type="item.icon" />
+                    {{item.title}}
                 </template>
-                <MenuItem name="1-1">文章管理</MenuItem>
-                <MenuItem name="1-2">评论管理</MenuItem>
-                <MenuItem name="1-3">举报管理</MenuItem>
-            </Submenu> -->
-            <Submenu name="2">
-                <template slot="title">
-                    <Icon type="md-cog" />
-                    系统设置
-                </template>
-                <MenuItem name="/home">
-                    主页
-                </MenuItem>
-                <MenuItem name="/menuconfig">
-                    动态菜单权限配置
-                </MenuItem>
-                <MenuItem name="/usermanage">
-                    系统用户管理
+
+                <MenuItem :name="`${child.route}`" v-for="child in item.children" v-if="item.children.length>0" :style="{background:$route.path===`/${child.route}`?'#2d8cf0 !important':'#363e4f !important'}" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+                    {{child.title}}
                 </MenuItem>
             </Submenu>
-            
+
+            <MenuItem :name='`${item.route}`' v-for="item in menus" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+            <Icon :type="item.icon" />
+                {{item.title}}
+            </MenuItem>
+
             
         </Menu>
         <!-- collapse -->
@@ -34,20 +40,49 @@
             <span class="txt">Collapse sidebar</span>
         </p>
     </div>
+    </div>
 </template>
 
 <script>
+import {queryMenu} from '@api'
+import { setTimeout } from 'timers';
 export default {
     data(){
         return{
+            visible:false,
             isCollapse:false,
-            openName:['2']
+            currentIndex:'',
+            activeName:'/home',
+            openName:[],
+            menus:[]
         }
     },
+    created(){
+        console.log(this.$route.path)
+        this.queryMenu()
+    },
     methods:{
+        collapseMenu(item,index){
+            this.$emit('collapseMenu',item,index)
+        },
+        goPage(item){
+            if(!item.children){
+                item.route.indexOf('/')>-1?this.$router.push(item.route):this.$router.push(`/${item.route}`)
+            }
+        },
+        queryMenu(){
+            queryMenu().then( (res) => {
+                console.log(res)
+                this.menus = res.data.menuList[0].children
+                this.activeName = this.$route.path
+            })
+        },
         selectItem(name){
-            this.$router.push(name)
-            console.log(name)
+            if(name.indexOf('/')>-1){
+                this.$router.push(name)
+            }else{
+                this.$router.push(`/${name}`)
+            }
         },
         collapseHandler(){
             let menuChilds = this.$refs.menu.$children
@@ -104,6 +139,18 @@ export default {
             }
         }
     }
+    .collapseMenu{
+            width:40px;
+            height: calc(100vh - 36px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2000;
+            .collapse{
+                padding-left: 0;
+                text-align: center;
+            }
+        }
 </style>
 
 

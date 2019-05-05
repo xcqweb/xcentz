@@ -10,6 +10,8 @@ const jwtAuth = expressJwt({
     "/api/xcentz/v1/users/getCode",
     "/api/xcentz/v1/users/getEmailCode",
     "/api/xcentz/v1/users/checkUser",
+    "/api/xcentz/v1/users/checkCode",
+    "/api/xcentz/v1/users/checkEmailCode",
 ]}); 
 
 

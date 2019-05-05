@@ -19,7 +19,7 @@
 				</Input>
 			</FormItem>
 			<FormItem>
-				<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.code)' :loading="loading" @click="handleSubmit('formInline')" style="width:360px;">登录</Button>
+				<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline')" style="width:360px;">登录</Button>
 			</FormItem>
 
 		</i-form>
@@ -28,12 +28,27 @@
 
 <script>
 
-	import {login,getCode} from '@/assets/api'
+	import {login,getCode,checkCode} from '@/assets/api'
 	export default{
 		name:'login',
 		data(){
-			
+			const validateCode = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请输入验证码!'));
+				} else {
+					checkCode({code:value}).then( (res) => {
+						if(res.data.valid){
+							this.validCode = true
+							callback();
+						}else{
+							this.validCode = false
+							callback(new Error('验证码不正确!'));
+						}
+					})
+				}
+			};
 			return{
+				validCode:false,
 				showPsw:true,
 				verifyImg:'',
 				loading:false,
@@ -51,7 +66,7 @@
 						{ type: 'string', min: 6, message: '密码长度不少于6位数', trigger: 'blur' }
 					],
 					code: [
-						{ required: true, message: '请输入验证码', trigger: 'blur' }
+						{ validator: validateCode, trigger: 'blur' }
 					]
 				}
 			}
@@ -74,7 +89,6 @@
 			getCode(){
 				getCode().then( (res) => {
 					let obj = res.data
-					// console.log(res.data)
 					var a = new FileReader();
 					a.readAsDataURL(obj);
 					a.onload =  (e) => {

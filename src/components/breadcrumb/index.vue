@@ -35,6 +35,7 @@
 <script>
 import pathToRegexp from 'path-to-regexp'
 import screenfull from 'screenfull'
+import {loginOut} from '@api'
 
 export default {
     data(){
@@ -56,7 +57,16 @@ export default {
     },
     methods:{
         loginOut(){
-
+            loginOut().then( (res) => {
+                if(res.data.isLogin){
+                    this.$Message.success({
+                        content:'退出成功！',
+                        top: 50,
+                        duration: 5
+                    });
+                    this.$router.replace('/login')
+                }
+            })
         },
         itemHandler(e){
             let index = e.target.dataset.index
@@ -79,7 +89,6 @@ export default {
             screenfull.toggle()
         },
         getBreadcrumb() {
-            // only show routes with meta.title
             let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
             const first = matched[0]
             if (!this.isHome(first)) {
@@ -95,7 +104,6 @@ export default {
             return name.trim().toLocaleLowerCase() === 'home'.toLocaleLowerCase()
         },
         pathCompile(path) {
-            // To solve this problem https://github.com/PanJiaChen/vue-element-admin/issues/561
             const { params } = this.$route
             var toPath = pathToRegexp.compile(path)
             return toPath(params)

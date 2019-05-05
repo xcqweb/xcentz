@@ -14,31 +14,56 @@
             <div class="center_g marginTop10"><p class="label_g">菜单路径</p><Input v-model="formItem.route" placeholder="请输入菜单路径..." /></div>
             <div class="center_g marginTop10"><p class="label_g">菜单图标</p><Input v-model="formItem.icon" placeholder="请输入菜单图标..." /></div>
         </Modal>
+
+        <!-- 编辑菜单 -->
+         <Modal
+            v-model="editMenuStatus"
+            title="编辑菜单"
+            class-name="center_g"
+            @on-ok="editMenuHandler"
+            @on-cancel="editMenuStatus=false">
+            <div class="center_g marginTop10"><p class="label_g">菜单名称</p><Input v-model="editFrom.menuName" placeholder="请输入菜单名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">菜单路径</p><Input v-model="editFrom.route" placeholder="请输入菜单路径..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">菜单图标</p><Input v-model="editFrom.icon" placeholder="请输入菜单图标..." /></div>
+        </Modal>
     </div>
 </template>
 <script>
-import {addMenu,queryMenu,removeMenu} from '@api'
+import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
 import { setTimeout } from 'timers';
     export default {
         data () {
             return {
                 formItem:{
                   menuName:'',
-                  route:''  
+                  route:'',
+                  icon:'',  
                 },
+                editFrom:{
+                  menuName:'',
+                  route:'',
+                  icon:'',
+                  id:''  
+                },
+                maxId:0,
+                parentId:0,
                 currentTreeData:[],
                 addMenuStatus:false,
+                editMenuStatus:false,
                 treeData:[],
             }
         },
         activated(){
-            
-            queryMenu().then((res) => {
-                this.treeData = res.data.menuList
-            })
+            this.queryMenu()
         },
         methods: {
-            
+            //查询菜单
+            queryMenu(){
+                queryMenu().then((res) => {
+                    this.treeData = res.data.menuList
+                    this.maxId = res.data.maxId
+                })
+            },
             renderContent (h, { root, node, data }) {
                 return h('span', {
                     style: {
@@ -97,7 +122,20 @@ import { setTimeout } from 'timers';
                 ]);
             },
             edit(root, node, data){
-                console.log(node)
+                this.parentId = data.parent_id
+                this.editMenuStatus = true
+                this.editFrom = {
+                  menuName:node.node.title,
+                  route:node.node.route,
+                  icon:node.node.icon,  
+                  id:node.node.id,  
+                }
+            },
+            //编辑菜单
+            editMenuHandler(){
+                editMenu({menuName:this.editFrom.menuName,route:this.editFrom.route,icon:this.editFrom.icon,id:this.editFrom.id}).then( (res) => {
+                    this.queryMenu()
+                })
             },
             //新增菜单
             addMenuHandler(){
@@ -105,10 +143,14 @@ import { setTimeout } from 'timers';
                 this.addMenuStatus = false
                 this.formItem = {
                     menuName:'',
-                    route:''
+                    route:'',
+                    icon:''
                 }
             },
             addMenu(data){
+                // console.log(data)
+                // return
+                this.parentId = data.parent_id
                 this.addMenuStatus = true
                 this.currentTreeData = data
             },
@@ -120,23 +162,16 @@ import { setTimeout } from 'timers';
                     title: menu.menuName,
                     expand: true
                 });
-                this.$set(data, 'children', children);
-                
+
+
                 this.$nextTick( () => {
                     setTimeout( () => {
-                        let len = data.children.length-1
-                        let menuId = data.children[len].id
-                        let menuName = data.children[len].title
-                        console.log(data,len,parentId,menuName,menuId,menu)
-                        // return
-                        // this.updateMenu({parentId,menuName,menuId})
-                        addMenu({parentId,menuName,menuId}).then( (res) => {
-                            console.log(res.status)
-                            
+                        let menuId = this.maxId+1
+                        let menuName = menu.menuName
+                        
+                        addMenu({parentId,menuName,menuId,route:menu.route,icon:menu.icon}).then( (res) => {
+                            this.queryMenu()
                         },error=>{
-                            console.log(666)
-                            children.pop()
-                            this.$set(data, 'children', children);
                         })
                     },0)
                     
@@ -154,31 +189,37 @@ import { setTimeout } from 'timers';
                     })
                     return
                 }
-                
-                function loop(node){
-                    let arr = []
-                    arr.push(node.nodeKey)
-                    if(node.children){
-                        for(let item of node.children){
-                            arr.push(item.nodeKey)
-                            if(item.children){
-                                loop(item)
+                 this.$Modal.confirm({
+                    title: '提示',
+                    content: '<p>确定要要删除菜单?</p>',
+                    onOk: () => {
+                        let arr = []
+                        function loop(node){
+                            arr.push(node.id)
+                            if(node.children){
+                                for(let item of node.children){
+                                    arr.push(item.id)
+                                    if(item.children){
+                                        loop(item)
+                                    }
+                                }
                             }
+                            return [...new Set(arr)]
                         }
-                    }
-                    return arr
-                }
                 
-                console.log(loop(node.node))
-                let ids = loop(node.node)
-                removeMenu({ids:this.createIds(ids)}).then( (res) => {
-                    console.log()
-                })
-                return
-                const parentKey = root.find(el => el === node).parent;
-                const parent = root.find(el => el.nodeKey === parentKey).node;
-                const index = parent.children.indexOf(data);
-                parent.children.splice(index, 1);
+                        let ids = loop(node.node)
+
+                        removeMenu({ids:this.createIds(ids)}).then( (res) => {
+                            this.queryMenu()
+                        })
+
+                        // const parentKey = root.find(el => el === node).parent;
+                        // const parent = root.find(el => el.nodeKey === parentKey).node;
+                        // const index = parent.children.indexOf(data);
+                        // parent.children.splice(index, 1);
+                    },
+                });
+                
             },
             createIds(ids){
                 let str = ''

@@ -31,7 +31,7 @@
 				</Input>
 			</FormItem>
 			<FormItem>
-				<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;">注册</Button>
+				<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;">注册</Button>
 			</FormItem>
 
 		</i-form>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {getEmailCode,register,checkUser} from '@/assets/api'
+import {getEmailCode,register,checkUser,checkEmailCode} from '@/assets/api'
 import { error } from 'util';
 import { setTimeout } from 'timers';
 export default {
@@ -48,7 +48,7 @@ export default {
             if (value === '') {
                 callback(new Error('请输入邮箱!'));
             } else {
-                if(!/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/.test(this.formInline.email)){
+                if(!/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/.test(value)){
                     callback(new Error('邮箱格式不正确!'));
                 }
                 callback();
@@ -59,7 +59,7 @@ export default {
             if (value === '') {
                 callback(new Error('请输入手机号!'));
             } else {
-                if(!/^1(3|4|5|7|8)\d{9}$/.test(this.formInline.phone)){
+                if(!/^1(3|4|5|7|8)\d{9}$/.test(value)){
                     callback(new Error('手机号格式不正确!'));
                 }
                 callback();
@@ -70,7 +70,7 @@ export default {
             if (value === '') {
                 callback(new Error('请输入用户名或邮箱!'));
             } else {
-                checkUser({username:this.formInline.user}).then( (res) => {
+                checkUser({username:value}).then( (res) => {
                     console.log(res.data.user)
                     let user = res.data.user
                     if(user.length>0){
@@ -82,7 +82,24 @@ export default {
             }
         };
 
+        const validateCode = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入邮箱验证码!'));
+            } else {
+                checkEmailCode({code:value}).then( (res) => {
+                    if(res.data.valid){
+                        this.validCode = true
+                        callback()
+                    }else{
+                        this.validCode = false
+                        callback(new Error('邮箱验证码不正确!'));
+                    }
+                })
+            }
+        };
+
         return{
+            validCode:false,
             loading:false,
             codeLoading:false,
             isSend:false,
@@ -109,7 +126,7 @@ export default {
                     { validator:validatePhone, trigger: 'blur' },
                 ],
                 code: [
-                    { required: true, message: '请输入验证码', trigger: 'blur' },
+                    { validator: validateCode, trigger: 'blur' },
                 ]
             })
         }
@@ -150,6 +167,15 @@ export default {
                     },1000)
                     console.log(res)
                 }
+            },error =>{
+                this.$Message.error({
+                    content:'验证码获取失败,请重新获取！',
+                    top: 50,
+                    duration: 5
+                });
+                this.isSendText = '重新获取邮箱验证码'
+                this.isSend = false
+                this.codeLoading = false
             })
         },
         handleSubmit(name) {
@@ -167,19 +193,20 @@ export default {
                             if(res.status===200){
                                 if(res.data.errorCode=='10002'){
                                     this.loading = false
-                                    this.$Message.success({
-                                        content:'验证码错误！',
-                                        top: 50,
-                                        duration: 5
-                                    });
+                                    // this.$Message.success({
+                                    //     content:'验证码错误！',
+                                    //     top: 50,
+                                    //     duration: 5
+                                    // });
                                     return
                                 }
                                 this.loading = false
-                                this.$Message.success({
-                                    content:'注册成功！',
-                                    top: 50,
-                                    duration: 5
-                                });
+                                this.$router.push('/login')
+                                // this.$Message.success({
+                                //     content:'注册成功！',
+                                //     top: 50,
+                                //     duration: 5
+                                // });
                             }
                             
                         },error => {
@@ -188,11 +215,11 @@ export default {
                         
                             
                     } else {
-                            this.$Message.error({
-                                content:'注册失败！',
-                                top: 50,
-                                duration: 5
-                            });
+                            // this.$Message.error({
+                            //     content:'注册失败！',
+                            //     top: 50,
+                            //     duration: 5
+                            // });
                     }
             })
         }

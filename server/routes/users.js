@@ -39,7 +39,7 @@ router.post('/login', function(req, res, next) {
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
               expiresIn: 60*60*1  // 1小时过期
             });
-            
+            req.session['token'] = token
             //更新登录时间
             //query(`update Pub_User set LoatLoginTime='${}' WHERE (UserName='${username}' OR Email='${username}')`)
 
@@ -56,24 +56,19 @@ router.post('/login', function(req, res, next) {
 
 //退出登录
 router.get('/loginOut',function(req, res, next){
-  let username = req.query.username
-  
+  req.session['token'] = ''
+  res.send({
+    isLogin:true
+  })
 })
 
 //查询用户
 router.get('/checkUser',function(req, res, next){
   let username = req.query.username
   query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}')`).then( (r) => {
-    console.log(r)
-    // if(r.length>0){
-    //   res.status(500).send({
-    //     message:'用户名或邮箱已注册!'
-    //   })
-    // }else{
       res.json({
         user:r
       })
-    // }
   })
   
 })
@@ -81,7 +76,8 @@ router.get('/checkUser',function(req, res, next){
 //注册账号
 router.post('/register', function(req, res, next) {
   console.log(req.session['verifyEmail'])
-  let content ={name:req.body.username}; // 要生成token的主题信息
+  let reData = req.body
+  let content ={name:reData.username}; // 要生成token的主题信息
   if(req.body.code != req.session['verifyEmail'].verifyEmailCode){
     res.status(500).json({
       message:'验证码错误！',
@@ -93,17 +89,22 @@ router.post('/register', function(req, res, next) {
       errorCode:'10002'
     })
   }else{
-    res.status(200).json({
-      message:'注册成功！',
-      errorCode:100004
+    query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES(${uuid.v1().replace(/\-/g,'')},'${reData.username}','${reData.email}','${reData.cname}','${reData.password}',${reData.roleId},${reData.phone},${+new Date()})`).then( (r) => {
+      res.status(200).json({
+        message:'注册成功！',
+        errorCode:10004
+      })
+    },error => {
+      res.status(500).json({
+        message:'注册失败！',
+        errorCode:100012
+      })
     })
   }
   
 });
 
-router.get('/checkAuth', function(req, res, next) {
-
-  
+router.get('/checkAuth', function(req, res, next) {  
   let userId = req.query.userId
   let data = {
     m1:1, //图表1
@@ -132,6 +133,21 @@ router.get('/getCode', function(req, res, next) {
   res.send(imgbase64)
 });
 
+
+//校验图片验证码
+router.get('/checkCode', function(req, res, next) {
+  console.log(req.session['captcha'],req.query.code)
+  if(req.session['captcha'] == req.query.code){
+    res.json({
+      valid:true
+    })
+  }else{
+    res.json({
+      valid:false
+    })
+  }
+});
+
 //获取邮箱验证码
 router.get('/getEmailCode', function(req, res, next) {
   let toEmail = req.query.email
@@ -151,10 +167,6 @@ router.get('/getEmailCode', function(req, res, next) {
   
   req.session['verifyEmail'] =  {verifyEmailCode:verifyEmail,expires:+new Date()}; 
   console.log(req.session)
-  // NB! No need to recreate the transporter object. You can use
-  // the same transporter object for all e-mails
-
-  // setup e-mail data with unicode symbols
 
   var mailOptions = {
       from: 'xuchangqian@yulong.com', // 发件地址
@@ -181,6 +193,18 @@ router.get('/getEmailCode', function(req, res, next) {
   });
 });
 
+//校验邮箱验证码
+router.get('/checkEmailCode', function(req, res, next) {
+  if(req.session['verifyEmail'].verifyEmailCode == req.query.code){
+    res.json({
+      valid:true
+    })
+  }else{
+    res.json({
+      valid:false
+    })
+  }
+});
 
 //获取用户列表
 router.get('/userList',function(req,res,next){
@@ -208,13 +232,20 @@ router.get('/queryMenu',function(req,res,next){
   query(`SELECT
   Pub_Menu.MenuId as id,
   Pub_Menu.MenuName as title,
-  Pub_Menu.ParentId as parent_id
+  Pub_Menu.ParentId as parent_id,
+  Pub_Menu.MenuUrl as route,
+  Pub_Menu.MenuIconUrl as icon,
+  1 as expand
   FROM
   Pub_Menu
   `).then( (r) => {
-        res.json({
-          menuList:buildTree(r)
-        })
+    query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
+      res.json({
+        maxId:response[0].maxId,
+        menuList:buildTree(r)
+      })
+    })
+    
   })
 })
 
@@ -222,14 +253,13 @@ router.get('/queryMenu',function(req,res,next){
 router.post('/addMenu',function(req,res,next){
   let reData = req.body
   // let MenuId = req.body.
-  console.log(uuid.v1().replace(/\-/g,''))
-  query(`INSERT INTO Pub_Menu(MenuId,MenuName,ParentId) VALUES(${uuid.v1()},'${reData.menuName}',${reData.parentId})`).then( (r) => {
-      // console.log(getTree(r))
-        
+  // console.log(uuid.v1().replace(/\-/g,''))
+  query(`INSERT INTO Pub_Menu(MenuId,MenuName,ParentId,MenuUrl,MenuIconUrl) VALUES(${reData.menuId},'${reData.menuName}',${reData.parentId},'${reData.route}','${reData.icon}')`).then( (r) => {
       res.json({
         errorCode:10008
       })
   }, error => {
+    console.log(error)
     res.status(500).json({
       errorCode:10009
     })
@@ -237,7 +267,7 @@ router.post('/addMenu',function(req,res,next){
 })
 
 //删除菜单
-router.post('/removeMenu',function(req,res,next){
+router.delete('/removeMenu',function(req,res,next){
   let ids = req.body.ids
 
   query(`DELETE FROM Pub_Menu WHERE ${ids}`).then( (r) => {
@@ -247,6 +277,23 @@ router.post('/removeMenu',function(req,res,next){
   }, error => {
     res.status(500).json({
       errorCode:10007
+    })
+  })
+})
+
+
+//修改菜单
+router.put('/editMenu',function(req,res,next){
+  let reData = req.body
+
+  query(`UPDATE Pub_Menu SET MenuName='${reData.menuName}',MenuUrl='${reData.route}',MenuIconUrl='${reData.icon}' WHERE MenuId = ${reData.id}`).then( (r) => {
+    console.log(r)
+      res.json({
+        errorCode:100010
+      })
+  }, error => {
+    res.status(500).json({
+      errorCode:100011
     })
   })
 })
