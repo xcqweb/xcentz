@@ -96,16 +96,25 @@ export function downloadExcle(params){
 //系统用户列表
 export function getUserList(params){
     return request({
-        url:'/users/userList',
+        url:'/users/user',
         method:'get',
         params
+    })
+}
+
+//新增系统用户
+export function addUser(params){
+    return request({
+        url:'/users/user',
+        method:'post',
+        data:params
     })
 }
 
 //查询菜单
 export function queryMenu(params){
     return request({
-        url:'/users/queryMenu',
+        url:'/users/menu',
         method:'get',
         params
     })
@@ -114,7 +123,7 @@ export function queryMenu(params){
 //新增菜单
 export function addMenu(params){
     return request({
-        url:'/users/addMenu',
+        url:'/users/menu',
         method:'post',
         data:params
     })
@@ -123,7 +132,7 @@ export function addMenu(params){
 //删除菜单
 export function removeMenu(params){
     return request({
-        url:'/users/removeMenu',
+        url:'/users/menu',
         method:'delete',
         data:params
     })
@@ -132,7 +141,52 @@ export function removeMenu(params){
 //编辑菜单
 export function editMenu(params){
     return request({
-        url:'/users/editMenu',
+        url:'/users/menu',
+        method:'put',
+        data:params
+    })
+}
+
+//新增角色
+export function addRole(params){
+    return request({
+        url:'/users/role',
+        method:'post',
+        data:params
+    })
+}
+
+//修改角色
+export function editRole(params){
+    return request({
+        url:'/users/role',
+        method:'put',
+        data:params
+    })
+}
+
+//删除角色
+export function delRole(params){
+    return request({
+        url:'/users/role',
+        method:'delete',
+        data:params
+    })
+}
+
+//获取角色列表
+export function roleList(params){
+    return request({
+        url:'/users/role',
+        method:'get',
+        params
+    })
+}
+
+//分配角色
+export function assignRole(params){
+    return request({
+        url:'/users/assignRole',
         method:'put',
         data:params
     })

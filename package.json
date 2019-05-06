@@ -16,7 +16,8 @@
     "path-to-regexp": "^3.0.0",
     "screenfull": "^4.2.0",
     "vue": "^2.6.10",
-    "vue-router": "^3.0.3"
+    "vue-router": "^3.0.3",
+    "xlsx": "^0.14.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.6.0",

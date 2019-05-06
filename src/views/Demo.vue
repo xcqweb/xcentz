@@ -21,12 +21,16 @@
         </div>
     </Upload>
     <button @click="download">下载</button>
+
+    <div>
+      <Upload-excel :on-success="handleSuccess" :before-upload="beforeUpload" ></Upload-excel>
+      <Table :columns="tableHeader" :data="tableData"></Table>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// var CryptoJS = require("crypto-js");
+import UploadExcel from '@@/uploadExcle'
 import AES from 'crypto-js/aes' 
 import Utf8 from 'crypto-js/enc-utf8'
 import {checkAuth,getCode,downloadExcle} from '@/assets/api'
@@ -37,19 +41,17 @@ export default {
       headers:{
         Authorization: `Bearer ${localStorage.getItem('token')}`
       },
-      auth:{}
+      auth:{},
+      tableData:[],
+      tableHeader:[]
+
     }
+  },
+  components:{
+    UploadExcel
   },
   
   created(){
-  //   var ciphertext = AES.encrypt('my message', 'secret key 123').toString();
-
-  // // Decrypt
-  // var bytes  = AES.decrypt(ciphertext, 'secret key 123');
-  // var originalText = bytes.toString(Utf8);
-
-  // console.log(originalText); // 'my message'
-
     checkAuth({userId:123}).then( (res) => {
       console.log(res.data.data)
       var bytes  = AES.decrypt(res.data.data, 'secret key 123');
@@ -60,6 +62,22 @@ export default {
     })
   },
   methods:{
+    beforeUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+      if (isLt1M) {
+        return true
+      }
+      this.$Message.warning({
+        content: 'Please do not upload files larger than 1m in size.',
+      })
+      return false
+    },
+    handleSuccess({ results, header }) {
+      this.tableData = results
+      this.tableHeader = header
+      console.log(results, header)
+    },
+
     download(){
       downloadExcle().then( (res) => {
         console.log(res)

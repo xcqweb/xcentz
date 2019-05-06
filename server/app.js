@@ -33,29 +33,29 @@ app.use(session({
 
 app.use(jwtAuth);
 
-app.use('/',function(req, res, next) {
-  console.log(req.path)
-  let path = req.path
-  let unLessPath = [
-    "/api/xcentz/v1/users/login", 
-    "/api/xcentz/v1/users/register",
-    "/api/xcentz/v1/users/getCode",
-    "/api/xcentz/v1/users/getEmailCode",
-    "/api/xcentz/v1/users/checkUser",
-    "/api/xcentz/v1/users/checkCode",
-    "/api/xcentz/v1/users/checkEmailCode",
-]
-  if(unLessPath.includes(path)){
-    next();
-  }else{
-    if(req.session['token']){
-      next();
-    }else{
-      next(createError(401));
-    }
-  }
+// app.use('/',function(req, res, next) {
+//   console.log(req.path)
+//   let path = req.path
+//   let unLessPath = [
+//     "/api/xcentz/v1/users/login", 
+//     "/api/xcentz/v1/users/register",
+//     "/api/xcentz/v1/users/getCode",
+//     "/api/xcentz/v1/users/getEmailCode",
+//     "/api/xcentz/v1/users/checkUser",
+//     "/api/xcentz/v1/users/checkCode",
+//     "/api/xcentz/v1/users/checkEmailCode",
+// ]
+//   if(unLessPath.includes(path)){
+//     next();
+//   }else{
+//     if(req.session['token']){
+//       next();
+//     }else{
+//       next(createError(401));
+//     }
+//   }
   
-});
+// });
 
 
 

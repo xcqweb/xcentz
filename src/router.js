@@ -99,6 +99,20 @@ let router = new Router({
         }
       ]
     },
+
+    //系统角色管理
+    {
+      path: '/',
+      component: HomeLayout,
+      children:[
+        {
+          path:'/rolemanage',
+          component:() => import('@/views/home/setting/roleManage'),
+          name:'rolemanage',
+          meta:{title:'系统角色管理'}
+        }
+      ]
+    },
   ]
 })
 

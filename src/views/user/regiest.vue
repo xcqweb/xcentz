@@ -1,38 +1,40 @@
 <template>
     <div class="regiest">
-        <i-form ref="formInline_register" :model="formInline" :rules="ruleInline" style="width:360px;">
-			<FormItem prop="user" style="height:40px;">
+        <i-form ref="formInline_register" :model="formInline" :label-width="80" :rules="ruleInline" style="width:360px;">
+			<FormItem prop="user" style="height:40px;" label='用户名'>
 				<Input type="text" size="large" style="width:100%;" v-model="formInline.user" placeholder="用户名">
-						<Icon type="ios-person-outline" slot="prepend"></Icon>
+                    <!-- <p slot="prepend"></p> -->
 				</Input>
 			</FormItem>
-			<FormItem prop="password" style="margin:30px 0 30px 0;">
+			<FormItem prop="password" style="margin:30px 0 30px 0;" label='密码'>
 				<Input type="password" size="large" style="width:100%;" v-model="formInline.password" placeholder="密码">
-					<Icon type="ios-lock-outline" slot="prepend"></Icon>
 				</Input>
 			</FormItem>
 
-            <FormItem prop="phone" style="margin:30px 0 30px 0;">
+            <FormItem prop="phone" style="margin:30px 0 30px 0;" label='电话'>
 				<Input type="text" size="large" style="width:100%;" v-model="formInline.phone" placeholder="电话">
-                    <Icon type="md-tablet-portrait" slot="prepend" />
 				</Input>
 			</FormItem>
 
-             <FormItem prop="email" style="margin:30px 0 30px 0;">
+            <FormItem prop="cname" style="margin:30px 0 30px 0;" label='中文名'>
+				<Input type="text" size="large" style="width:100%;" v-model="formInline.cname" placeholder="中文名">
+				</Input>
+			</FormItem>
+
+             <FormItem prop="email" style="margin:30px 0 30px 0;" label='邮箱'>
 				<Input type="text" size="large" style="width:100%;" v-model="formInline.email" placeholder="邮箱">
-                    <Icon type="ios-at-outline" slot="prepend"/>
 				</Input>
 			</FormItem>
 
-			<FormItem prop="code" style="margin:30px 0 30px 0;">
-				<Input type="text" size="large" v-model="formInline.code" placeholder="邮箱验证码">
+			<FormItem prop="code" style="margin:30px 0 30px 0;" label='验证码'>
+				<Input type="text" size="large" v-model.trim="formInline.code" placeholder="邮箱验证码">
 					<!-- <img slot="append" :src='verifyImg' @click="getCode" /> -->
                     <Button slot="append" :type="isSend?'text':'primary'" :loading="codeLoading" :disabled='isSend?true:false' @click="getEmailCodes">{{isSendText}}</Button>
 				</Input>
 			</FormItem>
-			<FormItem>
+			<!-- <FormItem> -->
 				<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;">注册</Button>
-			</FormItem>
+			<!-- </FormItem> -->
 
 		</i-form>
     </div>
@@ -51,7 +53,15 @@ export default {
                 if(!/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/.test(value)){
                     callback(new Error('邮箱格式不正确!'));
                 }
-                callback();
+                checkUser({username:value}).then( (res) => {
+                    console.log(res.data.user)
+                    let user = res.data.user
+                    if(user.length>0){
+                        callback(new Error('邮箱已注册!'));
+                    }else{
+                        callback()
+                    }
+                })
             }
         };
 
@@ -78,6 +88,8 @@ export default {
                     }else{
                         callback()
                     }
+                },error =>{
+                    callback(new Error('校验失败!'));
                 })
             }
         };
@@ -94,6 +106,9 @@ export default {
                         this.validCode = false
                         callback(new Error('邮箱验证码不正确!'));
                     }
+                },error => {
+                    this.validCode = false
+                    callback(new Error('验证失败!'));
                 })
             }
         };
@@ -108,25 +123,26 @@ export default {
                 user: '',
                 password: '',
                 phone:'',
+                cname:'',
                 email:'',
                 code:''
             },
             ruleInline: Object.freeze({
                 user: [
-                    { validator:validateUser, trigger: 'blur' }
+                    { required: true,validator:validateUser, trigger: 'blur' }
                 ],
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
                     { type: 'string', min: 6, message: '密码长度不少于6位数', trigger: 'blur' }
                 ],
                 email: [
-                    { validator:validateEmail, trigger: 'blur' },
+                    { required: true,validator:validateEmail, trigger: 'blur' },
                 ],
                 phone: [
                     { validator:validatePhone, trigger: 'blur' },
                 ],
                 code: [
-                    { validator: validateCode, trigger: 'blur' },
+                    { required: true,validator: validateCode, trigger: 'blur' },
                 ]
             })
         }
@@ -144,17 +160,11 @@ export default {
                 });
                 return
             }
-            // console.log(this.formInline.email)
             
             this.codeLoading = true
             getEmailCode({email:this.formInline.email}).then( (res) => {
                 if(res.status==200){
                     this.codeLoading = false
-                    this.$Message.success({
-                        content:'验证码发送成功！',
-                        top:50,
-                        duration:5
-                    })
                     this.isSend = true
                     let num = 0
                     let timer = setInterval( () =>{
@@ -180,47 +190,30 @@ export default {
         },
         handleSubmit(name) {
             this.$refs[name].validate((valid) => {
-                    if (valid) {
-                        this.loading = true
-                        let params = {
-                            username:this.formInline.user,
-                            password:this.formInline.password,
-                            email:this.formInline.email,
-                            phone:this.formInline.phone,
-                            code:this.formInline.code
-                        }
-                        register(params).then( (res) => {
-                            if(res.status===200){
-                                if(res.data.errorCode=='10002'){
-                                    this.loading = false
-                                    // this.$Message.success({
-                                    //     content:'验证码错误！',
-                                    //     top: 50,
-                                    //     duration: 5
-                                    // });
-                                    return
-                                }
-                                this.loading = false
-                                this.$router.push('/login')
-                                // this.$Message.success({
-                                //     content:'注册成功！',
-                                //     top: 50,
-                                //     duration: 5
-                                // });
-                            }
-                            
-                        },error => {
-                            this.loading = false
-                        })
-                        
-                            
-                    } else {
-                            // this.$Message.error({
-                            //     content:'注册失败！',
-                            //     top: 50,
-                            //     duration: 5
-                            // });
+                if (valid) {
+                    this.loading = true
+                    let params = {
+                        username:this.formInline.user,
+                        password:this.formInline.password,
+                        email:this.formInline.email,
+                        phone:this.formInline.phone,
+                        cname:this.formInline.cname,
+                        code:this.formInline.code
                     }
+                    register(params).then( (res) => {
+                        if(res.status===200){
+                            if(res.data.errorCode=='10002'){
+                                this.loading = false
+                                return
+                            }
+                            this.loading = false
+                            this.$router.push('/login')
+                        }
+                        
+                    },error => {
+                        this.loading = false
+                    })
+                }
             })
         }
     }
@@ -232,11 +225,6 @@ export default {
        position: absolute;
        top:88px;
     }
-    // .ivu-btn-primary{
-    //     color: #fff !important;
-    //     background-color: #2d8cf0 !important;
-    //     border-color: #2d8cf0 !important;
-    // }
 </style>
 
 

@@ -10,6 +10,7 @@ const {query} = require('../database');
 let CryptoJS = require("crypto-js");//加密库
 let uuid = require('node-uuid'); //生成唯一id
 let {buildTree} = require('../common/untl')
+let moment = require('moment')
 
 router.post('/login', function(req, res, next) {
     let username = req.body.username
@@ -25,7 +26,6 @@ router.post('/login', function(req, res, next) {
     }else{
     let email = req.body.email
       query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {
-        //console.log(r.length<1)
         if(r.length<=0){
           res.status(500).json({
             message:'用户名或密码错误！',
@@ -34,14 +34,13 @@ router.post('/login', function(req, res, next) {
         }else{
           let re = r[0]
           delete re.PassWord
-          
             // 这是加密的key（密钥) 
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
               expiresIn: 60*60*1  // 1小时过期
             });
             req.session['token'] = token
             //更新登录时间
-            //query(`update Pub_User set LoatLoginTime='${}' WHERE (UserName='${username}' OR Email='${username}')`)
+            query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE (UserName='${username}' OR Email='${username}')`)
 
             res.status(200).json({
               message:'登录成功！',
@@ -89,7 +88,7 @@ router.post('/register', function(req, res, next) {
       errorCode:'10002'
     })
   }else{
-    query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES(${uuid.v1().replace(/\-/g,'')},'${reData.username}','${reData.email}','${reData.cname}','${reData.password}',${reData.roleId},${reData.phone},${+new Date()})`).then( (r) => {
+    query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES('${uuid.v1().replace(/\-/g,'')}','${reData.username}','${reData.email}','${reData.cname}','${reData.password}',0,${reData.phone},'${ moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
       res.status(200).json({
         message:'注册成功！',
         errorCode:10004
@@ -101,7 +100,6 @@ router.post('/register', function(req, res, next) {
       })
     })
   }
-  
 });
 
 router.get('/checkAuth', function(req, res, next) {  
@@ -207,37 +205,55 @@ router.get('/checkEmailCode', function(req, res, next) {
 });
 
 //获取用户列表
-router.get('/userList',function(req,res,next){
+router.get('/user',function(req,res,next){
   query(`SELECT
-    Pub_User.UserId,
-    Pub_User.UserName,
-    Pub_User.Email,
-    Pub_User.Cname,
-    Pub_User.RoleId,
-    Pub_User.Phone,
-    Pub_User.CreateTime,
-    Pub_User.LoatLoginTime
-    FROM Pub_User`
+        Pub_User.UserId,
+        Pub_User.UserName,
+        Pub_User.Email,
+        Pub_User.Cname,
+        Pub_User.RoleId,
+        Pub_User.Phone,
+        Pub_Role.Directions,
+        Pub_Role.RoleId,
+        date_format(Pub_User.CreateTime, '%Y-%m-%d% %H:%i:%s') AS CreateTime,
+        date_format(Pub_User.LoatLoginTime, '%Y-%m-%d% %H:%i:%s') AS LoatLoginTime
+        FROM 
+        Pub_Role,
+        Pub_User
+        WHERE Pub_Role.RoleId=Pub_User.RoleId`
     ).then( (r) => {
-        // console.log(res)
         res.json({
           userLists:r
         })
   })
 })
 
+//新增用户
+router.post('/user',function(req,res,next){
+  let reData = req.body
+  query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES('${uuid.v1().replace(/\-/g,'')}','${reData.username}','${reData.email}','${reData.cname}','${reData.password}',0,${reData.phone},'${ moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
+    res.send({
+      errorCode:100019
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100020
+    })
+  })
+})
+
 
 //查询菜单
-router.get('/queryMenu',function(req,res,next){
+router.get('/menu',function(req,res,next){
   query(`SELECT
-  Pub_Menu.MenuId as id,
-  Pub_Menu.MenuName as title,
-  Pub_Menu.ParentId as parent_id,
-  Pub_Menu.MenuUrl as route,
-  Pub_Menu.MenuIconUrl as icon,
-  1 as expand
-  FROM
-  Pub_Menu
+        MenuId as id,
+        MenuName as title,
+        ParentId as parent_id,
+        MenuUrl as route,
+        MenuIconUrl as icon,
+        1 as expand
+        FROM
+        Pub_Menu
   `).then( (r) => {
     query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
       res.json({
@@ -250,7 +266,7 @@ router.get('/queryMenu',function(req,res,next){
 })
 
 //新增菜单
-router.post('/addMenu',function(req,res,next){
+router.post('/menu',function(req,res,next){
   let reData = req.body
   // let MenuId = req.body.
   // console.log(uuid.v1().replace(/\-/g,''))
@@ -267,7 +283,7 @@ router.post('/addMenu',function(req,res,next){
 })
 
 //删除菜单
-router.delete('/removeMenu',function(req,res,next){
+router.delete('/menu',function(req,res,next){
   let ids = req.body.ids
 
   query(`DELETE FROM Pub_Menu WHERE ${ids}`).then( (r) => {
@@ -283,7 +299,7 @@ router.delete('/removeMenu',function(req,res,next){
 
 
 //修改菜单
-router.put('/editMenu',function(req,res,next){
+router.put('/menu',function(req,res,next){
   let reData = req.body
 
   query(`UPDATE Pub_Menu SET MenuName='${reData.menuName}',MenuUrl='${reData.route}',MenuIconUrl='${reData.icon}' WHERE MenuId = ${reData.id}`).then( (r) => {
@@ -297,6 +313,84 @@ router.put('/editMenu',function(req,res,next){
     })
   })
 })
+
+//获取角色列表
+router.get('/role',function(req,res,next){
+  query(`SELECT * FROM Pub_Role WHERE CONCAT(RoleName,Directions) LIKE '%${req.query.key?req.query.key:''}%'`).then( (r) => {
+    res.send({
+      roleList:r
+    })
+  })
+})
+
+//新增角色
+router.post('/role',function(req,res,next){
+  let reData = req.body
+  console.log(reData)
+  query(`INSERT INTO Pub_Role(RoleName,Directions) VALUES('${reData.roleName}','${reData.direction}')`).then( (r) => {
+    res.send({
+      errorCode:100013
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100014
+    })
+  })
+})
+
+//编辑角色
+router.put('/role',function(req,res,next){
+  let reData = req.body
+  query(`UPDATE Pub_Role SET RoleName='${reData.roleName}',Directions='${reData.direction}' WHERE RoleId=${reData.id}`).then( (r) => {
+    res.send({
+      errorCode:100015
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100016
+    })
+  })
+})
+
+//删除角色
+router.delete('/role',function(req,res,next){
+  let reData = req.body
+  query(`DELETE FROM Pub_Role WHERE RoleId=${reData.id}`).then( (r) => {
+    res.send({
+      errorCode:100017
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100018
+    })
+  })
+})
+
+//分配角色
+router.put('/assignRole',function(req,res,next){
+  let reData = req.body
+  query(`UPDATE Pub_User SET RoleId=${reData.roleId} WHERE UserId='${reData.userId}'`).then( (r) => {
+    res.send({
+      errorCode:100021
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100022
+    })
+  })
+})
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
 

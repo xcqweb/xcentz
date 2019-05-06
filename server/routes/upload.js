@@ -29,7 +29,7 @@ router.post('/uploadExcle',function(req, res, next) {
             // 发生错误
           }else{
               let data = xlsx.parse(fs.readFileSync(path.join(__dirname,'../upload/report_01.xlsx')))
-            //   console.log(data[0].data)
+              console.log(data)
               
           }
     })
