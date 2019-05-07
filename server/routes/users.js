@@ -34,6 +34,7 @@ router.post('/login', function(req, res, next) {
         }else{
           let re = r[0]
           delete re.PassWord
+          delete re.Token
             // 这是加密的key（密钥) 
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
               expiresIn: 60*60*1  // 1小时过期
@@ -61,7 +62,7 @@ router.get('/loginOut',function(req, res, next){
   })
 })
 
-//查询用户
+//校验用户
 router.get('/checkUser',function(req, res, next){
   let username = req.query.username
   query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}')`).then( (r) => {
@@ -206,7 +207,10 @@ router.get('/checkEmailCode', function(req, res, next) {
 
 //获取用户列表
 router.get('/user',function(req,res,next){
-  query(`SELECT
+  let key = req.query.key || ''
+  let curPage = Number(req.query.currentPage) || 1
+  let pageSize = Number(req.query.pageSize) || 15
+  Promise.all([query(`SELECT
         Pub_User.UserId,
         Pub_User.UserName,
         Pub_User.Email,
@@ -220,24 +224,40 @@ router.get('/user',function(req,res,next){
         FROM 
         Pub_Role,
         Pub_User
-        WHERE Pub_Role.RoleId=Pub_User.RoleId`
-    ).then( (r) => {
+        WHERE Pub_Role.RoleId=Pub_User.RoleId AND CONCAT(Pub_User.UserName,Pub_User.Cname,Pub_User.Email,Pub_Role.Directions,Pub_User.Phone) LIKE '%${key}%'
+        LIMIT ${(curPage-1)*pageSize},${pageSize}`),
+        query('SELECT COUNT(*) AS total FROM Pub_User')]).then( (val) => {
         res.json({
-          userLists:r
+          userList:val[0],
+          total:val[1][0].total
         })
-  })
+      })
 })
 
 //新增用户
 router.post('/user',function(req,res,next){
   let reData = req.body
-  query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES('${uuid.v1().replace(/\-/g,'')}','${reData.username}','${reData.email}','${reData.cname}','${reData.password}',0,${reData.phone},'${ moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
+  query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES('${uuid.v1().replace(/\-/g,'')}','${reData.username}','${reData.email}','${reData.cname}','${reData.password}',${reData.role},${reData.phone},'${ moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
     res.send({
       errorCode:100019
     })
   },error =>{
     res.status(500).send({
       errorCode:100020
+    })
+  })
+})
+
+//删除用户
+router.delete('/user',function(req,res,next){
+  let userId = req.body.userId
+  query(`DELETE FROM Pub_User WHERE UserId='${userId}'`).then( (r) => {
+    res.send({
+      errorCode:100023
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100024
     })
   })
 })
@@ -316,9 +336,15 @@ router.put('/menu',function(req,res,next){
 
 //获取角色列表
 router.get('/role',function(req,res,next){
-  query(`SELECT * FROM Pub_Role WHERE CONCAT(RoleName,Directions) LIKE '%${req.query.key?req.query.key:''}%'`).then( (r) => {
-    res.send({
-      roleList:r
+  let key = req.query.key || ''
+  let curPage = Number(req.query.currentPage) || 1
+  let pageSize = Number(req.query.pageSize) || 10000000
+  Promise.all([query(`SELECT * FROM Pub_Role WHERE CONCAT(RoleName,Directions) LIKE '%${key}%'
+  LIMIT ${(curPage-1)*pageSize},${pageSize}`),
+  query('SELECT COUNT(*) AS total FROM Pub_Role')]).then( (val) => {
+    res.json({
+      roleList:val[0],
+      total:val[1][0].total
     })
   })
 })

@@ -58,8 +58,12 @@ export default {
         }
     },
     created(){
-        console.log(this.$route.path)
         this.queryMenu()
+    },
+    mounted(){
+        this.$root.eventBus.$on('getMenu',() => {
+            this.queryMenu()
+        })
     },
     methods:{
         collapseMenu(item,index){

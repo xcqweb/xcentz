@@ -18,7 +18,7 @@ export function loginOut(params){
     })
 }
 
-//查询用户
+//校验用户
 export function checkUser(params){
     return request({
         url:'/users/checkUser',
@@ -107,6 +107,15 @@ export function addUser(params){
     return request({
         url:'/users/user',
         method:'post',
+        data:params
+    })
+}
+
+//删除系统用户
+export function delUser(params){
+    return request({
+        url:'/users/user',
+        method:'delete',
         data:params
     })
 }

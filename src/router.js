@@ -12,6 +12,7 @@ let router = new Router({
     //登录注册
     {
       path:'/',
+      redirect:'/home',
       component:layout,
       children:[
         {
@@ -40,12 +41,8 @@ let router = new Router({
         }
       ]
     },
+    
     //demo
-   
-    {
-      path: '/',
-      redirect:'/home'
-    },
     {
       path: '/',
       component: HomeLayout,
@@ -110,6 +107,20 @@ let router = new Router({
           component:() => import('@/views/home/setting/roleManage'),
           name:'rolemanage',
           meta:{title:'系统角色管理'}
+        }
+      ]
+    },
+
+    //用户中心
+    {
+      path: '/',
+      component: HomeLayout,
+      children:[
+        {
+          path:'/usercenter',
+          component:() => import('@/views/home/usercenter/user'),
+          name:'usercenter',
+          meta:{title:'用户中心'}
         }
       ]
     },

@@ -59,7 +59,7 @@ import { setTimeout } from 'timers';
         methods: {
             //查询菜单
             queryMenu(){
-                queryMenu().then((res) => {
+                queryMenu({roleId:this.userInfo.RoleId}).then((res) => {
                     this.treeData = res.data.menuList
                     this.maxId = res.data.maxId
                 })
@@ -74,7 +74,7 @@ import { setTimeout } from 'timers';
                     h('span',{style:{float:'left'}}, [
                         h('Icon', {
                             props: {
-                                type: 'ios-paper-outline'
+                                type: 'ios-leaf'
                             },
                             style: {
                                 marginRight: '8px'
@@ -171,6 +171,7 @@ import { setTimeout } from 'timers';
                         
                         addMenu({parentId,menuName,menuId,route:menu.route,icon:menu.icon}).then( (res) => {
                             this.queryMenu()
+                            this.$root.eventBus.$emit('getMenu')
                         },error=>{
                         })
                     },0)
@@ -211,12 +212,8 @@ import { setTimeout } from 'timers';
 
                         removeMenu({ids:this.createIds(ids)}).then( (res) => {
                             this.queryMenu()
+                            this.$root.eventBus.$emit('getMenu')
                         })
-
-                        // const parentKey = root.find(el => el === node).parent;
-                        // const parent = root.find(el => el.nodeKey === parentKey).node;
-                        // const index = parent.children.indexOf(data);
-                        // parent.children.splice(index, 1);
                     },
                 });
                 
@@ -232,7 +229,6 @@ import { setTimeout } from 'timers';
                    
                 }
                 return str
-                console.log(str)
             }
         }
     }

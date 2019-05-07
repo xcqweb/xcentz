@@ -25,7 +25,8 @@ import {
     Tree,
     Tooltip,
     Select,
-    Option
+    Option,
+    Page,
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
@@ -60,7 +61,8 @@ let modules = [
     Tree,
     Tooltip,
     Select,
-    Option
+    Option,
+    Page,
 ]
 
 for(let item of modules){

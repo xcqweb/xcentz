@@ -1,11 +1,12 @@
 <template>
     <div class="userManage">
         <div class="top_operate">
-            <Input search enter-button="查询" size="large" style="width:300px;margin-right:30px;" placeholder="用户名 邮箱号 姓名..." />
+            <Input search enter-button="查询" v-model="searchKey" size="large" @on-search='search' @on-enter='search' style="width:300px;margin-right:30px;" placeholder="用户名 邮箱号 姓名..." />
             <Button size="large" icon="ios-add" type="primary" @click="addUserStatus=true">新增用户</Button> 
         </div>
          
          <Table :columns="columns" :data="userData" stripe border :loading='isLoading' size='large'></Table>
+         <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin-top:20px;' />
         <!-- 添加用户 -->
          <Modal
             v-model="addUserStatus"
@@ -36,6 +37,12 @@
                     </Input>
                 </FormItem>
 
+                <FormItem prop="role" style="margin:30px 0 30px 0;" label='角色'>
+                    <i-Select v-model="addUser.role" filterable>
+                        <i-Option v-for="item in roleList" :value="item.RoleId" :key="item.RoleName">{{ item.Directions }}</i-Option>
+                    </i-Select>
+                </FormItem>
+
                 <FormItem prop="cname" style="margin:30px 0 30px 0;" label='中文名'>
                     <Input type="text" size="large" style="width:100%;" v-model="addUser.cname" placeholder="请输入中文名">
                     </Input>
@@ -60,11 +67,12 @@
                 <i-Option v-for="item in roleList" :value="item.RoleId" :key="item.RoleName">{{ item.Directions }}</i-Option>
             </i-Select>
         </Modal>
+
     </div>
 </template>
 
 <script>
-import {checkUser,checkEmailCode,getUserList,assignRole,addUser,roleList} from '@api'
+import {checkUser,checkEmailCode,getUserList,assignRole,addUser,delUser,roleList} from '@api'
 import Operate from './components/operate'
 import Vue from 'vue'
 Vue.component('Operate',Operate)
@@ -133,6 +141,10 @@ export default {
         };
         let _this = this
         return{
+            pageSize:15,
+            totalCount:0,
+            currentPage:1,
+            searchKey:'',
             currentRow:'',
             selectRole:'',
             addUserStatus:false,
@@ -146,6 +158,7 @@ export default {
                 password: '',
                 confirmPsw:'',
                 phone:'',
+                role:0,
                 cname:'',
                 email:'',
             },
@@ -163,6 +176,9 @@ export default {
                 canme: [
                     { required: true, message: '请输中文名',trigger: 'blur' },
                 ],
+                role: [
+                    { required: true, message: '请选择角色',trigger: 'blur' },
+                ],
                 email: [
                     { required: true,validator:validateEmail, trigger: 'blur' },
                 ],
@@ -174,6 +190,7 @@ export default {
                     {
                         title: '序号',
                         type:'index',
+                        width:80,
                         align:'center'
                     },
                     {
@@ -189,6 +206,7 @@ export default {
                     {
                         title: '中文名',
                         key: 'Cname',
+                        width:120,
                         align:'center'
                     },
                     {
@@ -199,6 +217,7 @@ export default {
                     {
                         title: '角色',
                         key: 'Directions',
+                        width:120,
                         align:'center',
                     },
                     {
@@ -214,15 +233,49 @@ export default {
                     {
                         title: '操作',
                         align:'center',
+                        width:300,
                         render(h,{row}){
-                            return h('Operate',{
-                                on:{
-                                    operate:_this.operate
-                                },
-                                props:{
-                                    row:row
+                            return h('div',{
+                                style:{
+                                    display:'flex'
                                 }
-                            })
+                            },[h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                    },
+                                    style: {
+                                        marginRight: '16px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            _this.operate(1,row)
+                                        }
+                                    }
+                                }, '重置密码'),h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                    },
+                                    style: {
+                                        marginRight: '16px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            _this.operate(2,row)
+                                        }
+                                    }
+                                }, '分配角色'),h('Button', {
+                                    props: {
+                                        type: 'error',
+                                    },
+                                    style: {
+                                        marginRight: '16px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            _this.operate(3,row)
+                                        }
+                                    }
+                                }, '删除')])
                         }
                     }
                 ]),
@@ -235,6 +288,14 @@ export default {
         this.getUserList()
     },
     methods:{
+        //分页
+        goPage(page){
+            this.currentPage = page
+            this.getUserList()
+        },
+        search(){
+            this.getUserList()
+        },
         //获取角色列表
         getRoleHandler(){
             roleList().then( (res) =>{
@@ -245,20 +306,27 @@ export default {
         //操作
         operate(index,row){
             switch(index){
-                case '1'://重置密码
+                case 1://重置密码
                 break;
 
-                case '2'://角色分配
+                case 2://角色分配
                 this.assignRoleStatus = true
                 this.currentRow = Object.freeze(row)
 
                 break;
 
-                case '3'://删除用户
+                case 3://删除用户
+                this.$Modal.confirm({
+                    title: '提示',
+                    content: '<p>确定要要删除该用户?</p>',
+                    onOk: () => {
+                        delUser({userId:row.UserId}).then( (res) => {
+                            this.userData.splice(row._index,1)
+                        })
+                    },
+                });
                 break;
 
-                case '4': //权限分配
-                break;
             }
         },
         //分配角色
@@ -266,12 +334,17 @@ export default {
             console.log(this.selectRole)
             assignRole({roleId:this.selectRole,userId:this.currentRow.UserId}).then( (res) => {
                 this.currentRow.RoleId = this.selectRole
-                this.selectRole = ''
 
+                this.currentRow.Directions = this.roleList.find( (item) => {
+                    return item.RoleId === this.selectRole
+                }).Directions
+
+                this.selectRole = ''
             })
         },
         //添加用户
         addUserHandler(){
+            
             this.$refs['form_adduser'].validate((valid) => {
                 if (valid) {
                     let params = {
@@ -280,9 +353,11 @@ export default {
                         email:this.addUser.email,
                         phone:this.addUser.phone,
                         cname:this.addUser.cname,
+                        role:this.addUser.role
                     }
                     addUser(params).then( (res) => {
                         this.addUserStatus = false
+                        this.$refs['form_adduser'].resetFields();
                         this.getUserList()
                     })
                 }
@@ -291,11 +366,12 @@ export default {
         //获取用户列表
         getUserList(){
             this.isLoading = true
-            getUserList().then( (res) => {
+            getUserList({key:this.searchKey,currentPage:this.currentPage,pageSize:this.pageSize}).then( (res) => {
                 if(res.status===200){
                     this.isLoading = false
                     console.log(res)
-                    this.userData = res.data.userLists
+                    this.userData = res.data.userList
+                    this.totalCount = res.data.total
                 }
             })
         }

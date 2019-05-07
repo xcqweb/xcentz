@@ -6,7 +6,7 @@
         </div>
 
         <Table border stripe  size='large' :loading='isLoading' :columns="columnsRole" :data="dataRole" v-show="dataRole.length"></Table>
-
+        <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin-top:20px;' />
         <!-- 新增角色 -->
          <Modal
             v-model="addRoleStatus"
@@ -26,14 +26,28 @@
             <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="roleEdit.roleName" placeholder="请输入角色名..." /></div>
             <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="roleEdit.roleDirection" placeholder="请输入角色名说明..." /></div>
         </Modal>
+
+        <!-- 菜单权限分配 -->
+         <Modal
+            v-model="menuAuthStatus"
+            title="菜单权限分配"
+            @on-ok="menuAuth"
+            @on-cancel="menuAuthStatus=false">
+            <Tree :data="treeData" show-checkbox multiple></Tree>
+        </Modal>
     </div>
 </template>
 
 <script>
-import {roleList,addRole,editRole,delRole} from '@api'
+import {roleList,addRole,editRole,delRole,queryMenu} from '@api'
+import { userInfo } from 'os';
 export default {
     data(){
         return{
+            pageSize:15,
+            totalCount:0,
+            currentPage:1,
+            menuAuthStatus:false,
             searchKey:'',
             isLoading:false,
             addRoleStatus:false,
@@ -47,6 +61,7 @@ export default {
                 roleDirection:'',
                 id:''
             },
+            treeData:[],
             columnsRole: [
                     {
                         title: '序号',
@@ -74,7 +89,7 @@ export default {
                     {
                         title: '操作',
                         key: 'action',
-                        width:260,
+                        // width:260,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
@@ -91,6 +106,32 @@ export default {
                                         }
                                     }
                                 }, '编辑'),
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                    },
+                                    style: {
+                                        marginRight: '16px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.menuAuthAssign(params)
+                                        }
+                                    }
+                                }, '菜单权限分配'),
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                    },
+                                    style: {
+                                        marginRight: '16px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.moduleAuthAssign(params)
+                                        }
+                                    }
+                                }, '模块权限分配'),
                                 h('Button', {
                                     props: {
                                         type: 'error',
@@ -110,11 +151,16 @@ export default {
     },
     activated(){
         this.getRoleList()
+         queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
+             console.log(res.data.menuList)
+             this.treeData = res.data.menuList
+         })
     },
     methods:{
+       
         //搜索
         search(){
-            this.getRoleList(this.searchKey)
+            this.getRoleList()
         },
         //新增角色
         addRole(){
@@ -135,13 +181,15 @@ export default {
         //获取角色列表
         getRoleList(key){
             this.isLoading = true
-            roleList({key}).then( (res) => {
+            roleList({key:this.searchKey,currentPage:this.currentPage,pageSize:this.pageSize}).then( (res) => {
                 this.isLoading = false
                 this.dataRole = res.data.roleList
+                this.totalCount = res.data.total
             },error => {
                 this.isLoading = false
             })
         },
+        //编辑角色
         edit (data) {
             this.editRoleStatus = true
             this.roleEdit = {
@@ -150,6 +198,7 @@ export default {
                 id:data.row.RoleId
             }
         },
+        //删除角色
         remove (data) {
             console.log(data)
             this.$Modal.confirm({
@@ -161,6 +210,24 @@ export default {
                         })
                     }
             })
+        },
+        //模块权限分配
+        moduleAuthAssign(data){
+
+        },
+        //菜单权限分配
+        menuAuthAssign(data){
+            this.menuAuthStatus = true
+            console.log(data)
+        },
+        //确定 == 菜单权限分配
+        menuAuth(){
+
+        },
+        //分页
+        goPage(page){
+            this.currentPage = page
+            this.getRoleList()
         }
     }
 }
