@@ -8,6 +8,12 @@
             temp[list[i].id] = list[i];
         }
         for(let i in temp){
+            console.log(temp[i].parent_id)
+            if(Object.prototype.toString.call(temp[i].checked) === '[object Null]'){
+                temp[i].checked = false
+            }else{
+                temp[i].checked = true
+            }
             if(temp[i].parent_id) {
                 if(temp[temp[i].parent_id]){
                     if(!temp[temp[i].parent_id].children) {

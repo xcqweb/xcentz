@@ -129,6 +129,24 @@ export function queryMenu(params){
     })
 }
 
+//查询权限菜单
+export function queryAuthMenu(params){
+    return request({
+        url:'/users/menuAuth',
+        method:'get',
+        params
+    })
+}
+
+//更新权限菜单
+export function updateAuthMenu(params){
+    return request({
+        url:'/users/menuAuth',
+        method:'put',
+        data:params
+    })
+}
+
 //新增菜单
 export function addMenu(params){
     return request({
@@ -197,6 +215,42 @@ export function assignRole(params){
     return request({
         url:'/users/assignRole',
         method:'put',
+        data:params
+    })
+}
+
+//新增模块
+export function addModule(params){
+    return request({
+        url:'/users/module',
+        method:'post',
+        data:params
+    })
+}
+
+//查询模块
+export function queryModule(params){
+    return request({
+        url:'/users/module',
+        method:'get',
+        params
+    })
+}
+
+//修改模块
+export function editModule(params){
+    return request({
+        url:'/users/module',
+        method:'put',
+        data:params
+    })
+}
+
+//删除模块
+export function delModule(params){
+    return request({
+        url:'/users/module',
+        method:'delete',
         data:params
     })
 }

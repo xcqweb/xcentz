@@ -41,7 +41,7 @@ let router = new Router({
         }
       ]
     },
-    
+
     //demo
     {
       path: '/',
@@ -107,6 +107,20 @@ let router = new Router({
           component:() => import('@/views/home/setting/roleManage'),
           name:'rolemanage',
           meta:{title:'系统角色管理'}
+        }
+      ]
+    },
+
+    //权限模块管理
+    {
+      path: '/',
+      component: HomeLayout,
+      children:[
+        {
+          path:'/modulemanage',
+          component:() => import('@/views/home/setting/moduleManage'),
+          name:'modulemanage',
+          meta:{title:'权限模块管理'}
         }
       ]
     },

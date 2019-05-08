@@ -6,7 +6,9 @@
                 <li @click="$router.push('/login')" :class="{active:$route.path==='/login'}">登录</li>
                 <li @click="$router.push('/regiest')" :class="{active:$route.path==='/regiest'}">注册</li>
             </ul>
-            <router-view></router-view> 
+            <keep-alive>
+               <router-view></router-view>  
+            </keep-alive>
         </div>
     </div>
 </template>
@@ -26,7 +28,7 @@ export default {
             // flag?this.$router.push('/login'):
         }
     },
-    mounted(){
+    activated(){
         this.$nextTick( () => {
             particlesJS.load('particles-js', function() {})
         })

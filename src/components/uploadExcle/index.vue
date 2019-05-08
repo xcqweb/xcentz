@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import XLSX from 'xlsx'
+import XLSX from 'xlsx/dist/cpexcel'
 
 export default {
   props: {

@@ -381,10 +381,7 @@ export default {
 
 <style lang="less" scoped>
 .userManage{
-    .top_operate{
-        display: flex;
-        margin-bottom: 20px;
-    }
+   
 }
     
 </style>

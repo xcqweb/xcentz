@@ -64,6 +64,7 @@ export default {
                         top: 50,
                         duration: 5
                     });
+                    localStorage.clear()
                     this.$router.replace('/login')
                 }
             })

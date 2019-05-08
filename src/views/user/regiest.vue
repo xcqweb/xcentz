@@ -32,9 +32,8 @@
                     <Button slot="append" :type="isSend?'text':'primary'" :loading="codeLoading" :disabled='isSend?true:false' @click="getEmailCodes">{{isSendText}}</Button>
 				</Input>
 			</FormItem>
-			<!-- <FormItem> -->
-				<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;">注册</Button>
-			<!-- </FormItem> -->
+            
+			<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;">注册</Button>
 
 		</i-form>
     </div>

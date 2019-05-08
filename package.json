@@ -29,10 +29,12 @@
     "copy-webpack-plugin": "^5.0.2",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "install": "^0.12.2",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "postcss-loader": "^3.0.0",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.5.21",
+    "webpack-bundle-analyzer": "^3.3.2"
   },
   "eslintConfig": {
     "root": true,

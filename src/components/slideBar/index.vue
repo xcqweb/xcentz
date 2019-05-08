@@ -1,45 +1,41 @@
 <template>
     <div>
-
-    
-    <div class="collapseMenu slideBar" v-show="isCollapse">
-        <div :name="item.id" v-for="(item,index) in menus" @mouseover="collapseMenu(item,index)" @click="goPage(item)" class="ivu-menu-submenu" style="height:49px;line-height:49px;color:#fff;background:#515a6e;cursor:pointer;">
-            <Icon :type="item.icon" />
+        <div class="collapseMenu slideBar" v-show="isCollapse">
+            <div :name="item.id" v-for="(item,index) in menus" @mouseover="collapseMenu(item,index)" @click="goPage(item)" class="ivu-menu-submenu" style="height:49px;line-height:49px;color:#fff;background:#515a6e;cursor:pointer;">
+                <Icon :type="item.icon" />
+            </div>
+            <!-- collapse -->
+            <p class="collapse" @click="collapseHandler">
+                <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
+                <span class="txt">Collapse sidebar</span>
+            </p>
         </div>
-        <!-- collapse -->
-        <p class="collapse" @click="collapseHandler">
-            <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
-            <span class="txt">Collapse sidebar</span>
-        </p>
-    </div>
 
 
-    <div class="slideBar" v-show='!isCollapse'>
-        <Menu theme="dark" :active-name="activeName" @on-select='selectItem' ref="menu">
-            <Submenu :name="item.id" v-for="item in menus" v-if="item.children">
-                <template slot="title">
-                    <Icon :type="item.icon" />
+        <div class="slideBar" v-show='!isCollapse'>
+            <Menu theme="dark" :active-name="activeName" @on-select='selectItem' ref="menu">
+                <Submenu :name="item.id" v-for="item in menus" v-if="item.children">
+                    <template slot="title">
+                        <Icon :type="item.icon" />
+                        {{item.title}}
+                    </template>
+
+                    <MenuItem :name="`${child.route}`" v-for="child in item.children" v-if="item.children.length>0" :style="{background:$route.path===`/${child.route}`?'#2d8cf0 !important':'#363e4f !important'}" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+                        {{child.title}}
+                    </MenuItem>
+                </Submenu>
+
+                <MenuItem :name='`${item.route}`' v-for="item in menus" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+                <Icon :type="item.icon" />
                     {{item.title}}
-                </template>
-
-                <MenuItem :name="`${child.route}`" v-for="child in item.children" v-if="item.children.length>0" :style="{background:$route.path===`/${child.route}`?'#2d8cf0 !important':'#363e4f !important'}" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
-                    {{child.title}}
                 </MenuItem>
-            </Submenu>
-
-            <MenuItem :name='`${item.route}`' v-for="item in menus" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
-            <Icon :type="item.icon" />
-                {{item.title}}
-            </MenuItem>
-
-            
-        </Menu>
-        <!-- collapse -->
-        <p class="collapse" @click="collapseHandler">
-            <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
-            <span class="txt">Collapse sidebar</span>
-        </p>
-    </div>
+            </Menu>
+            <!-- collapse -->
+            <p class="collapse" @click="collapseHandler">
+                <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
+                <span class="txt">Collapse sidebar</span>
+            </p>
+        </div>
     </div>
 </template>
 
@@ -75,7 +71,7 @@ export default {
             }
         },
         queryMenu(){
-            queryMenu().then( (res) => {
+            queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
                 console.log(res)
                 this.menus = res.data.menuList[0].children
                 this.activeName = this.$route.path

@@ -71,11 +71,10 @@
 				}
 			}
 		},
-		beforeDestory(){
+		deactivated(){
 			removeEventListener('keyup',this.keyupLogin,false)
 		},
-		mounted(){
-
+		activated(){
 			this.getCode()
 			addEventListener('keyup',this.keyupLogin,false)
 		},
@@ -103,9 +102,10 @@
 							login({username:this.formInline.user,password:this.formInline.password,code:this.formInline.code}).then( (res) => {
 								if(res.status===200){
 									this.loading = false
+									this.userInfo = res.data.user
 									localStorage.setItem('token',res.data.token)
 									localStorage.setItem('userInfo',JSON.stringify(res.data.user))
-									this.$router.replace('/home')
+									this.$router.replace('/demo')
 								}
 								
 							},error => {

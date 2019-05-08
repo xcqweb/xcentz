@@ -265,25 +265,51 @@ router.delete('/user',function(req,res,next){
 
 //查询菜单
 router.get('/menu',function(req,res,next){
-  query(`SELECT
-        MenuId as id,
-        MenuName as title,
-        ParentId as parent_id,
-        MenuUrl as route,
-        MenuIconUrl as icon,
-        1 as expand
-        FROM
-        Pub_Menu
-  `).then( (r) => {
+  let roleId = req.query.roleId
+  query(`SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu, Pub_Role_Menu WHERE Pub_Role_Menu.MenuId = Pub_Menu.MenuId AND Pub_Role_Menu.RoleId = ${roleId}`).then( (r) => {
     query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
       res.json({
         maxId:response[0].maxId,
         menuList:buildTree(r)
       })
     })
+  })
+})
+
+//查询权限菜单
+router.get('/menuAuth',function(req,res,next){
+  let roleId = req.query.roleId
+  query(`SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route, t.checked FROM Pub_Menu LEFT JOIN (SELECT Pub_Role_Menu.RoleId AS checked, Pub_Role_Menu.MenuId FROM Pub_Role_Menu WHERE Pub_Role_Menu.RoleId = ${roleId}) AS t ON t.MenuId = Pub_Menu.MenuId`).then( (r) => {
+      res.json({
+        menuList:buildTree(r)
+      })
     
   })
 })
+
+//配置权限菜单
+router.put('/menuAuth',function(req,res,next){
+  let str = req.body.str
+  let roleId = Number(req.body.roleId)
+  query(`DELETE FROM Pub_Role_Menu WHERE RoleId = ${roleId}`).then( (r) => {
+    if(!str){
+      res.json({
+        errorCode:100031
+      })
+    }else{
+      query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {
+        res.json({
+          errorCode:100031
+        })
+      },error => {
+        res.status(500).json({
+          errorCode:100032
+        })
+      })
+    }
+  })
+})
+
 
 //新增菜单
 router.post('/menu',function(req,res,next){
@@ -295,7 +321,6 @@ router.post('/menu',function(req,res,next){
         errorCode:10008
       })
   }, error => {
-    console.log(error)
     res.status(500).json({
       errorCode:10009
     })
@@ -407,7 +432,62 @@ router.put('/assignRole',function(req,res,next){
 })
 
 
+//新增模块
+router.post('/module',function(req,res,next){
+  let reData = req.body
+  query(`INSERT INTO Pub_Module(ModuleName,Directions) VALUES('${reData.moduleName}','${reData.direction}')`).then( (r) => {
+    res.send({
+      errorCode:100025
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100026
+    })
+  })
+})
 
+//查询模块
+router.get('/module',function(req,res,next){
+  let key = req.query.key || ''
+  let curPage = Number(req.query.currentPage) || 1
+  let pageSize = Number(req.query.pageSize) || 10000000
+  Promise.all([query(`SELECT * FROM Pub_Module WHERE CONCAT(ModuleName,Directions) LIKE '%${key}%'
+  LIMIT ${(curPage-1)*pageSize},${pageSize}`),
+  query('SELECT COUNT(*) AS total FROM Pub_Module')]).then( (val) => {
+    res.json({
+      moduleList:val[0],
+      total:val[1][0].total
+    })
+  })
+})
+
+//编辑模块
+router.put('/module',function(req,res,next){
+  let reData = req.body
+  query(`UPDATE Pub_Module SET ModuleName='${reData.moduleName}',Directions='${reData.direction}' WHERE ModuleId=${reData.id}`).then( (r) => {
+    res.send({
+      errorCode:100027
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100028
+    })
+  })
+})
+
+//删除模块
+router.delete('/module',function(req,res,next){
+  let reData = req.body
+  query(`DELETE FROM Pub_Module WHERE ModuleId=${reData.id}`).then( (r) => {
+    res.send({
+      errorCode:100029
+    })
+  },error =>{
+    res.status(500).send({
+      errorCode:100030
+    })
+  })
+})
 
 
 

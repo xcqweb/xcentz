@@ -14,7 +14,7 @@
             @on-ok="addRole"
             @on-cancel="addRoleStatus=false">
             <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="roleAdd.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="roleAdd.roleDirection" placeholder="请输入角色名说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="roleAdd.roleDirection" placeholder="请输入角色说明..." /></div>
         </Modal>
 
         <!-- 编辑角色 -->
@@ -24,22 +24,22 @@
             @on-ok="editRole"
             @on-cancel="editRoleStatus=false">
             <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="roleEdit.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="roleEdit.roleDirection" placeholder="请输入角色名说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="roleEdit.roleDirection" placeholder="请输入角色说明..." /></div>
         </Modal>
 
         <!-- 菜单权限分配 -->
          <Modal
             v-model="menuAuthStatus"
             title="菜单权限分配"
-            @on-ok="menuAuth"
+            @on-ok="menuAuthHandler"
             @on-cancel="menuAuthStatus=false">
-            <Tree :data="treeData" show-checkbox multiple></Tree>
+            <Tree :data="treeData" show-checkbox :check-strictly='checkStrictly' multiple @on-check-change='checkedChange' ref='MenuTree'></Tree>
         </Modal>
     </div>
 </template>
 
 <script>
-import {roleList,addRole,editRole,delRole,queryMenu} from '@api'
+import {roleList,addRole,editRole,delRole,queryAuthMenu,updateAuthMenu} from '@api'
 import { userInfo } from 'os';
 export default {
     data(){
@@ -52,6 +52,7 @@ export default {
             isLoading:false,
             addRoleStatus:false,
             editRoleStatus:false,
+            checkStrictly:false,
             roleAdd:{
                 roleName:'',
                 roleDirection:''
@@ -59,8 +60,11 @@ export default {
             roleEdit:{
                 roleName:'',
                 roleDirection:'',
-                id:''
+                id:'',
+                index:''
             },
+            updateAuthMenuStr:'',
+            currentRoleId:'',
             treeData:[],
             columnsRole: [
                     {
@@ -98,7 +102,7 @@ export default {
                                         type: 'primary',
                                     },
                                     style: {
-                                        marginRight: '16px'
+                                        margin: '8px'
                                     },
                                     on: {
                                         click: () => {
@@ -111,7 +115,7 @@ export default {
                                         type: 'primary',
                                     },
                                     style: {
-                                        marginRight: '16px'
+                                        margin: '8px'
                                     },
                                     on: {
                                         click: () => {
@@ -124,7 +128,7 @@ export default {
                                         type: 'primary',
                                     },
                                     style: {
-                                        marginRight: '16px'
+                                        margin: '8px',
                                     },
                                     on: {
                                         click: () => {
@@ -135,6 +139,9 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'error',
+                                    },
+                                    style: {
+                                        margin: '8px',
                                     },
                                     on: {
                                         click: () => {
@@ -151,13 +158,15 @@ export default {
     },
     activated(){
         this.getRoleList()
-         queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
-             console.log(res.data.menuList)
-             this.treeData = res.data.menuList
-         })
+        
     },
     methods:{
-       
+        //查询权限菜单
+        queryAuthMenu(roleId){
+            queryAuthMenu({roleId}).then( (res) => {
+             this.treeData = res.data.menuList
+         })
+        },
         //搜索
         search(){
             this.getRoleList()
@@ -175,7 +184,8 @@ export default {
         //编辑角色
         editRole(){
             editRole({roleName:this.roleEdit.roleName,direction:this.roleEdit.roleDirection,id:this.roleEdit.id}).then( (res) => {
-                this.getRoleList()
+                this.$set(this.dataRole[this.roleEdit.index],'RoleName',this.roleEdit.roleName)
+                this.$set(this.dataRole[this.roleEdit.index],'Directions',this.roleEdit.roleDirection)
             })
         },
         //获取角色列表
@@ -195,7 +205,8 @@ export default {
             this.roleEdit = {
                 roleName:data.row.RoleName,
                 roleDirection:data.row.Directions,
-                id:data.row.RoleId
+                id:data.row.RoleId,
+                index:data.index
             }
         },
         //删除角色
@@ -216,13 +227,29 @@ export default {
 
         },
         //菜单权限分配
-        menuAuthAssign(data){
+        menuAuthAssign({row:{RoleId}}){
             this.menuAuthStatus = true
-            console.log(data)
+            this.checkStrictly = true
+            this.currentRoleId = RoleId
+            this.queryAuthMenu(RoleId)
+        },
+        checkedChange(){
+            
+            this.checkStrictly = false
+            let checkedArr = this.$refs.MenuTree.getCheckedAndIndeterminateNodes()
+            let len = checkedArr.length-1
+            let str = ''
+            for(let [index,item] of checkedArr.entries()){
+                str += `(${this.currentRoleId},${item.id})${index===len?'':','}`
+            }
+            this.updateAuthMenuStr = str
+            console.log(str)
         },
         //确定 == 菜单权限分配
-        menuAuth(){
-
+        menuAuthHandler(){
+            updateAuthMenu({str:this.updateAuthMenuStr,roleId:this.currentRoleId}).then( (res) => {
+                this.$root.eventBus.$emit('getMenu')
+            })
         },
         //分页
         goPage(page){
@@ -235,10 +262,7 @@ export default {
 
 <style lang="less" scoped>
 .roleManage{
-    .top_operate{
-        display: flex;
-        margin-bottom: 20px;
-    }
+    
 }
 </style>
 
