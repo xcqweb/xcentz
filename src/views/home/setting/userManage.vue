@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import {checkUser,checkEmailCode,getUserList,assignRole,addUser,delUser,roleList} from '@api'
+import {checkUser,checkEmailCode,getUserList,assignRole,addUser,delUser,roleList,resetPassword} from '@api'
 import Operate from './components/operate'
 import Vue from 'vue'
 Vue.component('Operate',Operate)
@@ -158,7 +158,7 @@ export default {
                 password: '',
                 confirmPsw:'',
                 phone:'',
-                role:0,
+                role:21,
                 cname:'',
                 email:'',
             },
@@ -177,7 +177,7 @@ export default {
                     { required: true, message: '请输中文名',trigger: 'blur' },
                 ],
                 role: [
-                    { required: true, message: '请选择角色',trigger: 'blur' },
+                    { required: true,type: 'number', message: '请选择角色',trigger: 'blur' },
                 ],
                 email: [
                     { required: true,validator:validateEmail, trigger: 'blur' },
@@ -307,6 +307,14 @@ export default {
         operate(index,row){
             switch(index){
                 case 1://重置密码
+                
+                this.$Modal.confirm({
+                    title: '提示',
+                    content: '<p>确定重置该用户密码? <br /> <span style="color:#999;">重置密码后新密码将发至该用户的账户邮箱<span></p>',
+                    onOk: () => {
+                        resetPassword({userId:row.UserId,email:row.Email})
+                    },
+                });
                 break;
 
                 case 2://角色分配
@@ -318,7 +326,7 @@ export default {
                 case 3://删除用户
                 this.$Modal.confirm({
                     title: '提示',
-                    content: '<p>确定要要删除该用户?</p>',
+                    content: '<p>确定要删除该用户?</p>',
                     onOk: () => {
                         delUser({userId:row.UserId}).then( (res) => {
                             this.userData.splice(row._index,1)
@@ -344,7 +352,7 @@ export default {
         },
         //添加用户
         addUserHandler(){
-            
+            console.log(this.addUser)
             this.$refs['form_adduser'].validate((valid) => {
                 if (valid) {
                     let params = {

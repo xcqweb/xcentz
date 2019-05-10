@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     
-    <div style="width:300px;height:300px;background:#f00;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m1">
+    <!-- <div style="width:300px;height:300px;background:#f00;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m1">
       M1
     </div>
     <div style="width:300px;height:300px;background:#ff0;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m2">
@@ -9,7 +9,7 @@
     </div>
     <div style="width:300px;height:300px;background:#00f;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m3">
       M3
-    </div>
+    </div> -->
     <Upload
         multiple
         :headers='headers'
@@ -17,14 +17,15 @@
         action="/api/xcentz/v1/upload/uploadExcle">
         <div style="padding: 20px 0">
             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-            <p>Click or drag files here to upload</p>
+            <p>点击或拖曳上传excle</p>
         </div>
     </Upload>
-    <button @click="download">下载</button>
+    <Button type="primary" @click="download">下载</Button>
 
-    <div>
+    <div style="margin-top:20px;">
       <Upload-excel :on-success="handleSuccess" :before-upload="beforeUpload" ></Upload-excel>
-      <Table :columns="tableHeader" :data="tableData"></Table>
+      
+      <Table :columns="tableHeader" :data="tableData" style="margin-top:20px;"></Table>
     </div>
   </div>
 </template>

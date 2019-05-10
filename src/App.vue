@@ -4,6 +4,17 @@
   </div>
 </template>
 
+<script>
+export default {
+  watch:{
+      '$route'(to){
+        sessionStorage.setItem('currentRoute',to.path)
+      }
+  },
+}
+</script>
+
+
 <style lang='less'>
 @import './assets/styles/iv_style.less';
 

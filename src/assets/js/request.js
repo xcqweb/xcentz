@@ -40,7 +40,15 @@ instance.interceptors.response.use( (response) => {
 	return response
 	
 }, error => {
-	error.response.data && error.response.data.errorCode && Message.message('error',{
+	if(!error.response){
+		Message.message('error',{
+			content: '出错啦!',
+			top: 50,
+			duration: 3
+		})
+		return
+	}
+	error.response && error.response.data && error.response.data.errorCode && Message.message('error',{
 		content: errorCodes[error.response.data.errorCode],
 		top: 50,
 		duration: 3

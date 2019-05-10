@@ -34,7 +34,8 @@
     "less-loader": "^4.1.0",
     "postcss-loader": "^3.0.0",
     "vue-template-compiler": "^2.5.21",
-    "webpack-bundle-analyzer": "^3.3.2"
+    "webpack-bundle-analyzer": "^3.3.2",
+    "webpack-parallel-uglify-plugin": "^1.1.0"
   },
   "eslintConfig": {
     "root": true,

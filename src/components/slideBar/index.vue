@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="collapseMenu slideBar" v-show="isCollapse">
-            <div :name="item.id" v-for="(item,index) in menus" @mouseover="collapseMenu(item,index)" @click="goPage(item)" class="ivu-menu-submenu" style="height:49px;line-height:49px;color:#fff;background:#515a6e;cursor:pointer;">
+        <div class="collapseMenu slideBar" v-show="isCollapse" @mouseleave="$emit('collapse',isCollapse)">
+            <div :name="item.id" v-for="(item,index) in menus" :key="item.id" @mouseover="collapseMenu(item,index)" @click="goPage(item)" class="ivu-menu-submenu" style="height:49px;line-height:49px;color:#fff;background:#515a6e;cursor:pointer;">
                 <Icon :type="item.icon" />
             </div>
             <!-- collapse -->
@@ -13,23 +13,8 @@
 
 
         <div class="slideBar" v-show='!isCollapse'>
-            <Menu theme="dark" :active-name="activeName" @on-select='selectItem' ref="menu">
-                <Submenu :name="item.id" v-for="item in menus" v-if="item.children">
-                    <template slot="title">
-                        <Icon :type="item.icon" />
-                        {{item.title}}
-                    </template>
-
-                    <MenuItem :name="`${child.route}`" v-for="child in item.children" v-if="item.children.length>0" :style="{background:$route.path===`/${child.route}`?'#2d8cf0 !important':'#363e4f !important'}" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
-                        {{child.title}}
-                    </MenuItem>
-                </Submenu>
-
-                <MenuItem :name='`${item.route}`' v-for="item in menus" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
-                <Icon :type="item.icon" />
-                    {{item.title}}
-                </MenuItem>
-            </Menu>
+            
+            <MenuTree :menus='menus' :activeName='activeName' @onSelected='selectItem' ref="menu" />
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
@@ -41,7 +26,9 @@
 
 <script>
 import {queryMenu} from '@api'
-import { setTimeout } from 'timers';
+import MenuTree from './menuTree'
+import {flatten} from '@/assets/js/until'
+import authRoute from '@/router/modules/authRoute'
 export default {
     data(){
         return{
@@ -53,6 +40,7 @@ export default {
             menus:[]
         }
     },
+    components:{MenuTree},
     created(){
         this.queryMenu()
     },
@@ -70,11 +58,27 @@ export default {
                 item.route.indexOf('/')>-1?this.$router.push(item.route):this.$router.push(`/${item.route}`)
             }
         },
+        //设置动态路由 根据后台返回权限菜单设置
+        fliterRoute(menus){
+            let newRoute = []
+            for(let menu of menus){
+                let route = menu && menu.route && menu.route.indexOf('/')>-1?menu.route:`/${menu.route}`
+                for(let routeKey of authRoute){
+                    if(route === routeKey.children[0].path){
+                       newRoute.push(routeKey)
+                    }
+                }
+            }
+            return newRoute
+        },
         queryMenu(){
             queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
-                console.log(res)
-                this.menus = res.data.menuList[0].children
+                let menuList = res.data.menuList
+                this.menus = menuList[0].children
                 this.activeName = this.$route.path
+                //配置权限动态路由
+                let filterAuthRoutes = this.fliterRoute(flatten(menuList))
+                this.$router.matcher.addRoutes(filterAuthRoutes)
             })
         },
         selectItem(name){

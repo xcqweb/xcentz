@@ -10,7 +10,8 @@
             </BreadcrumbItem>
         </Breadcrumb>
         <div class="userInfo">
-            <Poptip placement='bottom-end' @on-popper-show='isDown=true' @on-popper-hide='isDown=false'>
+            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="margin-right:10px;"/>
+            <Poptip placement='bottom-end' trigger='hover' @on-popper-show='isDown=true' @on-popper-hide='isDown=false'>
                 <span class="userInfo_name">{{userInfo.Cname}}</span>
                 <span class="arrow">
                     <Icon type="md-arrow-dropup" v-show="!isDown"/>
@@ -53,7 +54,7 @@ export default {
         }
     },
     created(){
-        console.log(this.$route.matched.filter(item => item.meta && item.meta.title))
+        // console.log(this.$route.matched.filter(item => item.meta && item.meta.title))
     },
     methods:{
         loginOut(){
@@ -126,6 +127,8 @@ export default {
         position: absolute;
         top:0;
         right:30px;
+        display: flex;
+        align-items: center;
         .userInfo_name{
             font-size: 14px;
             cursor: pointer;

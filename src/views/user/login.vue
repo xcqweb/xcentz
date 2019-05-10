@@ -105,7 +105,7 @@
 									this.userInfo = res.data.user
 									localStorage.setItem('token',res.data.token)
 									localStorage.setItem('userInfo',JSON.stringify(res.data.user))
-									this.$router.replace('/demo')
+									this.$router.replace('/home')
 								}
 								
 							},error => {

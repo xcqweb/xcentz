@@ -14,7 +14,7 @@
             title="新增模块"
             @on-ok="addModule"
             @on-cancel="addModuleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="moduleAdd.moduleName" placeholder="请输入模块名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="moduleAdd.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
             <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="moduleAdd.moduleDirection" placeholder="请输入模块说明..." /></div>
         </Modal>
 
@@ -24,7 +24,7 @@
             title="新增模块"
             @on-ok="moduleEditHandler"
             @on-cancel="editModuleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="moduleEdit.moduleName" placeholder="请输入模块名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="moduleEdit.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
             <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="moduleEdit.moduleDirection" placeholder="请输入模块说明..." /></div>
         </Modal>
     </div>

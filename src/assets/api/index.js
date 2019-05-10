@@ -73,6 +73,16 @@ export function checkEmailCode(params){
     })
 }
 
+//重置密码resetPassword
+export function resetPassword(params){
+    return request({
+        url:'/users/resetPassword',
+        method:'get',
+        params
+    })
+}
+
+
 //注册
 export function register(params){
     return request({
@@ -251,6 +261,24 @@ export function delModule(params){
     return request({
         url:'/users/module',
         method:'delete',
+        data:params
+    })
+}
+
+//权限模块查询
+export function queryAuthModule(params){
+    return request({
+        url:'/users/authModule',
+        method:'get',
+        params
+    })
+}
+
+//权限模块配置
+export function configAuthModule(params){
+    return request({
+        url:'/users/authModule',
+        method:'put',
         data:params
     })
 }

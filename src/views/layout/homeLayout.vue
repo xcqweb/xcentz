@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <div style="position:absolute;top:0;left:36px;" :style="{top:comPopTip}" v-show="hoverMenus.children" class="popTip">
+        <div style="position:absolute;top:0;left:32px;" :style="{top:comPopTip}" v-show="hoverMenus.children" class="popTip">
             <Poptip trigger="hover" v-model="visible" placement="right-start">
                 <div slot="content">
                      <Dropdown @on-click='goPage'>
@@ -21,7 +21,7 @@
         </div>
 
         <div style="position:absolute;top:0;left:36px;" :style="{top:comToolTip}" v-show="!hoverMenus.children">
-            <Tooltip placement="right" ref="toolTip">
+            <Tooltip trigger="hover" placement="right" ref="toolTip">
                 <div slot='content'>
                     {{hoverMenus.title}}
                 </div>
@@ -62,6 +62,8 @@ export default {
             this.hoverMenus = item
         },
         collapse(flag){
+            this.$refs.toolTip.visible = false
+            this.visible = false
             this.iscollapse = flag
         }
     }

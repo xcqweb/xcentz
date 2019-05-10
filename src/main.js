@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
+import router from '@/router'
 import '@/assets/styles/reset.less'
 import '@/assets/styles/main.less'
 
@@ -8,7 +8,9 @@ import '@/assets/styles/main.less'
 import 'iview/dist/styles/iview.css';
 import '@/assets/js/iview'
 Vue.config.productionTip = false
-
+window.addEventListener("unload", () => {
+  alert(666)
+})
 
 Vue.mixin({
   data(){
@@ -22,6 +24,7 @@ Vue.mixin({
     }
   }
 })
+
 
 new Vue({
   router,

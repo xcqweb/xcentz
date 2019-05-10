@@ -7,7 +7,6 @@
          <Modal
             v-model="addMenuStatus"
             title="新增菜单"
-            class-name="center_g"
             @on-ok="addMenuHandler"
             @on-cancel="addMenuStatus=false">
             <div class="center_g marginTop10"><p class="label_g">菜单名称</p><Input v-model="formItem.menuName" placeholder="请输入菜单名..." /></div>
@@ -19,7 +18,6 @@
          <Modal
             v-model="editMenuStatus"
             title="编辑菜单"
-            class-name="center_g"
             @on-ok="editMenuHandler"
             @on-cancel="editMenuStatus=false">
             <div class="center_g marginTop10"><p class="label_g">菜单名称</p><Input v-model="editFrom.menuName" placeholder="请输入菜单名..." /></div>
@@ -53,13 +51,14 @@ import { setTimeout } from 'timers';
                 treeData:[],
             }
         },
+        
         activated(){
             this.queryMenu()
         },
         methods: {
             //查询菜单
             queryMenu(){
-                queryMenu({roleId:this.userInfo.RoleId}).then((res) => {
+                queryMenu({isAdmin:true}).then((res) => {
                     this.treeData = res.data.menuList
                     this.maxId = res.data.maxId
                 })
@@ -135,6 +134,7 @@ import { setTimeout } from 'timers';
             editMenuHandler(){
                 editMenu({menuName:this.editFrom.menuName,route:this.editFrom.route,icon:this.editFrom.icon,id:this.editFrom.id}).then( (res) => {
                     this.queryMenu()
+                    this.$root.eventBus.$emit('getMenu')
                 })
             },
             //新增菜单
@@ -222,9 +222,9 @@ import { setTimeout } from 'timers';
                 let str = ''
                 for(let i=0; i<ids.length;i++){
                     if(i===ids.length-1){
-                         str+="MenuId = "+ids[i]
+                         str+="t1.MenuId = "+ids[i]
                     }else{
-                         str+="MenuId = "+ids[i]+" or "
+                         str+="t1.MenuId = "+ids[i]+" or "
                     }
                    
                 }

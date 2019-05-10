@@ -54,6 +54,56 @@ router.post('/login', function(req, res, next) {
     }
 });
 
+//重置密码
+router.get('/resetPassword',function(req, res, next){
+  let userId = req.query.userId
+  let toEmail = req.query.email
+  let newPsw = stringRandom()
+  query(`UPDATE Pub_User SET PassWord = '${newPsw}' WHERE UserId ='${userId}'`).then( (r) => {
+    var transporter = nodemailer.createTransport({
+      //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
+      host: 'smtp.exmail.qq.com',
+      port: 465, // SMTP 端口
+      secure: true,
+      auth: {
+          user: 'xuchangqian@yulong.com',
+          //这里密码不是qq密码，是你设置的smtp密码
+          // pass: 'fuyatraecdgxbhih'
+          pass: 'Xcq123456'
+      }
+    });
+  
+    var mailOptions = {
+        from: 'xuchangqian@yulong.com', // 发件地址
+        to: toEmail, // 收件列表
+        subject: 'xcentz 运营管理系统重置密码', // 标题
+        //text和html两者只支持一种
+        text: `${toEmail} 用户的新密码为：${newPsw}`, // 标题
+        html: `<b>${toEmail} 用户的新密码为：<em style='font-weight:100;text-decoration:underline;'>${newPsw} <br />
+              <p style='text-align:right;font-size:12px;'>xcentz</p>
+              <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+        ` // html 内容
+    };
+  
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+          res.send({
+            errorCode:100036,
+            message:"重置密码失败!"
+          })
+        }else{
+          res.send({
+            errorCode:100037,
+            message:"重置密码成功!"
+          })
+        }
+    });
+  },error =>{
+
+  })
+})
+
 //退出登录
 router.get('/loginOut',function(req, res, next){
   req.session['token'] = ''
@@ -75,7 +125,7 @@ router.get('/checkUser',function(req, res, next){
 
 //注册账号
 router.post('/register', function(req, res, next) {
-  console.log(req.session['verifyEmail'])
+  // console.log(req.session['verifyEmail'])
   let reData = req.body
   let content ={name:reData.username}; // 要生成token的主题信息
   if(req.body.code != req.session['verifyEmail'].verifyEmailCode){
@@ -90,13 +140,48 @@ router.post('/register', function(req, res, next) {
     })
   }else{
     query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES('${uuid.v1().replace(/\-/g,'')}','${reData.username}','${reData.email}','${reData.cname}','${reData.password}',0,${reData.phone},'${ moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
-      res.status(200).json({
-        message:'注册成功！',
-        errorCode:10004
-      })
+      
+      var transporter = nodemailer.createTransport({
+        //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
+        host: 'smtp.exmail.qq.com',
+        port: 465, // SMTP 端口
+        secure: true,
+        auth: {
+            user: 'xuchangqian@yulong.com',
+            //这里密码不是qq密码，是你设置的smtp密码
+            // pass: 'fuyatraecdgxbhih'
+            pass: 'Xcq123456'
+        }
+      });
+    
+      var mailOptions = {
+          from: 'xuchangqian@yulong.com', // 发件地址
+          to: reData.email, // 收件列表
+          subject: 'xcentz 运营管理系统账号注册', // 标题
+          //text和html两者只支持一种
+          text: `xcentz运营管理系统账号注册`, // 标题
+          html: `<b>感谢注册xcentz运营管理系统! 新用户的<em style='font-weight:100;text-decoration:underline;'>账号:${reData.username}或${reData.email} 密码:${reData.password}</em> <br />
+                <p style='text-align:right;font-size:12px;'>xcentz</p>
+                <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+          ` // html 内容
+      };
+    
+      // send mail with defined transport object
+      transporter.sendMail(mailOptions, function(error, info){
+          if(error){
+            // res.send({
+            //   errorCode:100036
+            // })
+          }else{
+            res.status(200).json({
+              message:'新增用户成功！',
+              errorCode:10004
+            })
+          }
+      });
     },error => {
       res.status(500).json({
-        message:'注册失败！',
+        message:'新增用户失败！',
         errorCode:100012
       })
     })
@@ -135,7 +220,7 @@ router.get('/getCode', function(req, res, next) {
 
 //校验图片验证码
 router.get('/checkCode', function(req, res, next) {
-  console.log(req.session['captcha'],req.query.code)
+  // console.log(req.session['captcha'],req.query.code)
   if(req.session['captcha'] == req.query.code){
     res.json({
       valid:true
@@ -165,7 +250,7 @@ router.get('/getEmailCode', function(req, res, next) {
   let verifyEmail = stringRandom()
   
   req.session['verifyEmail'] =  {verifyEmailCode:verifyEmail,expires:+new Date()}; 
-  console.log(req.session)
+  // console.log(req.session)
 
   var mailOptions = {
       from: 'xuchangqian@yulong.com', // 发件地址
@@ -182,13 +267,16 @@ router.get('/getEmailCode', function(req, res, next) {
   // send mail with defined transport object
   transporter.sendMail(mailOptions, function(error, info){
       if(error){
-          return console.log(error);
+        res.send({
+          errorCode:100033,
+          message:"验证码发送失败!"
+        })
+      }else{
+        res.send({
+          errorCode:10003,
+          message:"验证码发送成功!"
+        })
       }
-      res.send({
-        message:'验证码发送成功！',
-        errorCode:10003
-      })
-
   });
 });
 
@@ -238,9 +326,43 @@ router.get('/user',function(req,res,next){
 router.post('/user',function(req,res,next){
   let reData = req.body
   query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES('${uuid.v1().replace(/\-/g,'')}','${reData.username}','${reData.email}','${reData.cname}','${reData.password}',${reData.role},${reData.phone},'${ moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
-    res.send({
-      errorCode:100019
-    })
+   
+    var transporter = nodemailer.createTransport({
+      //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
+      host: 'smtp.exmail.qq.com',
+      port: 465, // SMTP 端口
+      secure: true,
+      auth: {
+          user: 'xuchangqian@yulong.com',
+          //这里密码不是qq密码，是你设置的smtp密码
+          // pass: 'fuyatraecdgxbhih'
+          pass: 'Xcq123456'
+      }
+    });
+  
+    var mailOptions = {
+        from: 'xuchangqian@yulong.com', // 发件地址
+        to: reData.email, // 收件列表
+        subject: 'xcentz 运营管理系统账号注册', // 标题
+        //text和html两者只支持一种
+        text: `xcentz运营管理系统账号注册`, // 标题
+        html: `<b>感谢注册xcentz运营管理系统! 新用户的账号:<em style='font-weight:100;text-decoration:underline;'>${reData.username}或${reData.email}</em> 密码:<em style='font-weight:100;text-decoration:underline;'>${reData.password}</em> <br />
+              <p style='text-align:right;font-size:12px;'>xcentz</p>
+              <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+        ` // html 内容
+    };
+  
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+          
+        }else{
+          res.send({
+            errorCode:100019,
+            message:'注册成功!'
+          })
+        }
+    });
   },error =>{
     res.status(500).send({
       errorCode:100020
@@ -253,11 +375,13 @@ router.delete('/user',function(req,res,next){
   let userId = req.body.userId
   query(`DELETE FROM Pub_User WHERE UserId='${userId}'`).then( (r) => {
     res.send({
-      errorCode:100023
+      errorCode:100023,
+      message:'用户删除成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100024
+      errorCode:100024,
+      message:'用户删除失败!'
     })
   })
 })
@@ -266,7 +390,14 @@ router.delete('/user',function(req,res,next){
 //查询菜单
 router.get('/menu',function(req,res,next){
   let roleId = req.query.roleId
-  query(`SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu, Pub_Role_Menu WHERE Pub_Role_Menu.MenuId = Pub_Menu.MenuId AND Pub_Role_Menu.RoleId = ${roleId}`).then( (r) => {
+  let isAdmin = req.query.isAdmin
+  let str = ''
+  if(isAdmin){
+    str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu`
+  }else{
+    str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu, Pub_Role_Menu WHERE Pub_Role_Menu.MenuId = Pub_Menu.MenuId AND Pub_Role_Menu.RoleId = ${roleId}`
+  }
+  query(str).then( (r) => {
     query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
       res.json({
         maxId:response[0].maxId,
@@ -294,16 +425,19 @@ router.put('/menuAuth',function(req,res,next){
   query(`DELETE FROM Pub_Role_Menu WHERE RoleId = ${roleId}`).then( (r) => {
     if(!str){
       res.json({
-        errorCode:100031
+        errorCode:100031,
+        message:'菜单权限配置成功!'
       })
     }else{
       query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {
         res.json({
-          errorCode:100031
+          errorCode:100031,
+          message:'菜单权限配置成功!'
         })
       },error => {
         res.status(500).json({
-          errorCode:100032
+          errorCode:100032,
+          message:'菜单权限配置失败!'
         })
       })
     }
@@ -318,11 +452,13 @@ router.post('/menu',function(req,res,next){
   // console.log(uuid.v1().replace(/\-/g,''))
   query(`INSERT INTO Pub_Menu(MenuId,MenuName,ParentId,MenuUrl,MenuIconUrl) VALUES(${reData.menuId},'${reData.menuName}',${reData.parentId},'${reData.route}','${reData.icon}')`).then( (r) => {
       res.json({
-        errorCode:10008
+        errorCode:10008,
+        message:'菜单添加成功!'
       })
   }, error => {
     res.status(500).json({
-      errorCode:10009
+      errorCode:10009,
+      message:'菜单添加失败!'
     })
   })
 })
@@ -330,14 +466,15 @@ router.post('/menu',function(req,res,next){
 //删除菜单
 router.delete('/menu',function(req,res,next){
   let ids = req.body.ids
-
-  query(`DELETE FROM Pub_Menu WHERE ${ids}`).then( (r) => {
+  query(`DELETE t1,t2 FROM Pub_Menu AS t1 LEFT JOIN Pub_Role_Menu AS t2 ON t1.MenuId = t2.MenuId WHERE ${ids}`).then( (r) => {
       res.json({
-        errorCode:10006
+        errorCode:10006,
+        message:'菜单删除成功!',
       })
   }, error => {
     res.status(500).json({
-      errorCode:10007
+      errorCode:10007,
+      message:'菜单删除失败!',
     })
   })
 })
@@ -348,13 +485,14 @@ router.put('/menu',function(req,res,next){
   let reData = req.body
 
   query(`UPDATE Pub_Menu SET MenuName='${reData.menuName}',MenuUrl='${reData.route}',MenuIconUrl='${reData.icon}' WHERE MenuId = ${reData.id}`).then( (r) => {
-    console.log(r)
       res.json({
-        errorCode:100010
+        errorCode:100010,
+        message:'菜单修改成功!'
       })
   }, error => {
     res.status(500).json({
-      errorCode:100011
+      errorCode:100011,
+      message:'菜单修改失败!'
     })
   })
 })
@@ -377,14 +515,16 @@ router.get('/role',function(req,res,next){
 //新增角色
 router.post('/role',function(req,res,next){
   let reData = req.body
-  console.log(reData)
+  // console.log(reData)
   query(`INSERT INTO Pub_Role(RoleName,Directions) VALUES('${reData.roleName}','${reData.direction}')`).then( (r) => {
     res.send({
-      errorCode:100013
+      errorCode:100013,
+      message:'角色添加成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100014
+      errorCode:100014,
+      message:'角色添加失败!'
     })
   })
 })
@@ -394,11 +534,13 @@ router.put('/role',function(req,res,next){
   let reData = req.body
   query(`UPDATE Pub_Role SET RoleName='${reData.roleName}',Directions='${reData.direction}' WHERE RoleId=${reData.id}`).then( (r) => {
     res.send({
-      errorCode:100015
+      errorCode:100015,
+      message:'角色更新成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100016
+      errorCode:100016,
+      message:'角色更新失败!'
     })
   })
 })
@@ -406,13 +548,16 @@ router.put('/role',function(req,res,next){
 //删除角色
 router.delete('/role',function(req,res,next){
   let reData = req.body
-  query(`DELETE FROM Pub_Role WHERE RoleId=${reData.id}`).then( (r) => {
+  //三联表删除
+  query(`DELETE t1,t2,t3 FROM Pub_Role AS t1 LEFT JOIN Pub_Role_Menu AS t2 ON t1.RoleId = t2.RoleId LEFT JOIN Pub_Role_Moudule AS t3 ON t1.RoleId  = t3.RoleId WHERE t1.RoleId = ${reData.id}`).then( (r) => {
     res.send({
-      errorCode:100017
+      errorCode:100017,
+      message:'角色删除成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100018
+      errorCode:100018,
+      message:'角色删除失败!'
     })
   })
 })
@@ -422,11 +567,13 @@ router.put('/assignRole',function(req,res,next){
   let reData = req.body
   query(`UPDATE Pub_User SET RoleId=${reData.roleId} WHERE UserId='${reData.userId}'`).then( (r) => {
     res.send({
-      errorCode:100021
+      errorCode:100021,
+      message:'角色分配成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100022
+      errorCode:100022,
+      message:'角色分配失败!'
     })
   })
 })
@@ -437,11 +584,13 @@ router.post('/module',function(req,res,next){
   let reData = req.body
   query(`INSERT INTO Pub_Module(ModuleName,Directions) VALUES('${reData.moduleName}','${reData.direction}')`).then( (r) => {
     res.send({
-      errorCode:100025
+      errorCode:100025,
+      message:'新增模块成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100026
+      errorCode:100026,
+      message:'新增模块失败!'
     })
   })
 })
@@ -466,11 +615,13 @@ router.put('/module',function(req,res,next){
   let reData = req.body
   query(`UPDATE Pub_Module SET ModuleName='${reData.moduleName}',Directions='${reData.direction}' WHERE ModuleId=${reData.id}`).then( (r) => {
     res.send({
-      errorCode:100027
+      errorCode:100027,
+      message:'编辑模块成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100028
+      errorCode:100028,
+      message:'编辑模块失败!'
     })
   })
 })
@@ -478,18 +629,62 @@ router.put('/module',function(req,res,next){
 //删除模块
 router.delete('/module',function(req,res,next){
   let reData = req.body
-  query(`DELETE FROM Pub_Module WHERE ModuleId=${reData.id}`).then( (r) => {
+  //连表删除
+  query(`DELETE t1,t2 FROM Pub_Module AS t1 LEFT JOIN Pub_Role_Moudule AS t2 ON t1.ModuleId = t2.ModuleId WHERE t1.ModuleId = ${reData.id} `).then( (r) => {
     res.send({
-      errorCode:100029
+      errorCode:100029,
+      message:'删除模块成功!'
     })
   },error =>{
     res.status(500).send({
-      errorCode:100030
+      errorCode:100030,
+      message:'删除模块失败!'
     })
   })
 })
 
+// 权限模块查询
+router.get('/authModule',function(req,res,next){
+  let roleId = req.query.roleId
+  let isAdmin = req.query.isAdmin
+  let str = ''
+  if(isAdmin){
+    str = `SELECT Pub_Module.ModuleId,Pub_Module.ModuleName,Pub_Module.Directions,t.selected FROM Pub_Module  LEFT JOIN (SELECT Pub_Role_Moudule.RoleId AS selected ,Pub_Role_Moudule.ModuleId FROM Pub_Role_Moudule WHERE Pub_Role_Moudule.RoleId = ${roleId}) AS t ON t.ModuleId =  Pub_Module.ModuleId`
+  }else{
+    str = `SELECT Pub_Module.ModuleId,Pub_Module.ModuleName,Pub_Module.Directions FROM Pub_Module ,Pub_Role_Moudule WHERE Pub_Role_Moudule.ModuleId =  Pub_Module.ModuleId AND Pub_Role_Moudule.RoleId = ${roleId}`
+  }
+  query(str).then( (r) => {
+    res.send({
+      muduleList:r
+    })
+  })
+})
 
+//权限模块配置
+router.put('/authModule',function(req,res,next){
+  let str = req.body.str
+  let roleId = Number(req.body.roleId)
+  query(`DELETE FROM Pub_Role_Moudule WHERE RoleId = ${roleId}`).then( () => {
+    if(!str){
+      res.json({
+        errorCode:100034,
+        message:'模块权限配置成功!'
+      })
+    }else{
+      query(`INSERT INTO Pub_Role_Moudule(RoleId,ModuleId) VALUES${str}`).then( () => {
+        res.json({
+          errorCode:100034,
+          message:'模块权限配置成功!'
+        })
+      },error => {
+        res.status(500).json({
+          errorCode:100035,
+          message:'模块权限配置失败!'
+        })
+      })
+    }
+  })
+})
 
 
 

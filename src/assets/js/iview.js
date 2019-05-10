@@ -27,10 +27,14 @@ import {
     Select,
     Option,
     Page,
+    Avatar,
+    Checkbox,
+    CheckboxGroup
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
 Vue.prototype.$Message = Message;
+Vue.$Message = Message;
 Vue.prototype.$Modal = Modal;
 // Vue.prototype.$Modal = Modal;
 // Vue.prototype.$Notice = Notice;
@@ -63,6 +67,9 @@ let modules = [
     Select,
     Option,
     Page,
+    Avatar,
+    Checkbox,
+    CheckboxGroup
 ]
 
 for(let item of modules){

@@ -31,19 +31,45 @@
          <Modal
             v-model="menuAuthStatus"
             title="菜单权限分配"
+            width='600'
             @on-ok="menuAuthHandler"
             @on-cancel="menuAuthStatus=false">
             <Tree :data="treeData" show-checkbox :check-strictly='checkStrictly' multiple @on-check-change='checkedChange' ref='MenuTree'></Tree>
+        </Modal>
+
+        <!-- 模块权限分配 -->
+         <Modal
+            v-model="moduleAuthStatus"
+            title="模块权限分配"
+            width='800'
+            @on-ok="moduleAuthHandler"
+            @on-cancel="moduleAuthStatus=false">
+            <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-bottom:6px;">
+                <Checkbox
+                    :indeterminate="indeterminate"
+                    :value="checkAll"
+                    size='large'
+                    @click.prevent.native="handleCheckAll">{{checkAll?'取消全选':'全选'}}</Checkbox>
+            </div>
+            <CheckboxGroup v-model="checkAllGroup" @on-change="ModulecheckedChange">
+                <Checkbox size='large' v-for="item in moduleList" :label="item.ModuleName" :key="item.ModuleId"></Checkbox>
+            </CheckboxGroup>
         </Modal>
     </div>
 </template>
 
 <script>
-import {roleList,addRole,editRole,delRole,queryAuthMenu,updateAuthMenu} from '@api'
+import {roleList,addRole,editRole,delRole,queryAuthMenu,updateAuthMenu,queryAuthModule,configAuthModule} from '@api'
 import { userInfo } from 'os';
+import { isNull } from 'util';
+import { setTimeout } from 'timers';
 export default {
     data(){
         return{
+            indeterminate:false,
+            checkAll:false,
+            checkAllGroup:[],
+            moduleList:[],
             pageSize:15,
             totalCount:0,
             currentPage:1,
@@ -64,7 +90,10 @@ export default {
                 index:''
             },
             updateAuthMenuStr:'',
+            updateAuthModuleStr:'',
             currentRoleId:'',
+            moduleAuthStatus:false,
+            treeDataModule:[],
             treeData:[],
             columnsRole: [
                     {
@@ -161,6 +190,17 @@ export default {
         
     },
     methods:{
+        //模块权限全选
+        handleCheckAll(){
+            this.checkAll = !this.checkAll
+            this.checkAllGroup = []
+            this.updateAuthModuleStr = ''
+            if(!this.checkAll)return
+            for(let item of this.moduleList){
+                this.checkAllGroup.push(item.ModuleName)
+            }
+            this.getSelectedModule()
+        },
         //查询权限菜单
         queryAuthMenu(roleId){
             queryAuthMenu({roleId}).then( (res) => {
@@ -224,7 +264,24 @@ export default {
         },
         //模块权限分配
         moduleAuthAssign(data){
+            this.checkAllGroup = []
+            this.checkAll = false
+            this.moduleAuthStatus = true
+            this.currentRoleId = data.row.RoleId
+            queryAuthModule({roleId:data.row.RoleId,isAdmin:true}).then( (res) => {
+                this.moduleList = res.data.muduleList
+                for(let item of this.moduleList){
+                    if(item.selected){
+                        this.checkAllGroup.push(item.ModuleName)
+                    }
+                }
+                this.ModulecheckedChange()
+            })
+        },
+        moduleAuthHandler(){
+            configAuthModule({str:this.updateAuthModuleStr,roleId:this.currentRoleId}).then( (res) => {
 
+            })
         },
         //菜单权限分配
         menuAuthAssign({row:{RoleId}}){
@@ -233,9 +290,29 @@ export default {
             this.currentRoleId = RoleId
             this.queryAuthMenu(RoleId)
         },
+        ModulecheckedChange(){
+            let len = this.moduleList.length
+            if(this.checkAllGroup.length===len){
+                this.checkAll = true
+            }else{
+                this.checkAll = false
+            }
+            this.getSelectedModule()
+        },
+        getSelectedModule(){
+            let str = ''
+            let len = this.checkAllGroup.length - 1 
+            for(let [index,key] of this.checkAllGroup.entries()){
+                for(let item of this.moduleList){
+                    if(item.ModuleName === key){
+                        str += `(${this.currentRoleId},${item.ModuleId})${index===len?'':','}`
+                    }
+                }
+            }
+            this.updateAuthModuleStr = str
+            console.log(str)
+        },
         checkedChange(){
-            
-            this.checkStrictly = false
             let checkedArr = this.$refs.MenuTree.getCheckedAndIndeterminateNodes()
             let len = checkedArr.length-1
             let str = ''
@@ -243,7 +320,10 @@ export default {
                 str += `(${this.currentRoleId},${item.id})${index===len?'':','}`
             }
             this.updateAuthMenuStr = str
+
+            this.checkStrictly = false
             console.log(str)
+            
         },
         //确定 == 菜单权限分配
         menuAuthHandler(){
