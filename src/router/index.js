@@ -30,7 +30,7 @@ let staticRoute = [
       component:layout,
       children:[
         {
-          path:'login',
+          path:'/login',
           component:UserLayout,
           name:'login',
           children:[
@@ -43,7 +43,7 @@ let staticRoute = [
           ]
         },
         {
-          path:'regiest',
+          path:'/regiest',
           component:UserLayout,
           name:'regiest',
           children:[

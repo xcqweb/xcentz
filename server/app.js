@@ -9,7 +9,7 @@ var usersRouter = require('./routes/users');
 var uploadRouter = require('./routes/upload');
 var jwtAuth = require('./middleware/jwtAuth');
 var session = require("express-session");
-// var history = require('connect-history-api-fallback'); 
+var history = require('connect-history-api-fallback'); 
 require('babel-core/register');
 
 
@@ -19,7 +19,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// app.use(history());  
+app.use(history({index: 'index.html'}));  
 app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

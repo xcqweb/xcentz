@@ -1,7 +1,7 @@
 <template>
     <div class="user" id="particles-js">
         <p class="title"><span></span>centz后台运营管理系统</p>
-        <div class="userCon" :style="{height:$route.path==='/login'?'400px':'560px'}">
+        <div class="userCon" :style="{height:$route.path.replace(/\/+/g,'')==='login'?'400px':'560px'}">
             <ul class="userTab">
                 <li @click="$router.push('/login')" :class="{active:$route.path==='/login'}">登录</li>
                 <li @click="$router.push('/regiest')" :class="{active:$route.path==='/regiest'}">注册</li>
@@ -25,11 +25,9 @@ export default {
     methods:{
         tabHander(flag){
             this.tab = flag
-            // flag?this.$router.push('/login'):
         }
     },
     activated(){
-        console.log(this.$route.path)
         this.$nextTick( () => {
             particlesJS.load('particles-js', function() {})
         })
