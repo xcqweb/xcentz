@@ -29,6 +29,7 @@ export default {
         }
     },
     activated(){
+        console.log(this.$route.path)
         this.$nextTick( () => {
             particlesJS.load('particles-js', function() {})
         })

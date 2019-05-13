@@ -1,0 +1,15 @@
+2019/05/13 14:57:21 [emerg] 7724#2180: unknown directive "msie6&quot" in E:\demo\express\nginx-1.16.0/conf/nginx.conf:36
+2019/05/13 14:58:03 [emerg] 2252#10492: invalid number of arguments in "gzip_disable" directive in E:\demo\express\nginx-1.16.0/conf/nginx.conf:36
+2019/05/13 14:58:18 [notice] 7296#4328: signal process started
+2019/05/13 15:03:39 [notice] 12404#8840: signal process started
+2019/05/13 18:15:03 [emerg] 6120#9240: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:15:19 [emerg] 12776#5480: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:15:54 [emerg] 9488#12592: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:16:58 [emerg] 10788#9776: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:17:08 [emerg] 11368#11664: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:17:55 [emerg] 1692#12260: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:18:10 [emerg] 13288#12648: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:18:37 [emerg] 4296#8756: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:19:44 [emerg] 10160#8972: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:24:20 [emerg] 10124#10320: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/05/13 18:27:05 [emerg] 3260#6328: CreateFile() "E:\项目\xcentz\server\nginx-1.16.0/conf/nginx.conf" failed (3: The system cannot find the path specified)

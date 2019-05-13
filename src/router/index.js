@@ -64,7 +64,7 @@ let staticRoute = [
       children:[
         {
           path:'/home',
-          component:() => import('@/views/home/setting/userManage'),
+          component:() => import('@/views/home/charts/chartsHome'),
           name:'home',
           meta:{title:'主页'}
         }
@@ -98,7 +98,7 @@ router.beforeEach( (from,to,next) => {
       duration: 3
     })
     next({
-      path:'/'
+      path:'/home'
     })
   }
   

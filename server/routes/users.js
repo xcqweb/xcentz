@@ -348,8 +348,7 @@ router.post('/user',function(req,res,next){
         text: `xcentz运营管理系统账号注册`, // 标题
         html: `<b>感谢注册xcentz运营管理系统! 新用户的账号:<em style='font-weight:100;text-decoration:underline;'>${reData.username}或${reData.email}</em> 密码:<em style='font-weight:100;text-decoration:underline;'>${reData.password}</em> <br />
               <p style='text-align:right;font-size:12px;'>xcentz</p>
-              <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
-        ` // html 内容
+              <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>` // html 内容
     };
   
     // send mail with defined transport object
@@ -414,7 +413,6 @@ router.get('/menuAuth',function(req,res,next){
       res.json({
         menuList:buildTree(r)
       })
-    
   })
 })
 

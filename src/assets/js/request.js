@@ -41,12 +41,12 @@ instance.interceptors.response.use( (response) => {
 	
 }, error => {
 	if(!error.response){
-		Message.message('error',{
+		Message.message('error',{	
 			content: '出错啦!',
 			top: 50,
 			duration: 3
 		})
-		return
+		return Promise.reject(error)
 	}
 	error.response && error.response.data && error.response.data.errorCode && Message.message('error',{
 		content: errorCodes[error.response.data.errorCode],

@@ -4,14 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-
 var authRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var uploadRouter = require('./routes/upload');
 var jwtAuth = require('./middleware/jwtAuth');
 var session = require("express-session");
-var history = require('connect-history-api-fallback'); 
-var morgan = require('morgan')
+// var history = require('connect-history-api-fallback'); 
+require('babel-core/register');
 
 
 var app = express();
@@ -20,14 +19,13 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(morgan("combined"));
-app.use(history());  
-app.use(logger('dev'));
+// app.use(history());  
+app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-    //  导入
+
 /* 创建session中间件 */
 app.use(session({
     name:'testapp',       //..这里的name指的是cookie的name，默认cookie的name是：connect.sid
@@ -60,12 +58,10 @@ app.use(jwtAuth);
 //       next(createError(401));
 //     }
 //   }
-  
 // });
 
 
 
-// app.use('/api/xcentz/v1/*', authRouter);
 app.use('/api/xcentz/v1/users', usersRouter);
 app.use('/api/xcentz/v1/upload', uploadRouter);
 

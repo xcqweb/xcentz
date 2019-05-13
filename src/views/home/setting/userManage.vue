@@ -299,8 +299,7 @@ export default {
         //获取角色列表
         getRoleHandler(){
             roleList().then( (res) =>{
-                console.log(res)
-                this.roleList = res.data.roleList
+                this.roleList = Object.freeze(res.data.roleList)
             })
         },
         //操作
@@ -310,7 +309,7 @@ export default {
                 
                 this.$Modal.confirm({
                     title: '提示',
-                    content: '<p>确定重置该用户密码? <br /> <span style="color:#999;">重置密码后新密码将发至该用户的账户邮箱<span></p>',
+                    content: `<p style='letter-spacing:2px;line-height:26px;'>确定重置${row.UserName}用户的密码? <br /> <span style="color:#999;">重置密码后新密码将发至该用户的账户邮箱<span></p>`,
                     onOk: () => {
                         resetPassword({userId:row.UserId,email:row.Email})
                     },
@@ -319,6 +318,7 @@ export default {
 
                 case 2://角色分配
                 this.assignRoleStatus = true
+                this.selectRole = row.RoleId
                 this.currentRow = Object.freeze(row)
 
                 break;
@@ -339,7 +339,6 @@ export default {
         },
         //分配角色
         assignRole(){
-            console.log(this.selectRole)
             assignRole({roleId:this.selectRole,userId:this.currentRow.UserId}).then( (res) => {
                 this.currentRow.RoleId = this.selectRole
 
@@ -352,7 +351,6 @@ export default {
         },
         //添加用户
         addUserHandler(){
-            console.log(this.addUser)
             this.$refs['form_adduser'].validate((valid) => {
                 if (valid) {
                     let params = {
@@ -377,7 +375,6 @@ export default {
             getUserList({key:this.searchKey,currentPage:this.currentPage,pageSize:this.pageSize}).then( (res) => {
                 if(res.status===200){
                     this.isLoading = false
-                    console.log(res)
                     this.userData = res.data.userList
                     this.totalCount = res.data.total
                 }

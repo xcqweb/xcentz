@@ -86,6 +86,20 @@ export default[
           }
         ]
       },
+
+      //上传excle
+      {
+        path: '/',
+        component: HomeLayout,
+        children:[
+          {
+            path:'/uploadExcle',
+            component:() => import('@/views/home/upload/uploadExcle'),
+            name:'uploadExcle',
+            meta:{title:'上传excle'}
+          }
+        ]
+      },
 ]
 
 
