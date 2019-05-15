@@ -1,10 +1,10 @@
 <template>
     <div class="user" id="particles-js">
         <p class="title"><span></span>centz后台运营管理系统</p>
-        <div class="userCon" :style="{height:$route.path.replace(/\/+/g,'')==='login'?'400px':'560px'}">
+        <div class="userCon" :style="{height:$route.path.replace(/\/+/g,'')==='login'?'400px':'540px'}">
             <ul class="userTab">
-                <li @click="$router.push('/login')" :class="{active:$route.path==='/login'}">登录</li>
-                <li @click="$router.push('/regiest')" :class="{active:$route.path==='/regiest'}">注册</li>
+                <li @click="$router.push('/login')" :class="{active:$route.path.replace(/\/+/g,'')==='login'}">登录</li>
+                <li @click="$router.push('/regiest')" :class="{active:$route.path.replace(/\/+/g,'')==='regiest'}">注册</li>
             </ul>
             <keep-alive>
                <router-view></router-view>  
@@ -41,6 +41,7 @@ export default {
 		height: 100vh;
 		position: fixed;
         background-color: #5cadff;
+        overflow: auto;
         .title{
             color: #fff;
             font-size: 30px;
@@ -48,7 +49,7 @@ export default {
             letter-spacing: 2px;
             text-shadow: 4px 4px 2px #444;
             width: 100%;
-            margin-top: calc(26vh - 45px);
+            margin-top: calc(18vh - 45px);
             &>span{
                 padding: 10px 30px;
                 background: url('../../assets/images/logo.png') no-repeat;
@@ -56,13 +57,13 @@ export default {
             }
         }
         .userCon{
-            min-width: 400px;
-            max-width: 660px;
+            min-width: 600px;
+            max-width: 30vw;
             top: 0;
             bottom: 0;
             left: 0;
             right: 0;
-            margin: 30vh auto;
+            margin: 22vh auto;
             position: absolute;
             background-color: #fff;
             border-radius: 10px;

@@ -1,6 +1,6 @@
             
             
-    export function buildTree(list){
+    var buildTree = function(list){
         let trees = []
         let temp = {};
         let tree = {};
@@ -39,4 +39,4 @@
         return trees;
     }
 
-			
+module.exports = {buildTree}

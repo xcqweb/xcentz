@@ -63,7 +63,7 @@ function emptyDir(fileUrl){
         console.log("删除文件"+fileUrl+'/'+file+"成功");
     }        
   });   
-
 }
+
 emptyDir('./server/public')
 exists('./dist','./server/public',copy)
