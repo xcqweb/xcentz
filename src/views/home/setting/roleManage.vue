@@ -113,16 +113,18 @@ export default {
                     },
                     {
                         title: '角色名称',
-                        key: 'RoleName'
+                        key: 'RoleName',
+                        // width:120,
                     },
                      {
                         title: '角色说明',
-                        key: 'Directions'
+                        key: 'Directions',
+                        // width:120,
                     },
                     {
                         title: '操作',
                         key: 'action',
-                        // width:260,
+                        width:500,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [

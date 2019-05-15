@@ -13,6 +13,7 @@ let {buildTree} = require('../common/untl')
 let moment = require('moment')
 
 router.post('/login', function(req, res, next) {
+    console.log(req.ip)
     let username = req.body.username
     let password = req.body.password
     let verifyCode = req.session['captcha']
@@ -37,7 +38,7 @@ router.post('/login', function(req, res, next) {
           delete re.Token
             // 这是加密的key（密钥) 
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
-              expiresIn: 60*60*1  // 1小时过期
+              expiresIn: 60*60*2  // 2小时过期
             });
             req.session['token'] = token
             //更新登录时间
@@ -258,7 +259,7 @@ router.get('/getEmailCode', function(req, res, next) {
       subject: 'xcentz 运营管理系统注册验证', // 标题
       //text和html两者只支持一种
       text: `xcentz 运营系统注册码：${verifyEmail} 一小时内有效`, // 标题
-      html: `<b>xcentz 运营系统注册码：<em style='font-weight:100;text-decoration:underline;'>${verifyEmail}<em> 一小时内有效</b> <br />
+      html: `<b>xcentz 运营系统注册码：<em style='font-weight:100;text-decoration:underline;'>${verifyEmail}<em> 2小时内有效</b> <br />
             <p style='text-align:right;font-size:12px;'>xcentz</p>
             <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
       ` // html 内容

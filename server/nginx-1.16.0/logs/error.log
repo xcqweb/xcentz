@@ -45,3 +45,6 @@
 2019/05/13 18:59:18 [error] 5068#4332: *265 no live upstreams while connecting to upstream, client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "http://localhost/favicon.ico", host: "localhost", referrer: "http://localhost/login"
 2019/05/13 18:59:24 [notice] 3520#2792: signal process started
 2019/05/13 19:00:23 [error] 180#3708: *279 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: localhost, request: "GET /login/ HTTP/1.1", upstream: "http://[::1]:8081/login/", host: "localhost"
+2019/05/15 09:38:49 [notice] 10176#9620: signal process started
+2019/05/15 09:39:39 [notice] 9180#8996: signal process started
+2019/05/15 09:39:55 [notice] 9944#10236: signal process started

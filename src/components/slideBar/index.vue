@@ -14,7 +14,7 @@
 
         <div class="slideBar" v-show='!isCollapse'>
             
-            <MenuTree :menus='menus' :activeName='activeName' @onSelected='selectItem' ref="menu" />
+            <MenuTree :menus='menus' @onSelected='selectItem' ref="menu" />
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
@@ -35,7 +35,6 @@ export default {
             visible:false,
             isCollapse:false,
             currentIndex:'',
-            activeName:'/home',
             openName:[],
             menus:[]
         }
@@ -75,7 +74,6 @@ export default {
             queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
                 let menuList = res.data.menuList
                 this.menus = menuList[0].children
-                this.activeName = this.$route.path
                 //配置权限动态路由
                 let filterAuthRoutes = this.fliterRoute(flatten(menuList))
                 this.$router.matcher.addRoutes(filterAuthRoutes)

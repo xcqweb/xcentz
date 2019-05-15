@@ -166,23 +166,22 @@ export default {
         height: 100%;
         width: 100%;
         .bar{
-            height: 1454/3px;
-            width: 1454/3px;
+            height: 20vh;
+            width: 30vw;
             position: relative;
         }
         .pie{
             position: relative;
-            height: 1454/3px;
-            width: 1454/3px;
-            left: 1454/2px;
-            top: -1454/3px;
+            height: 30vh;
+            width: 30vw;
+            left: 50vw;
+            top: -20vh;
         }
         .radar{
             position: relative;
-            height: 1454/3px;
-            width: 1454/3px;
-            // left: 1454/2px;
-            top: -1454/3px;
+            height: 20vh;
+            width: 30vw;
+            top: 20vh;
         }
     }
 </style>

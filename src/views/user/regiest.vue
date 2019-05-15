@@ -33,7 +33,7 @@
 				</Input>
 			</FormItem>
             
-			<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;">注册</Button>
+			<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;margin-bottom:20px;">注册</Button>
 
 		</i-form>
     </div>
@@ -220,10 +220,33 @@ export default {
 </script>
 
 <style lang="less" scoped>
-    .regiest{
-       position: absolute;
-       top:88px;
-    }
+.regiest{
+    position: absolute;
+    top:48px;
+    padding-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height:calc(100% - 48px);
+    overflow: auto;
+}
+
+.regiest::-webkit-scrollbar {
+    width: 3px;
+}
+.regiest::-webkit-scrollbar-track {
+    background-color: #ccc;
+    // border-right: 1px solid #ccc;
+}
+.regiest::-webkit-scrollbar-thumb {
+    background-color: #888;
+}
+// .regiest::-webkit-scrollbar-thumb:hover {
+//     background-color: #aaa;
+// }
+// .regiest::-webkit-scrollbar-thumb:active{
+//     background-color:#333;
+// }
 </style>
 
 

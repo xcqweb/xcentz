@@ -10,9 +10,6 @@ var uploadRouter = require('./routes/upload');
 var jwtAuth = require('./middleware/jwtAuth');
 var session = require("express-session");
 var history = require('connect-history-api-fallback'); 
-require('babel-core/register');
-
-
 var app = express();
 
 // view engine setup
@@ -20,45 +17,45 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(history({index: 'index.html'}));  
-app.use(logger('combined'));
+app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../dist')));
 
 /* 创建session中间件 */
 app.use(session({
-    name:'testapp',       //..这里的name指的是cookie的name，默认cookie的name是：connect.sid
-    secret:'keyword cat',   //  加密key 可以随意书写
-    cookie:{maxAge:60*60*1000},   //  两次请求的时间差，即超过这个时间再去访问session会失效
-    resave:true,
-    saveUninitialized:false
-  }))
+  name:'xcentz',       //..这里的name指的是cookie的name，默认cookie的name是：connect.sid
+  secret:'sdso7sash734u347dd34',   //  加密key 可以随意书写
+  cookie:{maxAge:2*60*60*1000},   //  两次请求的时间差，即超过这个时间再去访问session会失效
+  resave:true,
+  saveUninitialized:false
+}))
 
 app.use(jwtAuth);
 
-// app.use('/',function(req, res, next) {
-//   console.log(req.path)
-//   let path = req.path
-//   let unLessPath = [
-//     "/api/xcentz/v1/users/login", 
-//     "/api/xcentz/v1/users/register",
-//     "/api/xcentz/v1/users/getCode",
-//     "/api/xcentz/v1/users/getEmailCode",
-//     "/api/xcentz/v1/users/checkUser",
-//     "/api/xcentz/v1/users/checkCode",
-//     "/api/xcentz/v1/users/checkEmailCode",
-// ]
-//   if(unLessPath.includes(path)){
-//     next();
-//   }else{
-//     if(req.session['token']){
-//       next();
-//     }else{
-//       next(createError(401));
-//     }
-//   }
-// });
+app.use('/',function(req, res, next) {
+  console.log(req.path)
+  let path = req.path
+  let unLessPath = [
+    "/api/xcentz/v1/users/login", 
+    "/api/xcentz/v1/users/register",
+    "/api/xcentz/v1/users/getCode",
+    "/api/xcentz/v1/users/getEmailCode",
+    "/api/xcentz/v1/users/checkUser",
+    "/api/xcentz/v1/users/checkCode",
+    "/api/xcentz/v1/users/checkEmailCode",
+]
+  if(unLessPath.includes(path)){
+    next();
+  }else{
+    if(req.session['token']){
+      next();
+    }else{
+      next(createError(401));
+    }
+  }
+});
 
 
 
