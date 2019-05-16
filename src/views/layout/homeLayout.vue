@@ -77,7 +77,7 @@ export default {
         .home_view{
             margin: 20px 0 20px 20px;
             height: calc(100vh - 123px);
-            overflow: auto;
+            overflow: hidden auto;
         }
     }
     .popTip{
