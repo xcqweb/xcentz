@@ -1,7 +1,7 @@
 <template>
     <div class="userManage">
         <div class="top_operate">
-            <Input search enter-button="查询" v-model="searchKey" size="large" @on-search='search' @on-enter='search' style="width:300px;margin-right:30px;" placeholder="用户名 邮箱号 姓名..." />
+            <Input search enter-button v-model="searchKey" size="large" @on-search='search' @on-enter='search' style="width:300px;margin-right:30px;" placeholder="用户名 邮箱号 姓名..." />
             <Button size="large" icon="ios-add" type="primary" @click="addUserStatus=true">新增用户</Button> 
         </div>
          
@@ -74,8 +74,10 @@
 <script>
 import {checkUser,checkEmailCode,getUserList,assignRole,addUser,delUser,roleList,resetPassword} from '@api'
 import Operate from './components/operate'
+import Expand from './components/expand'
 import Vue from 'vue'
 Vue.component('Operate',Operate)
+Vue.component('Expand',Expand)
 export default {
     data(){
         const validateEmail = (rule, value, callback) => {
@@ -188,52 +190,61 @@ export default {
             }),
             columns:Object.freeze([
                     {
-                        title: '序号',
-                        type:'index',
+                        type:'expand',
                         width:80,
-                        align:'center'
+                        align:'center',
+                        render: (h, params) => {
+                            return h(Expand, {
+                                props: {
+                                    row: params.row
+                                }
+                            })
+                        }
                     },
-                    {
-                        title: '邮箱号',
-                        key: 'Email',
-                        align:'center'
-                    },
-                    {
-                        title: '手机号',
-                        key: 'Phone',
-                        align:'center'
-                    },
+                    // {
+                    //     title: '邮箱号',
+                    //     key: 'Email',
+                    //     align:'center'
+                    // },
+                    // {
+                    //     title: '手机号',
+                    //     key: 'Phone',
+                    //     // width:120,
+                    //     align:'center'
+                    // },
                     {
                         title: '中文名',
                         key: 'Cname',
-                        width:120,
+                        // width:120,
                         align:'center'
                     },
-                    {
-                        title: '英文名',
-                        key: 'UserName',
-                        align:'center'
-                    },
+                    // {
+                    //     title: '英文名',
+                    //     key: 'UserName',
+                    //     // width:120,
+                    //     align:'center'
+                    // },
                     {
                         title: '角色',
                         key: 'Directions',
-                        width:120,
+                        // width:120,
                         align:'center',
                     },
-                    {
-                        title: '最近登录时间',
-                        key: 'LoatLoginTime',
-                        align:'center'
-                    },
-                    {
-                        title: '账号创建时间',
-                        key: 'CreateTime',
-                        align:'center'
-                    },
+                    // {
+                    //     title: '最近登录时间',
+                    //     key: 'LoatLoginTime',
+                    //     align:'center'
+                    // },
+                    // {
+                    //     title: '账号创建时间',
+                    //     key: 'CreateTime',
+                    //     // width:150,
+                    //     align:'center'
+                    // },
                     {
                         title: '操作',
                         align:'center',
-                        width:300,
+                        width:360,
                         render(h,{row}){
                             return h('div',{
                                 style:{
@@ -242,6 +253,7 @@ export default {
                             },[h('Button', {
                                     props: {
                                         type: 'primary',
+                                        icon:'ios-refresh'
                                     },
                                     style: {
                                         marginRight: '16px'
@@ -254,6 +266,7 @@ export default {
                                 }, '重置密码'),h('Button', {
                                     props: {
                                         type: 'primary',
+                                        icon:'ios-create-outline'
                                     },
                                     style: {
                                         marginRight: '16px'
@@ -266,6 +279,7 @@ export default {
                                 }, '分配角色'),h('Button', {
                                     props: {
                                         type: 'error',
+                                        icon:'ios-trash-outline'
                                     },
                                     style: {
                                         marginRight: '16px'
@@ -386,7 +400,7 @@ export default {
 
 <style lang="less" scoped>
 .userManage{
-   
+   position:relative;
 }
     
 </style>

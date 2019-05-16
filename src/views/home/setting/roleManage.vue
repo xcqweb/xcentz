@@ -1,7 +1,7 @@
 <template>
     <div class="roleManage">
         <div class="top_operate">
-            <Input search enter-button="查询" v-model='searchKey' size="large" style="width:300px;margin-right:30px;" @on-search='search' @on-enter='search' placeholder="角色查询" />
+            <Input search enter-button v-model='searchKey' size="large" style="width:300px;margin-right:30px;" @on-search='search' @on-enter='search' placeholder="角色查询" />
             <Button size="large" icon="ios-add" type="primary" @click="addRoleStatus=true">新增角色</Button> 
         </div>
 
@@ -128,6 +128,7 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'primary',
+                                        icon:'md-create'
                                     },
                                     style: {
                                         margin: '8px'
@@ -141,6 +142,7 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'primary',
+                                        icon:'ios-create-outline'
                                     },
                                     style: {
                                         margin: '8px'
@@ -154,6 +156,7 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'primary',
+                                        icon:'ios-create-outline'
                                     },
                                     style: {
                                         margin: '8px',
@@ -167,6 +170,7 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'error',
+                                        icon:'ios-trash-outline'
                                     },
                                     style: {
                                         margin: '8px',

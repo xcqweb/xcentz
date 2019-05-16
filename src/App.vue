@@ -27,6 +27,7 @@ export default {
 }
 body,#app{
   overflow: hidden;
+  height: 100vh;
 }
 </style>
 

@@ -1,7 +1,7 @@
 <template>
     <div class="moduleManage">
         <div class="top_operate">
-            <Input search enter-button="查询" v-model="searchKey" size="large" @on-search='search' @on-enter='search' style="width:300px;margin-right:30px;" placeholder="模块名,说明..." />
+            <Input search enter-button v-model="searchKey" size="large" @on-search='search' @on-enter='search' style="width:300px;margin-right:30px;" placeholder="模块名,说明..." />
             <Button size="large" icon="ios-add" type="primary" @click="addModuleStatus=true">新增权限模块</Button> 
         </div>
         
@@ -14,18 +14,18 @@
             title="新增模块"
             @on-ok="addModule"
             @on-cancel="addModuleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="moduleAdd.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="moduleAdd.moduleDirection" placeholder="请输入模块说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块名称</p><Input v-model="moduleAdd.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块说明</p><Input v-model="moduleAdd.moduleDirection" placeholder="请输入模块说明..." /></div>
         </Modal>
 
         <!-- 编辑模块 -->
          <Modal
             v-model="editModuleStatus"
-            title="新增模块"
+            title="编辑模块"
             @on-ok="moduleEditHandler"
             @on-cancel="editModuleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="moduleEdit.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="moduleEdit.moduleDirection" placeholder="请输入模块说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块名称</p><Input v-model="moduleEdit.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块说明</p><Input v-model="moduleEdit.moduleDirection" placeholder="请输入模块说明..." /></div>
         </Modal>
     </div>
 </template>
@@ -86,6 +86,7 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'primary',
+                                        icon:'md-create'
                                     },
                                     style: {
                                         margin: '8px'
@@ -99,6 +100,7 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'error',
+                                        icon:'ios-trash-outline'
                                     },
                                     style: {
                                         margin: '8px',

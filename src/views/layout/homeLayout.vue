@@ -1,5 +1,5 @@
 <template>
-    <div style="width:100%;overflow:hidden;position:relative;">
+    <div style="width:100%;overflow:hidden;">
         <slide-bar @collapseMenu='collapseMenu' @collapse='collapse' :style="{width:iscollapse?'40px':'',paddingRight:iscollapse?'50px':'',marginLeft:iscollapse?'-10px':''}" style="overflow:hidden;transition: width 1s;"/>
         <div class="home_left" :style="{marginLeft:iscollapse?'40px':'240px',width:iscollapse?'calc(100% - 40px)':'calc(100% - 240px)'}">
             <top-bar />
@@ -13,7 +13,7 @@
         <div style="position:absolute;top:0;left:32px;" :style="{top:comPopTip}" v-show="hoverMenus.children" class="popTip">
             <Poptip trigger="hover" v-model="visible" placement="right-start">
                 <div slot="content">
-                     <Dropdown @on-click='goPage'>
+                     <Dropdown @on-click='goPage' ref="dropDown">
                         <DropdownItem v-for="item in hoverMenus.children" :name='item.route' class="collapse_item">{{item.title}}</DropdownItem>
                      </Dropdown>
                 </div>
@@ -77,6 +77,7 @@ export default {
         .home_view{
             margin: 20px 0 20px 20px;
             height: calc(100vh - 123px);
+            width: calc(100vw - 240px);
             overflow: hidden auto;
         }
     }

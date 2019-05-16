@@ -71,7 +71,6 @@ let modules = [
     Checkbox,
     CheckboxGroup
 ]
-
 for(let item of modules){
     Vue.component(item.name,item)
 }

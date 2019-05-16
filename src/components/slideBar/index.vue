@@ -18,7 +18,7 @@
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
-                <span class="txt">Collapse sidebar</span>
+                <span class="txt">Collapse</span>
             </p>
         </div>
     </div>
@@ -134,7 +134,7 @@ export default {
             user-select: none;
             .txt{
                 margin-left: 10px;
-                font-size: 16px;
+                font-size: 14px;
             }
             &:hover{
                 background-color: #70798c;

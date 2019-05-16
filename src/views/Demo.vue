@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     
-    <!-- <div style="width:300px;height:300px;background:#f00;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m1">
+    <div style="width:300px;height:300px;background:#f00;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m1">
       M1
     </div>
     <div style="width:300px;height:300px;background:#ff0;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m2">
@@ -9,7 +9,7 @@
     </div>
     <div style="width:300px;height:300px;background:#00f;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m3">
       M3
-    </div> -->
+    </div>
     <Upload
         multiple
         :headers='headers'
