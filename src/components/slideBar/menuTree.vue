@@ -1,5 +1,5 @@
 <template>
-    <Menu theme="dark" :active-name='$route.path' @on-select="selectBack">
+    <Menu theme="dark" accordion :active-name='$route.path' @on-select="selectBack">
         <Submenu :name="item.id" v-for="item in menus" v-if="item.children" :key="item.id">
             <template slot="title">
                 <Icon :type="item.icon" />

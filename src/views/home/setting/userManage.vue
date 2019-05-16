@@ -10,6 +10,7 @@
         <!-- 添加用户 -->
          <Modal
             v-model="addUserStatus"
+            :styles="{top: '50px'}"
             title="添加用户">
             <div slot="footer">
                 <Button type="text" size="large" @click="addUserStatus = false">取消</Button>
@@ -22,33 +23,33 @@
                         <!-- <p slot="prepend"></p> -->
                     </Input>
                 </FormItem>
-                <FormItem prop="password" style="margin:30px 0 30px 0;" label='密码'>
+                <FormItem prop="password" style="margin:26px 0;" label='密码'>
                     <Input type="password" size="large" style="width:100%;" v-model="addUser.password" placeholder="请输入密码">
                     </Input>
                 </FormItem>
 
-                <FormItem prop="confirmPsw" style="margin:30px 0 30px 0;" label='确认密码'>
+                <FormItem prop="confirmPsw" style="margin:26px 0;" label='确认密码'>
                     <Input type="password" size="large" style="width:100%;" v-model="addUser.confirmPsw" placeholder="请再次输入密码">
                     </Input>
                 </FormItem>
 
-                <FormItem prop="phone" style="margin:30px 0 30px 0;" label='电话'>
+                <FormItem prop="phone" style="margin:26px 0;" label='电话'>
                     <Input type="text" size="large" style="width:100%;" v-model="addUser.phone" placeholder="请输入电话">
                     </Input>
                 </FormItem>
 
-                <FormItem prop="role" style="margin:30px 0 30px 0;" label='角色'>
+                <FormItem prop="role" style="margin:26px 0;" label='角色'>
                     <i-Select v-model="addUser.role" filterable>
                         <i-Option v-for="item in roleList" :value="item.RoleId" :key="item.RoleName">{{ item.Directions }}</i-Option>
                     </i-Select>
                 </FormItem>
 
-                <FormItem prop="cname" style="margin:30px 0 30px 0;" label='中文名'>
+                <FormItem prop="cname" style="margin:26px 0;" label='中文名'>
                     <Input type="text" size="large" style="width:100%;" v-model="addUser.cname" placeholder="请输入中文名">
                     </Input>
                 </FormItem>
 
-                <FormItem prop="email" style="margin:30px 0 30px 0;" label='邮箱'>
+                <FormItem prop="email" style="margin:26px 0;" label='邮箱'>
                     <Input type="text" size="large" style="width:100%;" v-model="addUser.email" placeholder="请输入邮箱">
                     </Input>
                 </FormItem>

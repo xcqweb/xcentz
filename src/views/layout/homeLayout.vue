@@ -75,8 +75,8 @@ export default {
         transition: all 0.1s;
         overflow: hidden;
         .home_view{
-            margin: 20px 0 20px 20px;
-            height: calc(100vh - 123px);
+            padding: 20px;
+            height: calc(100vh - 83px);
             width: calc(100vw - 240px);
             overflow: hidden auto;
         }

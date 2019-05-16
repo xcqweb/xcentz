@@ -64,9 +64,35 @@ let staticRoute = [
       children:[
         {
           path:'/home',
-          component:() => import('@/views/home/charts/chartsHome'),
+          component:() => import('@/views/home/charts/order'),
           name:'home',
           meta:{title:'主页'}
+        }
+      ]
+    },
+    //订单情况
+    {
+      path: '/',
+      component: HomeLayout,
+      children:[
+        {
+          path:'/order',
+          component:() => import('@/views/home/charts/chartsHome'),
+          name:'order',
+          meta:{title:'订单情况'}
+        }
+      ]
+    },
+    //销量情况
+    {
+      path: '/',
+      component: HomeLayout,
+      children:[
+        {
+          path:'/sell',
+          component:() => import('@/views/home/charts/order'),
+          name:'sell',
+          meta:{title:'销量情况'}
         }
       ]
     },
