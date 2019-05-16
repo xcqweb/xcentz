@@ -9,7 +9,7 @@ apps:
 deploy:                     # 部署脚本
   production:               # 生产环境
     user: 'node'     # 服务器的用户名
-    host: '212.83.163.1'  # 服务器的ip地址
+    host: '30.100.93.124'  # 服务器的ip地址
     port: 22                # ssh端口
     ref: origin/master      # 要拉取的git分支
     ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"] # SSH 公钥检查
