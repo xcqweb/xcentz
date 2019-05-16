@@ -6,7 +6,7 @@
         </div>
          
          <Table :columns="columns" :data="userData" stripe border :loading='isLoading' size='large'></Table>
-         <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin-top:20px;' />
+         <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
         <!-- 添加用户 -->
          <Modal
             v-model="addUserStatus"
@@ -141,7 +141,7 @@ export default {
         };
         let _this = this
         return{
-            pageSize:15,
+            pageSize:10,
             totalCount:0,
             currentPage:1,
             searchKey:'',

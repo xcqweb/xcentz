@@ -6,7 +6,7 @@
         </div>
 
         <Table border stripe  size='large' :loading='isLoading' :columns="columnsRole" :data="dataRole" v-show="dataRole.length"></Table>
-        <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin-top:20px;' />
+        <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
         <!-- 新增角色 -->
          <Modal
             v-model="addRoleStatus"
@@ -60,9 +60,6 @@
 
 <script>
 import {roleList,addRole,editRole,delRole,queryAuthMenu,updateAuthMenu,queryAuthModule,configAuthModule} from '@api'
-import { userInfo } from 'os';
-import { isNull } from 'util';
-import { setTimeout } from 'timers';
 export default {
     data(){
         return{
@@ -70,7 +67,7 @@ export default {
             checkAll:false,
             checkAllGroup:[],
             moduleList:[],
-            pageSize:15,
+            pageSize:10,
             totalCount:0,
             currentPage:1,
             menuAuthStatus:false,

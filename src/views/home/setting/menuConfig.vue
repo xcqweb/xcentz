@@ -28,7 +28,6 @@
 </template>
 <script>
 import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
-import { setTimeout } from 'timers';
     export default {
         data () {
             return {

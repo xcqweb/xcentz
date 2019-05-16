@@ -6,7 +6,7 @@
         </div>
         
         <Table border stripe  size='large' :loading='isLoading' :columns="columnsModule" :data="dataModule" v-show="dataModule.length"></Table>
-        <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin-top:20px;' />
+        <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
 
         <!-- 新增模块 -->
          <Modal
@@ -51,7 +51,7 @@ export default {
             isLoading:false,
             totalCount:0,
             currentPage:1,
-            pageSize:15,
+            pageSize:10,
             dataModule:[],
             columnsModule:[
                 {
