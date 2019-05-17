@@ -13,7 +13,6 @@ let {buildTree} = require('../common/untl')
 let moment = require('moment')
 
 router.post('/login', function(req, res, next) {
-    console.log(req.ip)
     let username = req.body.username
     let password = req.body.password
     let verifyCode = req.session['captcha']
@@ -25,7 +24,6 @@ router.post('/login', function(req, res, next) {
         errorCode:'10000'
       })
     }else{
-    let email = req.body.email
       query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {
         if(r.length<=0){
           res.status(500).json({
@@ -40,9 +38,8 @@ router.post('/login', function(req, res, next) {
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
               expiresIn: 60*60*2  // 2小时过期
             });
-            req.session['token'] = token
             //更新登录时间
-            query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE (UserName='${username}' OR Email='${username}')`)
+            query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
 
             res.status(200).json({
               message:'登录成功！',
@@ -69,7 +66,6 @@ router.get('/resetPassword',function(req, res, next){
       auth: {
           user: 'xuchangqian@yulong.com',
           //这里密码不是qq密码，是你设置的smtp密码
-          // pass: 'fuyatraecdgxbhih'
           pass: 'Xcq123456'
       }
     });
@@ -121,14 +117,11 @@ router.get('/checkUser',function(req, res, next){
         user:r
       })
   })
-  
 })
 
 //注册账号
 router.post('/register', function(req, res, next) {
-  // console.log(req.session['verifyEmail'])
   let reData = req.body
-  let content ={name:reData.username}; // 要生成token的主题信息
   if(req.body.code != req.session['verifyEmail'].verifyEmailCode){
     res.status(500).json({
       message:'验证码错误！',
@@ -170,9 +163,7 @@ router.post('/register', function(req, res, next) {
       // send mail with defined transport object
       transporter.sendMail(mailOptions, function(error, info){
           if(error){
-            // res.send({
-            //   errorCode:100036
-            // })
+            
           }else{
             res.status(200).json({
               message:'新增用户成功！',
@@ -189,6 +180,8 @@ router.post('/register', function(req, res, next) {
   }
 });
 
+
+//
 router.get('/checkAuth', function(req, res, next) {  
   let userId = req.query.userId
   let data = {
@@ -197,7 +190,6 @@ router.get('/checkAuth', function(req, res, next) {
     m3:1 //图表2
   }
   var bytes  = CryptoJS.AES.encrypt(JSON.stringify(data), 'secret key 123').toString();
-
     res.json({
       data:bytes
     })

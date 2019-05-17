@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var app = express()
 var authRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var uploadRouter = require('./routes/upload');
@@ -11,7 +11,8 @@ var userCenterRouter = require('./routes/userCenter');
 var jwtAuth = require('./middleware/jwtAuth');
 var session = require("express-session");
 var history = require('connect-history-api-fallback'); 
-var app = express();
+var compression = require('compression')
+const {query} = require('./database');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../dist')));
-
+app.use(compression())
 /* 创建session中间件 */
 app.use(session({
   name:'xcentz',       //..这里的name指的是cookie的name，默认cookie的name是：connect.sid
@@ -35,30 +36,33 @@ app.use(session({
 
 app.use(jwtAuth);
 
-// app.use('/',function(req, res, next) {
-//   console.log(req.path)
-//   let path = req.path
-//   let unLessPath = [
-//     "/api/xcentz/v1/users/login", 
-//     "/api/xcentz/v1/users/register",
-//     "/api/xcentz/v1/users/getCode",
-//     "/api/xcentz/v1/users/getEmailCode",
-//     "/api/xcentz/v1/users/checkUser",
-//     "/api/xcentz/v1/users/checkCode",
-//     "/api/xcentz/v1/users/checkEmailCode",
-// ]
-//   if(unLessPath.includes(path)){
-//     res.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
-//     res.append('Cache-Control', 'no-cache');
-//     next();
-//   }else{
-//     if(req.session['token']){
-//       next();
-//     }else{
-//       next(createError(401));
-//     }
-//   }
-// });
+app.use('/',function(req, res, next) {
+  console.log(req.originalUrl)  
+  let path = req.path
+  let unLessPath = [
+    "/api/xcentz/v1/users/login", 
+    "/api/xcentz/v1/users/register",
+    "/api/xcentz/v1/users/getCode",
+    "/api/xcentz/v1/users/getEmailCode",
+    "/api/xcentz/v1/users/checkUser",
+    "/api/xcentz/v1/users/checkCode",
+    "/api/xcentz/v1/users/checkEmailCode",
+]
+  if(unLessPath.includes(path)){
+    res.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
+    res.append('Cache-Control', 'no-cache');
+    next();
+  }else{
+    let token = req.headers.authorization.substr(7)
+    query(`SELECT Token FROM Pub_User WHERE Token='${token}'`).then( (r) => {
+      if(r.length){
+        next();
+      }else{
+        next(createError(401));
+      }
+    })
+  }
+});
 
 
 

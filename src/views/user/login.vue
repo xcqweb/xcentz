@@ -54,7 +54,7 @@
 				loading:false,
 				formInline: {
 					user: 'chase.xu',
-					password: '88888888',
+					password: 'xcq123456',
 					code:''
 				},
 				ruleInline: {

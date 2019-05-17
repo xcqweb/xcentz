@@ -30,7 +30,7 @@
                     <Input type="password" size="large" style="width:100%;" v-model="addUser.old_password" placeholder="请输入原密码" />
                 </FormItem>
 
-                <FormItem prop="password" style="margin:26px 0;" label='密码'>
+                <FormItem prop="password" style="margin:26px 0;" label='新密码'>
                     <Input type="password" size="large" style="width:100%;" v-model="addUser.password" placeholder="请输入密码" />
                 </FormItem>
 
@@ -178,7 +178,7 @@ export default {
         },
         //更新头像
         updateAvatar(){
-            alert('正在加紧开发中...')
+            alert('正在加紧开发中...`')
         }
     }
 }

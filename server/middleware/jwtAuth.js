@@ -15,7 +15,5 @@ const jwtAuth = expressJwt({
 ]}); 
 
 
-
-
 module.exports = jwtAuth;
 
