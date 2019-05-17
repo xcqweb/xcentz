@@ -236,6 +236,7 @@ router.get('/checkCode', function(req, res, next) {
 //获取邮箱验证码
 router.get('/getEmailCode', function(req, res, next) {
   let toEmail = req.query.email
+  let type = req.query.type
   var transporter = nodemailer.createTransport({
     //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
     host: 'smtp.exmail.qq.com',
@@ -252,8 +253,20 @@ router.get('/getEmailCode', function(req, res, next) {
   
   req.session['verifyEmail'] =  {verifyEmailCode:verifyEmail,expires:+new Date()}; 
   // console.log(req.session)
-
-  var mailOptions = {
+  if(type==='edit'){
+    var mailOptions = {
+      from: 'xuchangqian@yulong.com', // 发件地址
+      to: toEmail, // 收件列表
+      subject: 'xcentz 运营管理系统验证码', // 标题
+      //text和html两者只支持一种
+      text: `xcentz 运营系统验证码：${verifyEmail} 一小时内有效`, // 标题
+      html: `<b>xcentz 运营系统验证码：<em style='font-weight:100;text-decoration:underline;'>${verifyEmail}<em> 2小时内有效</b> <br />
+            <p style='text-align:right;font-size:12px;'>xcentz</p>
+            <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+      ` // html 内容
+    };
+  }else{
+    var mailOptions = {
       from: 'xuchangqian@yulong.com', // 发件地址
       to: toEmail, // 收件列表
       subject: 'xcentz 运营管理系统注册验证', // 标题
@@ -263,7 +276,9 @@ router.get('/getEmailCode', function(req, res, next) {
             <p style='text-align:right;font-size:12px;'>xcentz</p>
             <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
       ` // html 内容
-  };
+    };
+  }
+  
 
   // send mail with defined transport object
   transporter.sendMail(mailOptions, function(error, info){

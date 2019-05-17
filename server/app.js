@@ -7,6 +7,7 @@ var logger = require('morgan');
 var authRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var uploadRouter = require('./routes/upload');
+var userCenterRouter = require('./routes/userCenter');
 var jwtAuth = require('./middleware/jwtAuth');
 var session = require("express-session");
 var history = require('connect-history-api-fallback'); 
@@ -34,33 +35,36 @@ app.use(session({
 
 app.use(jwtAuth);
 
-app.use('/',function(req, res, next) {
-  console.log(req.path)
-  let path = req.path
-  let unLessPath = [
-    "/api/xcentz/v1/users/login", 
-    "/api/xcentz/v1/users/register",
-    "/api/xcentz/v1/users/getCode",
-    "/api/xcentz/v1/users/getEmailCode",
-    "/api/xcentz/v1/users/checkUser",
-    "/api/xcentz/v1/users/checkCode",
-    "/api/xcentz/v1/users/checkEmailCode",
-]
-  if(unLessPath.includes(path)){
-    next();
-  }else{
-    if(req.session['token']){
-      next();
-    }else{
-      next(createError(401));
-    }
-  }
-});
+// app.use('/',function(req, res, next) {
+//   console.log(req.path)
+//   let path = req.path
+//   let unLessPath = [
+//     "/api/xcentz/v1/users/login", 
+//     "/api/xcentz/v1/users/register",
+//     "/api/xcentz/v1/users/getCode",
+//     "/api/xcentz/v1/users/getEmailCode",
+//     "/api/xcentz/v1/users/checkUser",
+//     "/api/xcentz/v1/users/checkCode",
+//     "/api/xcentz/v1/users/checkEmailCode",
+// ]
+//   if(unLessPath.includes(path)){
+//     res.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
+//     res.append('Cache-Control', 'no-cache');
+//     next();
+//   }else{
+//     if(req.session['token']){
+//       next();
+//     }else{
+//       next(createError(401));
+//     }
+//   }
+// });
 
 
 
 app.use('/api/xcentz/v1/users', usersRouter);
 app.use('/api/xcentz/v1/upload', uploadRouter);
+app.use('/api/xcentz/v1/userCenter', userCenterRouter);
 
 
 // catch 404 and forward to error handler
