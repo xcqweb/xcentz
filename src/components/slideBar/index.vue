@@ -13,7 +13,10 @@
 
 
         <div class="slideBar" v-show='!isCollapse'>
-            
+            <p class="logo">
+                <span>xcentz</span>
+                <span>后台运营管理系统</span>
+            </p>
             <MenuTree :menus='menus' @onSelected='selectItem' ref="menu" />
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
@@ -64,6 +67,7 @@ export default {
                 let route = menu && menu.route && menu.route.indexOf('/')>-1?menu.route:`/${menu.route}`
                 for(let routeKey of authRoute){
                     if(route === routeKey.children[0].path){
+                        routeKey.children[0].meta.title = menu.title
                        newRoute.push(routeKey)
                     }
                 }
@@ -117,6 +121,20 @@ export default {
         min-height: 100vh;
         position: fixed;
         background-color: #515a6e;
+        .logo{
+            color:#fff;
+            height: 83px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: rgb(54, 62, 79);
+            &>:nth-child(1){
+                font-style: italic;
+                font-size: 20px;
+            }
+        }
         .collapse{
             width: 100%;
             position: absolute;

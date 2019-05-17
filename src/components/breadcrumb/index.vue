@@ -10,6 +10,19 @@
             </BreadcrumbItem>
         </Breadcrumb>
         <div class="userInfo">
+            <Poptip trigger="hover" placement='top-end' width='360' style="margin:12px 48px 0 0">
+                <Badge :count='100'>
+                    <Icon type="ios-notifications-outline" size="26"></Icon>
+                </Badge>
+                <div slot="content" class="msg_content">
+                    <div style="color:rgb(181, 186, 189);">
+                        <Icon type="ios-notifications-outline" size="50"></Icon>
+                        <p>暂无消息</p> 
+                    </div>
+                   
+                </div>
+            </Poptip>
+            
             <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="margin-right:10px;"/>
             <Poptip placement='bottom-end' trigger='hover' @on-popper-show='isDown=true' @on-popper-hide='isDown=false'>
                 <span class="userInfo_name">{{userInfo.Cname}}</span>
@@ -23,6 +36,7 @@
                         <DropdownItem data-index='1'>主页</DropdownItem>
                         <DropdownItem divided data-index='2'>个人中心</DropdownItem>
                         <DropdownItem divided data-index='3'>退出登录</DropdownItem>
+                        <DropdownItem divided data-index='4'>消息</DropdownItem>
                     </Dropdown>
                 </div>
             </Poptip>
@@ -84,6 +98,9 @@ export default {
                 case '3':
                 this.loginOut()
                 break;
+
+                case '4':
+                break;
             }
         },
         //全屏
@@ -141,6 +158,12 @@ export default {
             font-size: 24px;
             margin-left: 10px;
             cursor: pointer;
+        }
+        .msg_content{
+            min-height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 </style>

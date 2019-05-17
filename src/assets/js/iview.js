@@ -29,7 +29,11 @@ import {
     Page,
     Avatar,
     Checkbox,
-    CheckboxGroup
+    CheckboxGroup,
+    Badge,
+    Tabs,
+    TabPane,
+    Switch 
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
@@ -69,7 +73,11 @@ let modules = [
     Page,
     Avatar,
     Checkbox,
-    CheckboxGroup
+    CheckboxGroup,
+    Badge,
+    Tabs,
+    TabPane,
+    Switch
 ]
 for(let item of modules){
     Vue.component(item.name,item)

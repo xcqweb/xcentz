@@ -165,10 +165,10 @@ export default {
                 if(res.status==200){
                     this.codeLoading = false
                     this.isSend = true
-                    let num = 0
+                    let num = 60
                     let timer = setInterval( () =>{
-                        this.isSendText = `${num++}s后重新获取`
-                        if(num>=60){
+                        this.isSendText = `${num--}s后重新获取`
+                        if(num<0){
                             clearInterval(timer)
                             this.isSendText = '获取邮箱验证码'
                             this.isSend = false

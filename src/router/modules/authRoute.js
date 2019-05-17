@@ -82,7 +82,7 @@ export default[
             path:'/usercenter',
             component:() => import('@/views/home/usercenter/user'),
             name:'usercenter',
-            meta:{title:'用户中心'}
+            meta:{title:'个人中心'}
           }
         ]
       },

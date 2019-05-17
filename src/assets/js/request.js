@@ -12,13 +12,13 @@ let instance = axios.create({
 
 instance.interceptors.request.use( (config) => {
 	let token = localStorage.getItem('token')
-	if(config.method === 'post' || config.method === 'put'){
-        let _data = ''
-        for(let it in config.data){
-            _data += encodeURIComponent(it) + '=' + encodeURIComponent(config.data[it]) + '&';
-        }
-        config.data = _data
-    }
+	// if(config.method === 'post'){
+    //     let _data = ''
+    //     for(let it in config.data){
+    //         _data += encodeURIComponent(it) + '=' + encodeURIComponent(config.data[it]) + '&';
+    //     }
+    //     config.data = _data
+    // }
 	
 	if(token){
 		config.headers['Authorization'] = 'Bearer '+token; 

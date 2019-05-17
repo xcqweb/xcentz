@@ -107,7 +107,6 @@
 									localStorage.setItem('userInfo',JSON.stringify(res.data.user))
 									this.$router.replace('/home')
 								}
-								
 							},error => {
 								this.loading = false
 							})
