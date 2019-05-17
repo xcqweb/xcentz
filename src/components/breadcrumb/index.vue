@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="height:41px;">
         <Breadcrumb>
             <BreadcrumbItem v-for="(item,index) in levelList" :key="item.path">
                 <!-- <Icon type="ios-home-outline"></Icon> -->

@@ -98,7 +98,6 @@ export default {
     .tags{
         height: 42px;
         width: 100%;
-        margin-top: 10px;
         border-top: 1px solid #ccc; 
         border-bottom: 1px solid #ccc;
         align-items: center;
