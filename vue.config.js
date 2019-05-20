@@ -15,7 +15,8 @@ const cdn = {
 		'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
 		'https://cdn.bootcss.com/vue-router/3.0.6/vue-router.min.js',
 		'https://cdn.bootcss.com/axios/0.18.0/axios.min.js',
-		'https://cdn.bootcss.com/echarts/4.2.1/echarts.min.js'
+		'https://cdn.bootcss.com/echarts/4.2.1/echarts.min.js',
+		'https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.js'
 	]
 }
 
@@ -75,7 +76,8 @@ module.exports = {
 						'vue': 'Vue',
 						'axios': 'axios',
 						'vue-router': 'VueRouter',
-						'echarts':'echarts'
+						'echarts':'echarts',
+						'chart.js':'Chart'
 					})
 	
 					config.plugin('html')
@@ -123,7 +125,7 @@ module.exports = {
 							 threshold:10240,
 							 deleteOriginalAssets: false
 						 }),
-						// new BundleAnalyzerPlugin(),
+						new BundleAnalyzerPlugin(),
 					 )
 			}
 		},	

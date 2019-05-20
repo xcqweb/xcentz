@@ -151,6 +151,7 @@ export default {
                     duration: 5
                 });
                 this.isSendText = '重新获取邮箱验证码'
+                this.loading = false
                 this.isSend = false
             })
         },
