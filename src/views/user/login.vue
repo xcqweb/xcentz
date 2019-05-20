@@ -2,7 +2,7 @@
 	<div class="con">
 		<i-form ref="formInline" :model="formInline" :rules="ruleInline" style="width:360px;">
 			<FormItem prop="user" style="height:40px;position:relative;">
-				<Input type="text" size="large" style="width:100%;" v-model="formInline.user" @on-blur='tipUserStatus = false' @on-keyup="appendFix" placeholder="用户名或邮箱">
+				<Input type="text" size="large" style="width:100%;" v-model="formInline.user" @on-blur='blurFix' @on-keyup="appendFix" placeholder="用户名或邮箱">
 						<Icon type="ios-person-outline" slot="prepend"></Icon>
 				</Input>
 				<div class="ivu-select-dropdown" v-show="tipUserStatus" style="width: 100%; position: absolute; will-change: top, left; transform-origin: center top; top: 33px; left: 0px;" x-placement="bottom-start">
@@ -113,6 +113,9 @@
 			addEventListener('keyup',this.keyupLogin,false)
 		},
 		methods:{
+			blurFix(){
+				this.chooseTipUser()
+			},
 			appendFix(){
 				if(this.formInline.user){
 					this.tipUserStatus = true
