@@ -5,7 +5,7 @@
             <Button size="large" icon="ios-add" type="primary" @click="addModuleStatus=true">新增权限模块</Button> 
         </div>
         
-        <Table border stripe  size='large' :loading='isLoading' :columns="columnsModule" :data="dataModule" v-show="dataModule.length"></Table>
+        <Table border stripe :loading='isLoading' :columns="columnsModule" :data="dataModule" v-show="dataModule.length"></Table>
         <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
 
         <!-- 新增模块 -->

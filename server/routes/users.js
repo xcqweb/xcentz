@@ -36,7 +36,7 @@ router.post('/login', function(req, res, next) {
           delete re.Token
             // 这是加密的key（密钥) 
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
-              expiresIn: 60*60*2  // 2小时过期
+              expiresIn: '1h' // 2小时过期
             });
             //更新登录时间
             query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)

@@ -79,7 +79,8 @@ export default {
                         top: 50,
                         duration: 5
                     });
-                    localStorage.clear()
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('userInfo')
                     this.$router.replace('/login')
                 }
             })

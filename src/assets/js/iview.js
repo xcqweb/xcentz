@@ -34,14 +34,12 @@ import {
     Tabs,
     TabPane,
     Switch,
-    AutoComplete
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
 Vue.prototype.$Message = Message;
 Vue.$Message = Message;
 Vue.prototype.$Modal = Modal;
-// Vue.prototype.$Modal = Modal;
 // Vue.prototype.$Notice = Notice;
 // Vue.prototype.$Spin = Spin;
 
@@ -79,7 +77,6 @@ let modules = [
     Tabs,
     TabPane,
     Switch,
-    AutoComplete
 ]
 for(let item of modules){
     Vue.component(item.name,item)

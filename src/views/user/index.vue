@@ -1,7 +1,7 @@
 <template>
     <div class="user" id="particles-js">
         <p class="title"><span></span>centz后台运营管理系统</p>
-        <div class="userCon" :style="{height:$route.path.replace(/\/+/g,'')==='login'?'400px':'540px'}">
+        <div class="userCon" :style="{height:$route.path.replace(/\/+/g,'')==='login'?'420px':'540px'}">
             <ul class="userTab">
                 <li @click="$router.push('/login')" :class="{active:$route.path.replace(/\/+/g,'')==='login'}">登录</li>
                 <li @click="$router.push('/regiest')" :class="{active:$route.path.replace(/\/+/g,'')==='regiest'}">注册</li>

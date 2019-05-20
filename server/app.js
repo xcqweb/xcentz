@@ -37,7 +37,7 @@ app.use(session({
 app.use(jwtAuth);
 
 app.use('/',function(req, res, next) {
-  console.log(req.originalUrl)  
+  
   let path = req.path
   let unLessPath = [
     "/api/xcentz/v1/users/login", 
@@ -49,8 +49,6 @@ app.use('/',function(req, res, next) {
     "/api/xcentz/v1/users/checkEmailCode",
   ]
   if(unLessPath.includes(path)){
-    res.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
-    res.append('Cache-Control', 'no-cache');
     next();
   }else{
     let token = req.headers.authorization.substr(7)
@@ -64,12 +62,9 @@ app.use('/',function(req, res, next) {
   }
 });
 
-
-
 app.use('/api/xcentz/v1/users', usersRouter);
 app.use('/api/xcentz/v1/upload', uploadRouter);
 app.use('/api/xcentz/v1/userCenter', userCenterRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
