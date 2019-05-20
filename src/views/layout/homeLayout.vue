@@ -77,7 +77,6 @@ export default {
         .home_view{
             padding: 20px;
             height: calc(100vh - 83px);
-            width: calc(100vw - 240px);
             overflow: hidden auto;
         }
     }

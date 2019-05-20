@@ -47,7 +47,7 @@ app.use('/',function(req, res, next) {
     "/api/xcentz/v1/users/checkUser",
     "/api/xcentz/v1/users/checkCode",
     "/api/xcentz/v1/users/checkEmailCode",
-]
+  ]
   if(unLessPath.includes(path)){
     res.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
     res.append('Cache-Control', 'no-cache');

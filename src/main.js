@@ -8,9 +8,6 @@ import '@/assets/styles/main.less'
 import 'iview/dist/styles/iview.css';
 import '@/assets/js/iview'
 Vue.config.productionTip = false
-window.addEventListener("unload", () => {
-  alert(666)
-})
 
 Vue.mixin({
   data(){

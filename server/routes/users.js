@@ -82,7 +82,6 @@ router.get('/resetPassword',function(req, res, next){
         ` // html 内容
     };
   
-    // send mail with defined transport object
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
           res.send({
@@ -153,14 +152,13 @@ router.post('/register', function(req, res, next) {
           to: reData.email, // 收件列表
           subject: 'xcentz 运营管理系统账号注册', // 标题
           //text和html两者只支持一种
-          text: `xcentz运营管理系统账号注册`, // 标题
+          text: `xcentz 运营管理系统账号注册`, // 标题
           html: `<b>感谢注册xcentz运营管理系统! 新用户的<em style='font-weight:100;text-decoration:underline;'>账号:${reData.username}或${reData.email} 密码:${reData.password}</em> <br />
                 <p style='text-align:right;font-size:12px;'>xcentz</p>
                 <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
           ` // html 内容
       };
     
-      // send mail with defined transport object
       transporter.sendMail(mailOptions, function(error, info){
           if(error){
             
@@ -213,7 +211,6 @@ router.get('/getCode', function(req, res, next) {
 
 //校验图片验证码
 router.get('/checkCode', function(req, res, next) {
-  // console.log(req.session['captcha'],req.query.code)
   if(req.session['captcha'] == req.query.code){
     res.json({
       valid:true
@@ -237,7 +234,6 @@ router.get('/getEmailCode', function(req, res, next) {
     auth: {
         user: 'xuchangqian@yulong.com',
         //这里密码不是qq密码，是你设置的smtp密码
-        // pass: 'fuyatraecdgxbhih'
         pass: 'Xcq123456'
     }
   });

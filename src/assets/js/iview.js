@@ -33,7 +33,8 @@ import {
     Badge,
     Tabs,
     TabPane,
-    Switch 
+    Switch,
+    AutoComplete
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
@@ -77,7 +78,8 @@ let modules = [
     Badge,
     Tabs,
     TabPane,
-    Switch
+    Switch,
+    AutoComplete
 ]
 for(let item of modules){
     Vue.component(item.name,item)
