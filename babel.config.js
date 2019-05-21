@@ -6,6 +6,7 @@ module.exports = {
     ["import", {
     "libraryName": "iview",
     "libraryDirectory": "src/components"
-  },'iview']
+  },'iview'],
+  'lodash'
 ]
 }

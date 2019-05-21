@@ -54,11 +54,14 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
         activated(){
             this.queryMenu()
         },
+        beforeDestroy(){
+            this.$root.eventBus.$off('getMenu')
+        },
         methods: {
             //查询菜单
             queryMenu(){
                 queryMenu({isAdmin:true}).then((res) => {
-                    this.treeData = res.data.menuList
+                    this.treeData = Object.freeze(res.data.menuList)
                     this.maxId = res.data.maxId
                 })
             },
@@ -151,7 +154,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                 // return
                 this.parentId = data.parent_id
                 this.addMenuStatus = true
-                this.currentTreeData = data
+                this.currentTreeData = Object.freeze(data)
             },
             append (data,menu) {
                 let parentId = data.id

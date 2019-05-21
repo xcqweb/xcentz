@@ -4,9 +4,11 @@
 
 <script>
 import Echarts from 'echarts'
+import {throttle} from 'lodash'
 export default {
     data(){
         return{
+            myChart:null,
             option:{
                 title: {
                     text: 'xcentz'
@@ -51,11 +53,23 @@ export default {
             this.init()
         })
     },
+    mounted(){
+        this.$nextTick( () =>{
+            window.addEventListener('resize',throttle(() => {
+                this.myChart.resize()
+            },300),false)
+        })
+    },
+    beforeDestroy(){
+        window.removeEventListener('resize',throttle(() => {
+            this.myChart.resize()
+        },300),false)
+    },
     methods:{
         init(){
             // console.log(this.setOption)
             let dom = document.querySelector(`#${this.id}`)
-            let myChart = Echarts.init(dom)
+            let myChart = this.myChart = Echarts.init(dom)
             this.setOption ? myChart.setOption(this.setOption) :myChart.setOption({...this.option,...this.setOption})
         }
     }

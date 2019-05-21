@@ -190,6 +190,7 @@ export default {
     display: flex;
     margin-top: 30px;
 }
+
 </style>
 
 

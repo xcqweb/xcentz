@@ -34,7 +34,7 @@
             width='600'
             @on-ok="menuAuthHandler"
             @on-cancel="menuAuthStatus=false">
-            <Tree :data="treeData" show-checkbox :check-strictly='checkStrictly' multiple @on-check-change='checkedChange' ref='MenuTree'></Tree>
+            <Tree :data="treeData" show-checkbox multiple @on-check-change='checkedChange' ref='MenuTree'></Tree>
         </Modal>
 
         <!-- 模块权限分配 -->
@@ -75,7 +75,6 @@ export default {
             isLoading:false,
             addRoleStatus:false,
             editRoleStatus:false,
-            checkStrictly:false,
             roleAdd:{
                 roleName:'',
                 roleDirection:''
@@ -90,7 +89,6 @@ export default {
             updateAuthModuleStr:'',
             currentRoleId:'',
             moduleAuthStatus:false,
-            treeDataModule:[],
             treeData:[],
             columnsRole: [
                     {
@@ -192,6 +190,9 @@ export default {
         this.getRoleList()
         
     },
+    beforeDestroy(){
+        this.$root.eventBus.$off('getMenu')
+    },
     methods:{
         //模块权限全选
         handleCheckAll(){
@@ -206,9 +207,20 @@ export default {
         },
         //查询权限菜单
         queryAuthMenu(roleId){
+            let _this = this
             queryAuthMenu({roleId}).then( (res) => {
-             this.treeData = res.data.menuList
-         })
+                this.treeData = Object.freeze(res.data.menuList)
+
+                function everyOne(item){
+                    for(let key of item){
+                        if(key.children && key.children.length>0){
+                            delete key.checked
+                            everyOne(key.children)
+                        }
+                    }
+                }
+                everyOne(this.treeData)
+            })
         },
         //搜索
         search(){
@@ -256,13 +268,13 @@ export default {
         remove (data) {
             console.log(data)
             this.$Modal.confirm({
-                    title: '提示',
-                    content: '<p>确定要要删除该角色?</p>',
-                    onOk: () => {
-                        delRole({id:data.row.RoleId}).then( (res) => {
-                            this.dataRole.splice(data.index,1)
-                        })
-                    }
+                title: '提示',
+                content: '<p>确定要要删除该角色?</p>',
+                onOk: () => {
+                    delRole({id:data.row.RoleId}).then( (res) => {
+                        this.dataRole.splice(data.index,1)
+                    })
+                }
             })
         },
         //模块权限分配
@@ -272,7 +284,7 @@ export default {
             this.moduleAuthStatus = true
             this.currentRoleId = data.row.RoleId
             queryAuthModule({roleId:data.row.RoleId,isAdmin:true}).then( (res) => {
-                this.moduleList = res.data.muduleList
+                this.moduleList = Object.freeze(res.data.muduleList)
                 for(let item of this.moduleList){
                     if(item.selected){
                         this.checkAllGroup.push(item.ModuleName)
@@ -289,7 +301,6 @@ export default {
         //菜单权限分配
         menuAuthAssign({row:{RoleId}}){
             this.menuAuthStatus = true
-            this.checkStrictly = true
             this.currentRoleId = RoleId
             this.queryAuthMenu(RoleId)
         },
@@ -320,13 +331,10 @@ export default {
             let len = checkedArr.length-1
             let str = ''
             for(let [index,item] of checkedArr.entries()){
-                str += `(${this.currentRoleId},${item.id})${index===len?'':','}`
+                str += `(${this.currentRoleId},${item.id})${index===len?'':','}`  
             }
             this.updateAuthMenuStr = str
-
-            this.checkStrictly = false
             console.log(str)
-            
         },
         //确定 == 菜单权限分配
         menuAuthHandler(){
@@ -343,10 +351,6 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.roleManage{
-    
-}
-</style>
+
 
 

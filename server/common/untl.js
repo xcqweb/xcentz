@@ -18,14 +18,13 @@
                     if(!temp[temp[i].parent_id].children) {
                         temp[temp[i].parent_id].children = [];
                     }
+                    
                     temp[temp[i].parent_id].children.push(temp[i]);
                 }
-                
             } else {
                 tree[temp[i].id] =  temp[i];
             }
         }
-
 
             for(let key in tree){
                 let item = tree[key]

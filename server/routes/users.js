@@ -13,10 +13,10 @@ let {buildTree} = require('../common/untl')
 let moment = require('moment')
 
 router.post('/login', function(req, res, next) {
-    let username = req.body.username
-    let password = req.body.password
-    let verifyCode = req.session['captcha']
-    let nowDate = +new Date()
+    var username = req.body.username
+    var password = req.body.password
+    var verifyCode = req.session['captcha']
+    var nowDate = +new Date()
 
     if(parseInt(req.body.code)!==verifyCode){
       res.status(500).send({
@@ -48,6 +48,10 @@ router.post('/login', function(req, res, next) {
               errorCode:10005
             })
           }
+      },error => {
+        res.status(500).send({
+          errorCode:100043
+        })
       })
     }
 });

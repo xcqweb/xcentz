@@ -202,46 +202,20 @@ export default {
                             })
                         }
                     },
-                    // {
-                    //     title: '邮箱号',
-                    //     key: 'Email',
-                    //     align:'center'
-                    // },
-                    // {
-                    //     title: '手机号',
-                    //     key: 'Phone',
-                    //     // width:120,
-                    //     align:'center'
-                    // },
+                    
                     {
                         title: '中文名',
                         key: 'Cname',
                         // width:120,
                         align:'center'
                     },
-                    // {
-                    //     title: '英文名',
-                    //     key: 'UserName',
-                    //     // width:120,
-                    //     align:'center'
-                    // },
+                   
                     {
                         title: '角色',
                         key: 'Directions',
                         // width:120,
                         align:'center',
                     },
-                    // {
-                    //     title: '最近登录时间',
-                    //     key: 'LoatLoginTime',
-                    //     align:'center'
-                    // },
-                    // {
-                    //     title: '账号创建时间',
-                    //     key: 'CreateTime',
-                    //     // width:150,
-                    //     align:'center'
-                    // },
                     {
                         title: '操作',
                         align:'center',
@@ -400,10 +374,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.userManage{
-   position:relative;
-}
-    
+    .userManage{
+        position:relative;
+    }
 </style>
 
 

@@ -37,7 +37,6 @@ app.use(session({
 app.use(jwtAuth);
 
 app.use('/',function(req, res, next) {
-  
   let path = req.path
   let unLessPath = [
     "/api/xcentz/v1/users/login", 

@@ -77,7 +77,7 @@ export default {
         queryMenu(){
             queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
                 let menuList = res.data.menuList
-                this.menus = menuList[0].children
+                this.menus = Object.freeze(menuList[0].children)
                 //配置权限动态路由
                 let filterAuthRoutes = this.fliterRoute(flatten(menuList))
                 this.$router.matcher.addRoutes(filterAuthRoutes)

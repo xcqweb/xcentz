@@ -10,7 +10,7 @@ import authRoute from './modules/authRoute'
 
 Vue.use(Router)
 
-let staticRoute = [
+let staticRoute = [...authRoute,
     {
       path:'/401',
       name:'401',

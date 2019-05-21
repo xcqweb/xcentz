@@ -37,6 +37,7 @@
 <script>
 
 	import {login,getCode,checkCode} from '@/assets/api'
+import { error } from 'util';
 	export default{
 		name:'login',
 		data(){
@@ -52,6 +53,8 @@
 							this.validCode = false
 							callback(new Error('验证码不正确!'));
 						}
+					},error => {
+						this.getCode()
 					})
 				}
 			};
@@ -118,13 +121,13 @@
 			},
 			appendFix(){
 				if(this.formInline.user){
-					this.tipUserStatus = true
 					if(this.formInline.user.indexOf('@') >= 0){
+						this.tipUserStatus = true
 						let index = this.formInline.user.indexOf('@')
 						let str = this.formInline.user.substr(0,index)
 						this.tipUser = str+'@xcentz.com'
 					}else{
-						this.tipUser = this.formInline.user+'@xcentz.com'
+						this.tipUser = this.formInline.user
 					}
 					
 				}

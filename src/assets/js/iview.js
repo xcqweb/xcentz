@@ -34,6 +34,7 @@ import {
     Tabs,
     TabPane,
     Switch,
+    Spin
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
@@ -77,6 +78,7 @@ let modules = [
     Tabs,
     TabPane,
     Switch,
+    Spin
 ]
 for(let item of modules){
     Vue.component(item.name,item)
