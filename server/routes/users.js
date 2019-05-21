@@ -61,7 +61,7 @@ router.get('/resetPassword',function(req, res, next){
   let userId = req.query.userId
   let toEmail = req.query.email
   let newPsw = stringRandom()
-  query(`UPDATE Pub_User SET PassWord = '${newPsw}' WHERE UserId ='${userId}'`).then( (r) => {
+  query(`UPDATE Pub_User SET PassWord = '${newPsw}',Token='' WHERE UserId ='${userId}'`).then( (r) => {
     var transporter = nodemailer.createTransport({
       //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
       host: 'smtp.exmail.qq.com',
@@ -440,10 +440,13 @@ router.put('/menuAuth',function(req,res,next){
       })
     }else{
       query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {
-        res.json({
-          errorCode:100031,
-          message:'菜单权限配置成功!'
+        query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+          res.json({
+            errorCode:100031,
+            message:'菜单权限配置成功!'
+          })
         })
+        
       },error => {
         res.status(500).json({
           errorCode:100032,
@@ -575,7 +578,7 @@ router.delete('/role',function(req,res,next){
 //分配角色
 router.put('/assignRole',function(req,res,next){
   let reData = req.body
-  query(`UPDATE Pub_User SET RoleId=${reData.roleId} WHERE UserId='${reData.userId}'`).then( (r) => {
+  query(`UPDATE Pub_User SET RoleId=${reData.roleId},Token='' WHERE UserId='${reData.userId}'`).then( (r) => {
     res.send({
       errorCode:100021,
       message:'角色分配成功!'
@@ -682,10 +685,13 @@ router.put('/authModule',function(req,res,next){
       })
     }else{
       query(`INSERT INTO Pub_Role_Moudule(RoleId,ModuleId) VALUES${str}`).then( () => {
-        res.json({
-          errorCode:100034,
-          message:'模块权限配置成功!'
+        query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+          res.json({
+            errorCode:100034,
+            message:'模块权限配置成功!'
+          })
         })
+        
       },error => {
         res.status(500).json({
           errorCode:100035,
