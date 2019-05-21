@@ -434,9 +434,11 @@ router.put('/menuAuth',function(req,res,next){
   let roleId = Number(req.body.roleId)
   query(`DELETE FROM Pub_Role_Menu WHERE RoleId = ${roleId}`).then( (r) => {
     if(!str){
-      res.json({
-        errorCode:100031,
-        message:'菜单权限配置成功!'
+      query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+        res.json({
+          errorCode:100031,
+          message:'菜单权限配置成功!'
+        })
       })
     }else{
       query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {
@@ -679,9 +681,11 @@ router.put('/authModule',function(req,res,next){
   let roleId = Number(req.body.roleId)
   query(`DELETE FROM Pub_Role_Moudule WHERE RoleId = ${roleId}`).then( () => {
     if(!str){
-      res.json({
-        errorCode:100034,
-        message:'模块权限配置成功!'
+      query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+        res.json({
+          errorCode:100034,
+          message:'模块权限配置成功!'
+        })
       })
     }else{
       query(`INSERT INTO Pub_Role_Moudule(RoleId,ModuleId) VALUES${str}`).then( () => {
