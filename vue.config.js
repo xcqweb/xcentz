@@ -1,8 +1,8 @@
 var CommpressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack');
-const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
+// const webpack = require('webpack');
+// const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
 
 function resolve (dir) {
