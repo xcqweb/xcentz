@@ -31,7 +31,7 @@ app.use(session({
   secret:'sdso7sash734u347dd34',   //  加密key 可以随意书写
   cookie:{maxAge:60*60*1000},   //  两次请求的时间差，即超过这个时间再去访问session会失效
   secure:true,
-  resave:false,
+  resave:true,
   saveUninitialized:true
 }))
 
@@ -51,7 +51,9 @@ app.use('/',function(req, res, next) {
   if(unLessPath.includes(path)){
     next();
   }else{
+    
     let token = req.headers.authorization.substr(7)
+    console.log(token)
     query(`SELECT Token FROM Pub_User WHERE Token='${token}'`).then( (r) => {
       if(r.length){
         next();

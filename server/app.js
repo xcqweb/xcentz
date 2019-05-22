@@ -31,7 +31,7 @@ app.use(session({
   secret:'sdso7sash734u347dd34',   //  加密key 可以随意书写
   cookie:{maxAge:60*60*1000},   //  两次请求的时间差，即超过这个时间再去访问session会失效
   secure:true,
-  resave:false,
+  resave:true,
   saveUninitialized:true
 }))
 

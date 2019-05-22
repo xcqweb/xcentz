@@ -16,7 +16,7 @@ router.post('/login', function(req, res, next) {
     var password = req.body.password
     var verifyCode = req.session['captcha']
     var nowDate = +new Date()
-    console.log(verifyCode)
+    console.log(username,password,verifyCode)
     if(parseInt(req.body.code)!==verifyCode){
       res.status(500).send({
         message:'验证码错误！',
@@ -37,6 +37,7 @@ router.post('/login', function(req, res, next) {
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
               expiresIn: '1h' // 2小时过期
             });
+            console.log(token)
             //更新登录时间
             query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
               res.status(200).json({
