@@ -1,11 +1,11 @@
 <template>
   <div>
-    <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
+    <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick" />
     <div class="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
       拖拽文件到此处或
-      <Button :loading="loading" style="margin-left:16px;" size="large" type="primary" @click="handleUpload">
+      <i-button :loading="loading" style="margin-left:16px;" size="large" type="primary" @click="handleUpload">
         点击上传预览
-      </Button>
+      </i-button>
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ export default {
         reader.onload = (e) => {
           const data = e.target.result
           const workbook = XLSX.read(data, { type: 'array' })
-          const firstSheetName = workbook.SheetNames[1]
+          const firstSheetName = workbook.SheetNames[0]
           const worksheet = workbook.Sheets[firstSheetName]
           const header = this.getHeaderRow(worksheet)
           const results = XLSX.utils.sheet_to_json(worksheet)

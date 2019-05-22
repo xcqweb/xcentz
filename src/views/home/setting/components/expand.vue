@@ -1,35 +1,35 @@
 <template>
     <div style='height:100%'>
-        <Row class="expand-row">
-            <i-Col span="8">
+        <i-row class="expand-row">
+            <i-col span="8">
                 <span class="expand-key">英文名: </span>
                 <span class="expand-value">{{ row.UserName }}</span>
-            </i-Col>
-            <i-Col span="8">
+            </i-col>
+            <i-col span="8">
                 <span class="expand-key">邮箱号: </span>
                 <span class="expand-value">{{ row.Email }}</span>
-            </i-Col>
-            <i-Col span="8">
+            </i-col>
+            <i-col span="8">
                 <span class="expand-key">手机号: </span>
                 <span class="expand-value">{{ row.Phone }}</span>
-            </i-Col>
+            </i-col>
             
-        </Row>
-        <Row>
-            <i-Col span="8">
+        </i-row>
+        <i-row>
+            <i-col span="8">
                 <span class="expand-key">最近登录时间: </span>
                 <span class="expand-value">{{ row.LoatLoginTime }}</span>
-            </i-Col>
-            <i-Col span="8">
+            </i-col>
+            <i-col span="8">
                 <span class="expand-key">账号创建时间: </span>
                 <span class="expand-value">{{ row.CreateTime }}</span>
-            </i-Col>
+            </i-col>
             
             <!-- <i-Col span="8">
                 <span class="expand-key">Favorite music: </span>
                 <span class="expand-value">{{ row.music }}</span>
             </i-Col> -->
-        </Row>
+        </i-row>
     </div>
 </template>
 

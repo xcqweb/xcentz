@@ -1,47 +1,47 @@
 <template>
     <div style="height:41px;">
-        <Breadcrumb>
-            <BreadcrumbItem v-for="(item,index) in levelList" :key="item.path">
+        <i-breadcrumb>
+            <i-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
                 <!-- <Icon type="ios-home-outline"></Icon> -->
                 <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">
                     {{item.meta.title}}
                 </span>
                 <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
-            </BreadcrumbItem>
-        </Breadcrumb>
+            </i-breadcrumb-item>
+        </i-breadcrumb>
         <div class="userInfo">
-            <Poptip trigger="hover" placement='top-end' width='360' style="margin:12px 48px 0 0">
-                <Badge :count='100'>
-                    <Icon type="ios-notifications-outline" size="26"></Icon>
-                </Badge>
+            <i-poptip trigger="hover" placement='top-end' width='360' style="margin:12px 48px 0 0">
+                <i-badge :count='100'>
+                    <i-icon type="ios-notifications-outline" size="26"></i-icon>
+                </i-badge>
                 <div slot="content" class="msg_content">
                     <div style="color:rgb(181, 186, 189);">
-                        <Icon type="ios-notifications-outline" size="50"></Icon>
+                        <i-icon type="ios-notifications-outline" size="50"></i-icon>
                         <p>暂无消息</p> 
                     </div>
                    
                 </div>
-            </Poptip>
+            </i-poptip>
             
-            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="margin-right:10px;"/>
-            <Poptip placement='bottom-end' trigger='hover' @on-popper-show='isDown=true' @on-popper-hide='isDown=false'>
+            <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="margin-right:10px;"/>
+            <i-poptip placement='bottom-end' trigger='hover' @on-popper-show='isDown=true' @on-popper-hide='isDown=false'>
                 <span class="userInfo_name">{{userInfo.Cname}}</span>
                 <span class="arrow">
-                    <Icon type="md-arrow-dropup" v-show="!isDown"/>
-                    <Icon type="md-arrow-dropdown" v-show="isDown"/>
+                    <i-icon type="md-arrow-dropup" v-show="!isDown"/>
+                    <i-icon type="md-arrow-dropdown" v-show="isDown"/>
                 </span>
                 
                 <div slot="content">
-                    <Dropdown @click.native='itemHandler'>
-                        <DropdownItem data-index='1'>主页</DropdownItem>
-                        <DropdownItem divided data-index='2'>个人中心</DropdownItem>
-                        <DropdownItem divided data-index='3'>退出登录</DropdownItem>
-                        <DropdownItem divided data-index='4'>消息</DropdownItem>
-                    </Dropdown>
+                    <i-dropdown @click.native='itemHandler'>
+                        <i-dropdown-item data-index='1'>主页</i-dropdown-item>
+                        <i-dropdown-item divided data-index='2'>个人中心</i-dropdown-item>
+                        <i-dropdown-item divided data-index='3'>退出登录</i-dropdown-item>
+                        <i-dropdown-item divided data-index='4'>消息</i-dropdown-item>
+                    </i-dropdown>
                 </div>
-            </Poptip>
+            </i-poptip>
             <span class="fullScreen" title="全屏" @click="screenFullHandler">
-                <Icon type="md-expand" />
+                <i-icon type="md-expand" />
             </span>
         </div>
     </div>

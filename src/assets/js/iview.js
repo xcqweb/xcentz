@@ -81,5 +81,6 @@ let modules = [
     Spin
 ]
 for(let item of modules){
-    Vue.component(item.name,item)
+    let hasI = item.name.charAt(0) === 'i'
+    Vue.component(hasI?item.name:`i${item.name}`,item)
 }

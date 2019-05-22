@@ -1,60 +1,60 @@
 <template>
     <div class="roleManage">
         <div class="top_operate">
-            <Input search enter-button v-model='searchKey' size="large" style="width:300px;margin-right:30px;" @on-search='search' @on-enter='search' placeholder="角色查询" />
-            <Button size="large" icon="ios-add" type="primary" @click="addRoleStatus=true">新增角色</Button> 
+            <i-input search enter-button v-model='searchKey' size="large" style="width:300px;margin-right:30px;" @on-search='search' @on-enter='search' placeholder="角色查询" />
+            <i-button size="large" icon="ios-add" type="primary" @click="addRoleStatus=true">新增角色</i-button> 
         </div>
 
-        <Table border stripe  size='large' :loading='isLoading' :columns="columnsRole" :data="dataRole" v-show="dataRole.length"></Table>
-        <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
+        <i-table border stripe  size='large' :loading='isLoading' :columns="columnsRole" :data="dataRole" v-show="dataRole.length"></i-table>
+        <i-page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
         <!-- 新增角色 -->
-         <Modal
+         <i-modal
             v-model="addRoleStatus"
             title="新增角色"
             @on-ok="addRole"
             @on-cancel="addRoleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="roleAdd.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="roleAdd.roleDirection" placeholder="请输入角色说明..." /></div>
-        </Modal>
+            <div class="center_g marginTop10"><p class="label_g">角色名称</p><i-input v-model="roleAdd.roleName" placeholder="请输入角色名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input v-model="roleAdd.roleDirection" placeholder="请输入角色说明..." /></div>
+        </i-modal>
 
         <!-- 编辑角色 -->
-         <Modal
+         <i-modal
             v-model="editRoleStatus"
             title="编辑角色"
             @on-ok="editRole"
             @on-cancel="editRoleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">角色名称</p><Input v-model="roleEdit.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><Input v-model="roleEdit.roleDirection" placeholder="请输入角色说明..." /></div>
-        </Modal>
+            <div class="center_g marginTop10"><p class="label_g">角色名称</p><i-input v-model="roleEdit.roleName" placeholder="请输入角色名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input v-model="roleEdit.roleDirection" placeholder="请输入角色说明..." /></div>
+        </i-modal>
 
         <!-- 菜单权限分配 -->
-         <Modal
+         <i-modal
             v-model="menuAuthStatus"
             title="菜单权限分配"
             width='600'
             @on-ok="menuAuthHandler"
             @on-cancel="menuAuthStatus=false">
-            <Tree :data="treeData" show-checkbox multiple @on-check-change='checkedChange' ref='MenuTree'></Tree>
-        </Modal>
+            <i-tree :data="treeData" show-checkbox multiple @on-check-change='checkedChange' ref='MenuTree'></i-tree>
+        </i-modal>
 
         <!-- 模块权限分配 -->
-         <Modal
+         <i-modal
             v-model="moduleAuthStatus"
             title="模块权限分配"
             width='800'
             @on-ok="moduleAuthHandler"
             @on-cancel="moduleAuthStatus=false">
             <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-bottom:6px;">
-                <Checkbox
+                <i-checkbox
                     :indeterminate="indeterminate"
                     :value="checkAll"
                     size='large'
-                    @click.prevent.native="handleCheckAll">{{checkAll?'取消全选':'全选'}}</Checkbox>
+                    @click.prevent.native="handleCheckAll">{{checkAll?'取消全选':'全选'}}</i-checkbox>
             </div>
-            <CheckboxGroup v-model="checkAllGroup" @on-change="ModulecheckedChange">
-                <Checkbox size='large' v-for="item in moduleList" :label="item.ModuleName" :key="item.ModuleId"></Checkbox>
-            </CheckboxGroup>
-        </Modal>
+            <i-checkbox-group v-model="checkAllGroup" @on-change="ModulecheckedChange">
+                <i-checkbox size='large' v-for="item in moduleList" :label="item.ModuleName" :key="item.ModuleId"></i-checkbox>
+            </i-checkbox-group>
+        </i-modal>
     </div>
 </template>
 
@@ -123,7 +123,7 @@ export default {
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
-                                h('Button', {
+                                h('i-button', {
                                     props: {
                                         type: 'primary',
                                         icon:'md-create'
@@ -137,7 +137,7 @@ export default {
                                         }
                                     }
                                 }, '编辑'),
-                                h('Button', {
+                                h('i-button', {
                                     props: {
                                         type: 'primary',
                                         icon:'ios-create-outline'
@@ -151,7 +151,7 @@ export default {
                                         }
                                     }
                                 }, '菜单权限分配'),
-                                h('Button', {
+                                h('i-button', {
                                     props: {
                                         type: 'primary',
                                         icon:'ios-create-outline'
@@ -165,7 +165,7 @@ export default {
                                         }
                                     }
                                 }, '模块权限分配'),
-                                h('Button', {
+                                h('i-button', {
                                     props: {
                                         type: 'error',
                                         icon:'ios-trash-outline'

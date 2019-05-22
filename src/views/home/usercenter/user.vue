@@ -1,66 +1,66 @@
 <template>
-    <Tabs>
-        <TabPane label="个人信息" icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
-            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="width:260px;height:300px;margin:0 36px;" @click.native='updateAvatar' />
+    <i-tabs>
+        <i-tab-pane label="个人信息" icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
+            <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="width:260px;height:300px;margin:0 36px;" @click.native='updateAvatar' />
             <i-form ref="form_adduser" :model="addUser" :label-width="80" :rules="ruleInline" style="width:360px;">
-                <FormItem prop="user" style="height:40px;" label='用户名'>
-                    <Input type="text" size="large" style="width:100%;" v-model="addUser.user" disabled/>
-                </FormItem>
+                <i-form-item prop="user" style="height:40px;" label='用户名'>
+                    <i-input type="text" size="large" style="width:100%;" v-model="addUser.user" disabled/>
+                </i-form-item>
 
-                <FormItem prop="phone" style="margin:26px 0;" label='电话'>
-                    <Input type="text" size="large" style="width:100%;" @on-blur="editUser" v-model="addUser.phone"/>
-                </FormItem>
+                <i-form-item prop="phone" style="margin:26px 0;" label='电话'>
+                    <i-input type="text" size="large" style="width:100%;" @on-blur="editUser" v-model="addUser.phone"/>
+                </i-form-item>
 
-                <FormItem prop="role" style="margin:26px 0;" label='角色'>
-                    <Input type="text" size="large" style="width:100%;" v-model="addUser.role" disabled />
-                </FormItem>
+                <i-form-item prop="role" style="margin:26px 0;" label='角色'>
+                    <i-input type="text" size="large" style="width:100%;" v-model="addUser.role" disabled />
+                </i-form-item>
 
-                <FormItem prop="cname" style="margin:26px 0;" label='中文名'>
-                    <Input type="text" size="large" style="width:100%;" @on-blur="editUser" v-model="addUser.cname" />
-                </FormItem>
+                <i-form-item prop="cname" style="margin:26px 0;" label='中文名'>
+                    <i-input type="text" size="large" style="width:100%;" @on-blur="editUser" v-model="addUser.cname" />
+                </i-form-item>
 
-                <FormItem prop="email" style="margin:26px 0;" label='邮箱'>
-                    <Input type="text" size="large" style="width:100%;" v-model="addUser.email" disabled placeholder="请输入邮箱" />
-                </FormItem>              
+                <i-form-item prop="email" style="margin:26px 0;" label='邮箱'>
+                    <i-input type="text" size="large" style="width:100%;" v-model="addUser.email" disabled placeholder="请输入邮箱" />
+                </i-form-item>              
             </i-form>
-        </TabPane>
-        <TabPane label="修改密码" icon="md-create">
+        </i-tab-pane>
+        <i-tab-pane label="修改密码" icon="md-create">
             <i-form ref="form_adduser" :model="addUser" :label-width="80" :rules="ruleInline" style="width:360px;">
-                <FormItem prop="old_password" style="margin:26px 0;" label='原密码'>
-                    <Input type="password" size="large" style="width:100%;" v-model="addUser.old_password" placeholder="请输入原密码" />
-                </FormItem>
+                <i-form-item prop="old_password" style="margin:26px 0;" label='原密码'>
+                    <i-input type="password" size="large" style="width:100%;" v-model="addUser.old_password" placeholder="请输入原密码" />
+                </i-form-item>
 
-                <FormItem prop="password" style="margin:26px 0;" label='新密码'>
-                    <Input type="password" size="large" style="width:100%;" v-model="addUser.password" placeholder="请输入密码" />
-                </FormItem>
+                <i-form-item prop="password" style="margin:26px 0;" label='新密码'>
+                    <i-input type="password" size="large" style="width:100%;" v-model="addUser.password" placeholder="请输入密码" />
+                </i-form-item>
 
-                <FormItem prop="confirmPsw" style="margin:26px 0;" label='确认密码'>
-                    <Input type="password" size="large" style="width:100%;" v-model="addUser.confirmPsw" placeholder="请再次输入密码" />
-                </FormItem>
+                <i-form-item prop="confirmPsw" style="margin:26px 0;" label='确认密码'>
+                    <i-input type="password" size="large" style="width:100%;" v-model="addUser.confirmPsw" placeholder="请再次输入密码" />
+                </i-form-item>
 
-                <FormItem prop="email" style="margin:26px 0;" label='邮箱'>
-                    <Input type="text" size="large" style="width:100%;" v-model="addUser.email" disabled placeholder="请输入邮箱" />
-                </FormItem> 
+                <i-form-item prop="email" style="margin:26px 0;" label='邮箱'>
+                    <i-input type="text" size="large" style="width:100%;" v-model="addUser.email" disabled placeholder="请输入邮箱" />
+                </i-form-item> 
 
-                <FormItem prop="code" style="margin:26px 0;" label='验证码'>
-                    <Input type="text" size="large" style="width:100%;" v-model="addUser.code" placeholder="请输入邮箱验证码" >
-                        <Button :disabled="isSend?true:false" slot="append" :loading='loading' :style="{backgroundColor:isSend?'#f7f7f7':'#2d8cf0',color:isSend?'#c5c8ce':'#fff'}" @click="getCode">{{isSendText}}</Button>
-                    </Input>
-                </FormItem>
+                <i-form-item prop="code" style="margin:26px 0;" label='验证码'>
+                    <i-input type="text" size="large" style="width:100%;" v-model="addUser.code" placeholder="请输入邮箱验证码" >
+                        <i-button :disabled="isSend?true:false" slot="append" :loading='loading' :style="{backgroundColor:isSend?'#f7f7f7':'#2d8cf0',color:isSend?'#c5c8ce':'#fff'}" @click="getCode">{{isSendText}}</i-button>
+                    </i-input>
+                </i-form-item>
 
             </i-form>
-            <Button type="primary" @click="handlerSubmit('form_adduser')" style="float:left;margin-left:30px;width:330px;" :disabled='!(addUser.old_password && addUser.password && addUser.confirmPsw && addUser.code)'>确认</Button>
-        </TabPane>
-        <TabPane label="用户设置" icon="logo-tux">
+            <i-button type="primary" @click="handlerSubmit('form_adduser')" style="float:left;margin-left:30px;width:330px;" :disabled='!(addUser.old_password && addUser.password && addUser.confirmPsw && addUser.code)'>确认</i-button>
+        </i-tab-pane>
+        <i-tab-pane label="用户设置" icon="logo-tux">
             <ul style="margin-top:20px;">
                 <li style="display:flex;align-items:center;width:100%;padding:20px 0;border-bottom:1px solid rgb(245, 238, 238);" v-for="i in 10">
                     <span style="flex:1;text-align:left;font-size:16px;">消息接收设置</span>
-                    <i-Switch size="large" />
+                    <i-switch size="large" />
                 </li>
             </ul>
-        </TabPane>
-        <TabPane label="系统消息" icon="md-alarm"></TabPane>
-    </Tabs>
+        </i-tab-pane>
+        <i-tab-pane label="系统消息" icon="md-alarm"></i-tab-pane>
+    </i-tabs>
 </template>
 
 <script>

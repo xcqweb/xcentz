@@ -5,7 +5,6 @@ const {query} = require('../database');
 //查询用户信息
 router.get('/queryUser',function(req,res){
     let userId = req.query.userId
-    let roleId = req.query.roleId
     query(`SELECT Pub_User.UserId,
     Pub_User.UserName AS user,
     Pub_User.Email AS email,
@@ -17,7 +16,6 @@ router.get('/queryUser',function(req,res){
     FROM 
     Pub_Role,
     Pub_User WHERE Pub_Role.RoleId=Pub_User.RoleId AND Pub_User.UserId='${userId}'`).then( (r) => {
-        // console.log(r)
         res.send({
             userInfo:r[0]
         })
@@ -31,10 +29,8 @@ router.put('/editPassword',function(req,res){
     console.log(user.code,req.session['verifyEmail'].verifyEmailCode)
     if(req.session['verifyEmail'].verifyEmailCode === user.code){
         query(`SELECT PassWord FROM Pub_User WHERE UserId='${userId}'`).then( (re) => {
-            console.log(re)
             if(user.old_password === re[0].PassWord){
                 query(`UPDATE Pub_User SET PassWord='${user.confirmPsw}' WHERE UserId='${userId}'`).then( (r) => {
-                    console.log(r)
                     res.send({
                         errorCode:100038
                     })
@@ -59,7 +55,6 @@ router.put('/editPassword',function(req,res){
 //用户修改个人信息
 router.put('/edituserInfo',function(req,res){
     let user = req.body
-    console.log(user.phone,user.cname,user.userId)
     query(`UPDATE Pub_User SET Phone='${user.phone}',Cname='${user.cname}' WHERE UserId='${user.userId}'`).then( (r) => {
         res.send({
             errorCode:100041

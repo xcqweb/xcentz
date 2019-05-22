@@ -1,29 +1,29 @@
 <template>
     <div class="menuConfig">
         <div class="menu_tree">
-           <Tree :data="treeData" :render="renderContent"></Tree> 
+           <i-tree :data="treeData" :render="renderContent"></i-tree> 
         </div>
         <!-- 新增菜单 -->
-         <Modal
+         <i-modal
             v-model="addMenuStatus"
             title="新增菜单"
             @on-ok="addMenuHandler"
             @on-cancel="addMenuStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">菜单名称</p><Input v-model="formItem.menuName" placeholder="请输入菜单名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">菜单路径</p><Input v-model="formItem.route" placeholder="请输入菜单路径..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">菜单图标</p><Input v-model="formItem.icon" placeholder="请输入菜单图标..." /></div>
-        </Modal>
+            <div class="center_g marginTop10"><p class="label_g">菜单名称</p><i-input v-model="formItem.menuName" placeholder="请输入菜单名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">菜单路径</p><i-input v-model="formItem.route" placeholder="请输入菜单路径..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">菜单图标</p><i-input v-model="formItem.icon" placeholder="请输入菜单图标..." /></div>
+        </i-modal>
 
         <!-- 编辑菜单 -->
-         <Modal
+         <i-modal
             v-model="editMenuStatus"
             title="编辑菜单"
             @on-ok="editMenuHandler"
             @on-cancel="editMenuStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">菜单名称</p><Input v-model="editFrom.menuName" placeholder="请输入菜单名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">菜单路径</p><Input v-model="editFrom.route" placeholder="请输入菜单路径..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">菜单图标</p><Input v-model="editFrom.icon" placeholder="请输入菜单图标..." /></div>
-        </Modal>
+            <div class="center_g marginTop10"><p class="label_g">菜单名称</p><i-input v-model="editFrom.menuName" placeholder="请输入菜单名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">菜单路径</p><i-input v-model="editFrom.route" placeholder="请输入菜单路径..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">菜单图标</p><i-input v-model="editFrom.icon" placeholder="请输入菜单图标..." /></div>
+        </i-modal>
     </div>
 </template>
 <script>

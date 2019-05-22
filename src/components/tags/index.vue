@@ -2,9 +2,9 @@
     <div class="tags">
         <div class="tags_con" :style="{minWidth:`${comWidth}px`}">
             <span v-for="item in tags">
-               <Tag closable :color="isActive(item)?'primary':'default'" @on-close='closeTag(item)'>
+               <i-tag closable :color="isActive(item)?'primary':'default'" @on-close='closeTag(item)'>
                    <router-link :to="item.path">{{item.meta.title}}</router-link>
-                </Tag> 
+                </i-tag> 
             </span>
         </div>
     </div>

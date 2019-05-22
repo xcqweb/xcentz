@@ -1,34 +1,34 @@
 <template>
 	<div class="con">
 		<i-form ref="formInline" :model="formInline" :rules="ruleInline" style="width:360px;">
-			<FormItem prop="user" style="height:40px;position:relative;">
-				<Input type="text" size="large" style="width:100%;" v-model="formInline.user" @on-blur='blurFix' @on-keyup="appendFix" placeholder="用户名或邮箱">
-						<Icon type="ios-person-outline" slot="prepend"></Icon>
-				</Input>
+			<i-form-item prop="user" style="height:40px;position:relative;">
+				<i-input type="text" size="large" style="width:100%;" v-model="formInline.user" @on-blur='blurFix' @on-keyup="appendFix" placeholder="用户名或邮箱">
+						<i-icon type="ios-person-outline" slot="prepend"></i-icon>
+				</i-input>
 				<div class="ivu-select-dropdown" v-show="tipUserStatus" style="width: 100%; position: absolute; will-change: top, left; transform-origin: center top; top: 33px; left: 0px;" x-placement="bottom-start">
 					<ul class="ivu-select-dropdown-list">
 						<li class="ivu-select-item" style='text-align:left;' @click="chooseTipUser">{{tipUser}}</li>
 					</ul> 
 				</div>
-			</FormItem>
-			<FormItem prop="password" style="margin:36px 0 36px 0;">
-				<Input :type="showPsw?'password':'text'" size="large" style="width:100%;" v-model="formInline.password" placeholder="密码">
-					<Icon type="ios-lock-outline" slot="prepend"></Icon>
-					<Icon type="md-eye" slot="append" style="cursor:pointer;" v-show="showPsw" @click="showPsw=false"/>
-					<Icon type="md-eye-off" slot="append" style="cursor:pointer;" v-show="!showPsw" @click="showPsw=true"/>
-				</Input>
-			</FormItem>
-			<FormItem prop="code" style="margin:36px 0 36px 0;">
-				<Input type="text" size="large" style="width:100%;" v-model="formInline.code" placeholder="验证码">
+			</i-form-item>
+			<i-form-item prop="password" style="margin:36px 0 36px 0;">
+				<i-input :type="showPsw?'password':'text'" size="large" style="width:100%;" v-model="formInline.password" placeholder="密码">
+					<i-icon type="ios-lock-outline" slot="prepend"></i-icon>
+					<i-icon type="md-eye" slot="append" style="cursor:pointer;" v-show="showPsw" @click="showPsw=false"/>
+					<i-icon type="md-eye-off" slot="append" style="cursor:pointer;" v-show="!showPsw" @click="showPsw=true"/>
+				</i-input>
+			</i-form-item>
+			<i-form-item prop="code" style="margin:36px 0 36px 0;">
+				<i-input type="text" size="large" style="width:100%;" v-model="formInline.code" placeholder="验证码">
 					<img slot="append" :src='verifyImg' @click="getCode" width="80" height="20" style="cursor:pointer;"/>
-				</Input>
-			</FormItem>
+				</i-input>
+			</i-form-item>
 			<p style="position:relative;height:30px;">
-				<Checkbox v-model="memory" style="position:absolute;top:-10px;left:0;">记住密码</Checkbox>
+				<i-checkbox v-model="memory" style="position:absolute;top:-10px;left:0;">记住密码</i-checkbox>
 			</p>
-			<FormItem>
-				<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline')" style="width:360px;">登录</Button>
-			</FormItem>
+			<i-form-item>
+				<i-button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline')" style="width:360px;">登录</i-button>
+			</i-form-item>
 
 		</i-form>
 	</div>
@@ -36,7 +36,7 @@
 
 <script>
 
-	import {login,getCode,checkCode} from '@/assets/api'
+import {login,getCode,checkCode} from '@api'
 import { error } from 'util';
 	export default{
 		name:'login',
@@ -51,6 +51,7 @@ import { error } from 'util';
 							callback();
 						}else{
 							this.validCode = false
+							this.getCode()
 							callback(new Error('验证码不正确!'));
 						}
 					},error => {
@@ -153,22 +154,22 @@ import { error } from 'util';
 				})
 			},
 			handleSubmit(name) {
-					this.$refs[name].validate((valid) => {
-						if (valid) {
-							this.loading = true
-							login({username:this.formInline.user,password:this.formInline.password,code:this.formInline.code}).then( (res) => {
-								if(res.status===200){
-									this.loading = false
-									this.userInfo = res.data.user
-									localStorage.setItem('token',res.data.token)
-									localStorage.setItem('userInfo',JSON.stringify(res.data.user))
-									this.$router.push('/home')
-								}
-							},error => {
+				this.$refs[name].validate((valid) => {
+					if (valid) {
+						this.loading = true
+						login({username:this.formInline.user,password:this.formInline.password,code:this.formInline.code}).then( (res) => {
+							if(res.status===200){
 								this.loading = false
-							})
-						}
-					})
+								this.userInfo = res.data.user
+								localStorage.setItem('token',res.data.token)
+								localStorage.setItem('userInfo',JSON.stringify(res.data.user))
+								this.$router.push('/home')
+							}
+						},error => {
+							this.loading = false
+						})
+					}
+				})
 			}
 		}
 	}

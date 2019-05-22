@@ -7,7 +7,7 @@ import {Message} from 'iview'
 
 let instance = axios.create({
 	baseURL: '/api/xcentz/v1', // api的base_url
-    timeout: 10000 // request timeout
+    timeout: 20000 // request timeout
 })
 
 instance.interceptors.request.use( (config) => {
@@ -42,7 +42,7 @@ instance.interceptors.response.use( (response) => {
 }, error => {
 	if(!error.response){
 		Message.message('error',{	
-			content: '出错啦!',
+			content: '请求超时!',
 			top: 50,
 			duration: 3
 		})

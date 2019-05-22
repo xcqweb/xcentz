@@ -2,7 +2,7 @@
     <div>
         <Upload-excel :on-success="handleSuccess" :before-upload="beforeUpload" ></Upload-excel>
       
-        <Table stripe :columns="tableHeader" :data="tableData" style="margin-top:20px;"></Table>
+        <i-table stripe :columns="tableHeader" :data="tableData" style="margin-top:20px;"></i-table>
     </div>
 </template>
 

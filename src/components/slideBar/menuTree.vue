@@ -1,29 +1,29 @@
 <template>
-    <Menu theme="dark" accordion :active-name='$route.path' @on-select="selectBack">
-        <Submenu :name="item.id" v-for="item in menus" v-if="item.children" :key="item.id">
+    <i-menu theme="dark" accordion :active-name='$route.path' @on-select="selectBack">
+        <i-submenu :name="item.id" v-for="item in menus" v-if="item.children" :key="item.id">
             <template slot="title">
-                <Icon :type="item.icon" />
+                <i-icon :type="item.icon" />
                 {{item.title}}
             </template>
 
            
             <div v-for="child in item.children" :key="child.id">
-                <MenuGroup :title="child.title" v-if="child.children && child.children.length">
-                    <MenuItem v-for="childItem in child.children" :key="childItem.id">{{childItem.title}}</MenuItem>
-                </MenuGroup>
+                <i-menu-group :title="child.title" v-if="child.children && child.children.length">
+                    <i-menu-item v-for="childItem in child.children" :key="childItem.id">{{childItem.title}}</i-menu-item>
+                </i-menu-group>
 
-                <MenuItem v-else :name="`${child.route}`" :style="{background:$route.path===`/${child.route}`?'#2d8cf0 !important':'#363e4f !important'}" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+                <i-menu-item v-else :name="`${child.route}`" :style="{background:$route.path===`/${child.route}`?'#2d8cf0 !important':'#363e4f !important'}" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
                     {{child.title}}
-                </MenuItem>
+                </i-menu-item>
             </div>
 
-        </Submenu>
+        </i-submenu>
 
-        <MenuItem :name='`${item.route}`' v-for="item in menus" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
-        <Icon :type="item.icon" />
+        <i-menu-item :name='`${item.route}`' v-for="item in menus" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+        <i-icon :type="item.icon" />
             {{item.title}}
-        </MenuItem>
-    </Menu>
+        </i-menu-item>
+    </i-menu>
 </template>
 
 <script>

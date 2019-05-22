@@ -1,39 +1,39 @@
 <template>
     <div class="regiest">
         <i-form ref="formInline_register" :model="formInline" :label-width="80" :rules="ruleInline" style="width:360px;">
-			<FormItem prop="user" style="height:40px;" label='用户名'>
-				<Input type="text" size="large" style="width:100%;" v-model="formInline.user" placeholder="用户名">
+			<i-form-item prop="user" style="height:40px;" label='用户名'>
+				<i-input type="text" size="large" style="width:100%;" v-model="formInline.user" placeholder="用户名">
                     <!-- <p slot="prepend"></p> -->
-				</Input>
-			</FormItem>
-			<FormItem prop="password" style="margin:30px 0 30px 0;" label='密码'>
-				<Input type="password" size="large" style="width:100%;" v-model="formInline.password" placeholder="密码">
-				</Input>
-			</FormItem>
+				</i-input>
+			</i-form-item>
+			<i-form-item prop="password" style="margin:30px 0 30px 0;" label='密码'>
+				<i-input type="password" size="large" style="width:100%;" v-model="formInline.password" placeholder="密码">
+				</i-input>
+			</i-form-item>
 
-            <FormItem prop="phone" style="margin:30px 0 30px 0;" label='电话'>
-				<Input type="text" size="large" style="width:100%;" v-model="formInline.phone" placeholder="电话">
-				</Input>
-			</FormItem>
+            <i-form-item prop="phone" style="margin:30px 0 30px 0;" label='电话'>
+				<i-input type="text" size="large" style="width:100%;" v-model="formInline.phone" placeholder="电话">
+				</i-input>
+			</i-form-item>
 
-            <FormItem prop="cname" style="margin:30px 0 30px 0;" label='中文名'>
-				<Input type="text" size="large" style="width:100%;" v-model="formInline.cname" placeholder="中文名">
-				</Input>
-			</FormItem>
+            <i-form-item prop="cname" style="margin:30px 0 30px 0;" label='中文名'>
+				<i-input type="text" size="large" style="width:100%;" v-model="formInline.cname" placeholder="中文名">
+				</i-input>
+			</i-form-item>
 
-             <FormItem prop="email" style="margin:30px 0 30px 0;" label='邮箱'>
-				<Input type="text" size="large" style="width:100%;" v-model="formInline.email" placeholder="邮箱">
-				</Input>
-			</FormItem>
+             <i-form-item prop="email" style="margin:30px 0 30px 0;" label='邮箱'>
+				<i-input type="text" size="large" style="width:100%;" v-model="formInline.email" placeholder="邮箱">
+				</i-input>
+			</i-form-item>
 
-			<FormItem prop="code" style="margin:30px 0 30px 0;" label='验证码'>
-				<Input type="text" size="large" v-model.trim="formInline.code" placeholder="邮箱验证码">
+			<i-form-item prop="code" style="margin:30px 0 30px 0;" label='验证码'>
+				<i-input type="text" size="large" v-model.trim="formInline.code" placeholder="邮箱验证码">
 					<!-- <img slot="append" :src='verifyImg' @click="getCode" /> -->
-                    <Button slot="append" :type="isSend?'text':'primary'" :loading="codeLoading" :disabled='isSend?true:false' @click="getEmailCodes">{{isSendText}}</Button>
-				</Input>
-			</FormItem>
+                    <i-button slot="append" :type="isSend?'text':'primary'" :loading="codeLoading" :disabled='isSend?true:false' @click="getEmailCodes">{{isSendText}}</i-button>
+				</i-input>
+			</i-form-item>
             
-			<Button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;margin-bottom:20px;">注册</Button>
+			<i-button type="primary" size='large' :disabled='!(formInline.user && formInline.password && formInline.email && formInline.code && validCode)' :loading="loading" @click="handleSubmit('formInline_register')" style="width:360px;margin-bottom:20px;">注册</i-button>
 
 		</i-form>
     </div>

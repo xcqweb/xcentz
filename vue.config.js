@@ -64,7 +64,7 @@ module.exports = {
 
 				config.plugin('html')
 					.tap(args => {
-						args[0].cdn = {js:[]}
+						args[0].cdn = process.env.NODE_ENV !== 'development'?cdn:{js:[]}
 						return args
 					})
 
@@ -78,12 +78,6 @@ module.exports = {
 						'vue-router': 'VueRouter',
 						'echarts':'echarts',
 						'chart.js':'Chart'
-					})
-	
-					config.plugin('html')
-					.tap(args => {
-						args[0].cdn = cdn
-						return args
 					})
 
           config

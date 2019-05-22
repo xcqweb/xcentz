@@ -2,11 +2,11 @@
     <div>
         <div class="collapseMenu slideBar" v-show="isCollapse" @mouseleave="$emit('collapse',isCollapse)">
             <div :name="item.id" v-for="(item,index) in menus" :key="item.id" @mouseover="collapseMenu(item,index)" @click="goPage(item)" class="ivu-menu-submenu" style="height:49px;line-height:49px;color:#fff;background:#515a6e;cursor:pointer;">
-                <Icon :type="item.icon" />
+                <i-icon :type="item.icon" />
             </div>
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
-                <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
+                <i-icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
                 <span class="txt">Collapse sidebar</span>
             </p>
         </div>
@@ -20,7 +20,7 @@
             <MenuTree :menus='menus' @onSelected='selectItem' ref="menu" />
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
-                <Icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
+                <i-icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
                 <span class="txt">Collapse</span>
             </p>
         </div>

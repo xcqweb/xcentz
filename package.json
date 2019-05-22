@@ -35,6 +35,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "install": "^0.12.2",
+    "iview-loader": "^1.2.2",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "postcss-loader": "^3.0.0",

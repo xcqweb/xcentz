@@ -11,21 +11,21 @@
         </div>
 
         <div style="position:absolute;top:0;left:32px;" :style="{top:comPopTip}" v-show="hoverMenus.children" class="popTip">
-            <Poptip trigger="hover" v-model="visible" placement="right-start">
+            <i-poptip trigger="hover" v-model="visible" placement="right-start">
                 <div slot="content">
-                     <Dropdown @on-click='goPage' ref="dropDown">
-                        <DropdownItem v-for="item in hoverMenus.children" :name='item.route' class="collapse_item">{{item.title}}</DropdownItem>
-                     </Dropdown>
+                     <i-dropdown @on-click='goPage' ref="dropDown">
+                        <i-dropdown-item v-for="item in hoverMenus.children" :name='item.route' class="collapse_item">{{item.title}}</i-dropdown-item>
+                     </i-dropdown>
                 </div>
-            </Poptip>
+            </i-poptip>
         </div>
 
         <div style="position:absolute;top:0;left:36px;" :style="{top:comToolTip}" v-show="!hoverMenus.children">
-            <Tooltip trigger="hover" placement="right" ref="toolTip">
+            <i-tooltip trigger="hover" placement="right" ref="toolTip">
                 <div slot='content'>
                     {{hoverMenus.title}}
                 </div>
-            </Tooltip>
+            </i-tooltip>
         </div>
     </div>
 </template>

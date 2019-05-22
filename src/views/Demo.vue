@@ -10,17 +10,17 @@
     <div style="width:300px;height:300px;background:#00f;text-align:center;line-height:300px;color:#fff;font-size:36px;" v-if="auth.m3">
       M3
     </div>
-    <Upload
+    <i-upload
         multiple
         :headers='headers'
         type="drag"
         action="/api/xcentz/v1/upload/uploadExcle">
         <div style="padding: 20px 0">
-            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+            <i-icon type="ios-cloud-upload" size="52" style="color: #3399ff"></i-icon>
             <p>点击或拖曳上传excle</p>
         </div>
-    </Upload>
-    <Button type="primary" @click="download">下载</Button>
+    </i-upload>
+    <i-button type="primary" @click="download">下载</i-button>
 
 
   </div>

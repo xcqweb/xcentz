@@ -1,32 +1,32 @@
 <template>
     <div class="moduleManage">
         <div class="top_operate">
-            <Input search enter-button v-model="searchKey" size="large" @on-search='search' @on-enter='search' style="width:300px;margin-right:30px;" placeholder="模块名,说明..." />
-            <Button size="large" icon="ios-add" type="primary" @click="addModuleStatus=true">新增权限模块</Button> 
+            <i-input search enter-button v-model="searchKey" size="large" @on-search='search' @on-enter='search' style="width:300px;margin-right:30px;" placeholder="模块名,说明..." />
+            <i-button size="large" icon="ios-add" type="primary" @click="addModuleStatus=true">新增权限模块</i-button> 
         </div>
         
-        <Table border stripe :loading='isLoading' :columns="columnsModule" :data="dataModule" v-show="dataModule.length"></Table>
-        <Page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
+        <i-table border stripe :loading='isLoading' :columns="columnsModule" :data="dataModule" v-show="dataModule.length"></i-table>
+        <i-page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
 
         <!-- 新增模块 -->
-         <Modal
+         <i-modal
             v-model="addModuleStatus"
             title="新增模块"
             @on-ok="addModule"
             @on-cancel="addModuleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">模块名称</p><Input v-model="moduleAdd.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">模块说明</p><Input v-model="moduleAdd.moduleDirection" placeholder="请输入模块说明..." /></div>
-        </Modal>
+            <div class="center_g marginTop10"><p class="label_g">模块名称</p><i-input v-model="moduleAdd.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块说明</p><i-input v-model="moduleAdd.moduleDirection" placeholder="请输入模块说明..." /></div>
+        </i-modal>
 
         <!-- 编辑模块 -->
-         <Modal
+         <i-modal
             v-model="editModuleStatus"
             title="编辑模块"
             @on-ok="moduleEditHandler"
             @on-cancel="editModuleStatus=false">
-            <div class="center_g marginTop10"><p class="label_g">模块名称</p><Input v-model="moduleEdit.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">模块说明</p><Input v-model="moduleEdit.moduleDirection" placeholder="请输入模块说明..." /></div>
-        </Modal>
+            <div class="center_g marginTop10"><p class="label_g">模块名称</p><i-input v-model="moduleEdit.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块说明</p><i-input v-model="moduleEdit.moduleDirection" placeholder="请输入模块说明..." /></div>
+        </i-modal>
     </div>
 </template>
 
@@ -83,7 +83,7 @@ export default {
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
-                                h('Button', {
+                                h('i-button', {
                                     props: {
                                         type: 'primary',
                                         icon:'md-create'
@@ -97,7 +97,7 @@ export default {
                                         }
                                     }
                                 }, '编辑'),
-                                h('Button', {
+                                h('i-button', {
                                     props: {
                                         type: 'error',
                                         icon:'ios-trash-outline'
