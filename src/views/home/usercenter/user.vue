@@ -163,7 +163,7 @@ export default {
                     editPassword({user:JSON.stringify(this.addUser),userId:this.userInfo.UserId}).then( (res) => {
                         let timer = setTimeout( () => {
                             clearTimeout(timer)
-                            localStorage.removeItem('token')
+                            localStorage.clear()
                             this.$router.replace('/login')
                         },3000)
                     })

@@ -125,7 +125,7 @@ module.exports = {
 							 threshold:10240,
 							 deleteOriginalAssets: false
 						 }),
-						new BundleAnalyzerPlugin(),
+						// new BundleAnalyzerPlugin(),
 					 )
 			}
 		},	

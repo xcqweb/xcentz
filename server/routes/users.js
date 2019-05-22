@@ -1,7 +1,6 @@
 let express = require('express');
 let router = express.Router();
 const jwt = require('jsonwebtoken');  //用来生成token
-let session = require('express-session');//回话模块
 let captchapng = require('captchapng');//生成图片
 const {secretOrPrivateKey} = require('../database/config');
 let nodemailer = require('nodemailer');//邮件发送模块
@@ -17,7 +16,7 @@ router.post('/login', function(req, res, next) {
     var password = req.body.password
     var verifyCode = req.session['captcha']
     var nowDate = +new Date()
-
+    console.log(verifyCode)
     if(parseInt(req.body.code)!==verifyCode){
       res.status(500).send({
         message:'验证码错误！',
@@ -40,13 +39,12 @@ router.post('/login', function(req, res, next) {
             });
             //更新登录时间
             query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
-
-            res.status(200).json({
-              message:'登录成功！',
-              token:token,
-              user:re,
-              errorCode:10005
-            })
+              res.status(200).json({
+                message:'登录成功！',
+                token:token,
+                user:re,
+                errorCode:10005
+              })
           }
       },error => {
         res.status(500).send({

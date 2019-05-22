@@ -51,9 +51,7 @@ app.use('/',function(req, res, next) {
   if(unLessPath.includes(path)){
     next();
   }else{
-    
     let token = req.headers.authorization.substr(7)
-    console.log(token)
     query(`SELECT Token FROM Pub_User WHERE Token='${token}'`).then( (r) => {
       if(r.length){
         next();

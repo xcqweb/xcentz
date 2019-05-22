@@ -304,6 +304,7 @@ export default {
             this.currentRoleId = RoleId
             this.queryAuthMenu(RoleId)
         },
+        
         ModulecheckedChange(){
             let len = this.moduleList.length
             if(this.checkAllGroup.length===len){
@@ -324,7 +325,7 @@ export default {
                 }
             }
             this.updateAuthModuleStr = str
-            console.log(str)
+            // console.log(str)
         },
         checkedChange(){
             let checkedArr = this.$refs.MenuTree.getCheckedAndIndeterminateNodes()
@@ -334,12 +335,15 @@ export default {
                 str += `(${this.currentRoleId},${item.id})${index===len?'':','}`  
             }
             this.updateAuthMenuStr = str
-            console.log(str)
+            // console.log(str)
         },
         //确定 == 菜单权限分配
         menuAuthHandler(){
+            this.checkedChange()
             updateAuthMenu({str:this.updateAuthMenuStr,roleId:this.currentRoleId}).then( (res) => {
-                this.$root.eventBus.$emit('getMenu')
+                if(this.currentRoleId === this.userInfo.RoleId){
+                  this.$root.eventBus.$emit('getMenu')  
+                }
             })
         },
         //分页

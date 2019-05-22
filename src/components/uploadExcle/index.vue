@@ -85,7 +85,7 @@ export default {
         reader.onload = (e) => {
           const data = e.target.result
           const workbook = XLSX.read(data, { type: 'array' })
-          const firstSheetName = workbook.SheetNames[0]
+          const firstSheetName = workbook.SheetNames[1]
           const worksheet = workbook.Sheets[firstSheetName]
           const header = this.getHeaderRow(worksheet)
           const results = XLSX.utils.sheet_to_json(worksheet)

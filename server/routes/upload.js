@@ -28,9 +28,8 @@ router.post('/uploadExcle',function(req, res, next) {
           } else if (err) {
             // 发生错误
           }else{
-              let data = xlsx.parse(fs.readFileSync(path.join(__dirname,'../upload/report_01.xlsx')))
-              console.log(data)
-              
+              let data = xlsx.parse(fs.readFileSync(path.join(__dirname,'../upload/Amz后台广告说明&样例.xlsx')))
+              // console.log(data[2])
           }
     })
   });
