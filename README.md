@@ -1,6 +1,5 @@
-# [系统使用介绍 Introduction](https://www.jugetaozi.com/react-admin-ssr/)
+# 系统使用介绍
 
-- 系统介绍(gitbook): https://www.jugetaozi.com/react-admin-ssr/
 
 ## 登录页面
 
