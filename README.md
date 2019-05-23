@@ -8,7 +8,7 @@
 
 ## 主页面
 
-![主界面](https://github.com/xcqweb/xcentz/tree/master/remade/home.png)
+![主界面](/remade/home.png)
 
 ## client 浏览器端
 
