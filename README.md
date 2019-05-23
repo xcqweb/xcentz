@@ -4,11 +4,11 @@
 
 ## 登录页面
 
-![登录界面](./master/remade/home.PNG)
+![登录界面](https://github.com/xcqweb/xcentz/tree/master/remade/home.PNG)
 
 ## 主页面
 
-![主界面](./master/remade/home.png)
+![主界面](https://github.com/xcqweb/xcentz/tree/master/remade/home.png)
 
 ## client 浏览器端
 
