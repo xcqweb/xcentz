@@ -33,6 +33,7 @@ router.post('/login', function(req, res, next) {
           let re = r[0]
           delete re.PassWord
           delete re.Token
+          console.log('========================')
             // 这是加密的key（密钥) 
             let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
               expiresIn: '1h' // 2小时过期
@@ -48,6 +49,7 @@ router.post('/login', function(req, res, next) {
               })
           }
       },error => {
+        console.log(error && error.code)// === 'PROTOCOL_SEQUENCE_TIMEOUT',
         res.status(500).send({
           errorCode:100043
         })
@@ -81,7 +83,7 @@ router.get('/resetPassword',function(req, res, next){
         text: `${toEmail} 用户的新密码为：${newPsw}`, // 标题
         html: `<b>${toEmail} 用户的新密码为：<em style='font-weight:100;text-decoration:underline;'>${newPsw} <br />
               <p style='text-align:right;font-size:12px;'>xcentz</p>
-              <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+              <p style='text-align:right;font-size:12px;'>${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
         ` // html 内容
     };
   
@@ -159,7 +161,7 @@ router.post('/register', function(req, res, next) {
           text: `xcentz运营管理系统账号注册`, // 标题
           html: `<b>感谢注册xcentz运营管理系统! 新用户的<em style='font-weight:100;text-decoration:underline;'>账号:${reData.username}或${reData.email} 密码:${reData.password}</em> <br />
                 <p style='text-align:right;font-size:12px;'>xcentz</p>
-                <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+                <p style='text-align:right;font-size:12px;'>${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
           ` // html 内容
       };
     
@@ -200,7 +202,8 @@ router.get('/checkAuth', function(req, res, next) {
 
 //获取图片验证码
 router.get('/getCode', function(req, res, next) {
-
+  // console.log(req)
+  // return
   var randomNum = parseInt(Math.random()*9000+1000)
   req.session['captcha'] =  randomNum; 
   //保存到cookie 方便前端调用验证
@@ -257,7 +260,7 @@ router.get('/getEmailCode', function(req, res, next) {
       text: `xcentz 运营系统验证码：${verifyEmail} 一小时内有效`, // 标题
       html: `<b>xcentz 运营系统验证码：<em style='font-weight:100;text-decoration:underline;'>${verifyEmail}<em> 2小时内有效</b> <br />
             <p style='text-align:right;font-size:12px;'>xcentz</p>
-            <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+            <p style='text-align:right;font-size:12px;'>${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
       ` // html 内容
     };
   }else{
@@ -359,7 +362,7 @@ router.post('/user',function(req,res,next){
         text: `xcentz运营管理系统账号注册`, // 标题
         html: `<b>感谢注册xcentz运营管理系统! 新用户的账号:<em style='font-weight:100;text-decoration:underline;'>${reData.username}或${reData.email}</em> 密码:<em style='font-weight:100;text-decoration:underline;'>${reData.password}</em> <br />
               <p style='text-align:right;font-size:12px;'>xcentz</p>
-              <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>` // html 内容
+              <p style='text-align:right;font-size:12px;'>${moment().format('YYYY-MM-DD HH:mm:ss')}</p>` // html 内容
     };
   
     // send mail with defined transport object

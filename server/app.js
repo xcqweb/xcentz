@@ -13,12 +13,22 @@ var session = require("express-session");
 var history = require('connect-history-api-fallback'); 
 var compression = require('compression')
 const {query} = require('./database');
+var RedisStore = require('connect-redis')(session); //redis
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(history({index: 'index.html'}));  
+app.use(history({
+  rewrites: [
+    {
+      from: /^\/api\/.*$/,
+      to: function(context) {
+        return context.parsedUrl.pathname;
+      }
+    }
+  ]
+}));  
 app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -32,7 +42,8 @@ app.use(session({
   cookie:{maxAge:60*60*1000},   //  两次请求的时间差，即超过这个时间再去访问session会失效
   secure:true,
   resave:true,
-  saveUninitialized:true
+  saveUninitialized:true,
+  store: new RedisStore({host:'localhost',port:6379,maxAge : 60*60*1000}) //解决多进程session不能共享的问题
 }))
 
 app.use(jwtAuth);
