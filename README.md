@@ -85,3 +85,6 @@ open in http://localhost:8008/
     ├─pages
     │
     |_router
+
+
+#redis window 下载地址 https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2FMSOpenTech%2Fredis%2Freleases%2Fdownload%2Fwin-3.2.100%2FRedis-x64-3.2.100.msi
