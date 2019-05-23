@@ -4,7 +4,7 @@
 
 ## 登录页面
 
-![登录界面](./build/home.PNG)
+![登录界面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/login.PNG)
 
 ## 主页面
 
