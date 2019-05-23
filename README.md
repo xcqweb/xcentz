@@ -4,7 +4,7 @@
 
 ## 登录页面
 
-![登录界面](https://github.com/xcqweb/xcentz/tree/master/remade/home.PNG)
+![登录界面](https://github.com/xcqweb/xcentz/tree/master/remade/home.PNG,'login')
 
 ## 主页面
 
