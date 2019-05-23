@@ -4,7 +4,7 @@
 
 ## 登录页面
 
-![登录界面](./tree/master/remade/home.PNG)
+![登录界面](./build/home.PNG)
 
 ## 主页面
 
