@@ -7,7 +7,7 @@ import {Message} from 'iview'
 
 let instance = axios.create({
 	baseURL: '/api/xcentz/v1', // api的base_url
-    timeout: 10 // request timeout
+    timeout: 20000 // request timeout
 })
 
 instance.interceptors.request.use( (config) => {
