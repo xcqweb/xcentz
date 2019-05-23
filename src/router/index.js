@@ -108,7 +108,7 @@ router.beforeEach( (from,to,next) => {
     if(token){
       next()
     }else{
-      router.push('/login')
+      router.replace('/login')
     }
   }
 })
