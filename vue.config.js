@@ -1,8 +1,6 @@
 var CommpressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const webpack = require('webpack');
-// const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
 
 function resolve (dir) {
@@ -11,12 +9,12 @@ function resolve (dir) {
 
 const cdn = {
 	js: [
-		'https://cdn.bootcss.com/xlsx/0.14.3/xlsx.full.min.js',
 		'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
 		'https://cdn.bootcss.com/vue-router/3.0.6/vue-router.min.js',
 		'https://cdn.bootcss.com/axios/0.18.0/axios.min.js',
 		'https://cdn.bootcss.com/echarts/4.2.1/echarts.min.js',
-		'https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.js'
+		'https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.js',
+		'https://cdn.bootcss.com/xlsx/0.14.3/xlsx.full.min.js',
 	]
 }
 
@@ -119,6 +117,48 @@ module.exports = {
 							 threshold:10240,
 							 deleteOriginalAssets: false
 						 }),
+						 new ParallelUglifyPlugin({
+							test:/.js$/g,
+							exclude: /[\\/]node_modules[\\/]/,
+							cacheDir:'cache',
+							uglifyES:{
+								output: {
+									/*
+									 是否输出可读性较强的代码，即会保留空格和制表符，默认为输出，为了达到更好的压缩效果，
+									 可以设置为false
+									*/
+									beautify: false,
+									/*
+									 是否保留代码中的注释，默认为保留，为了达到更好的压缩效果，可以设置为false
+									*/
+									comments: false
+								},
+								compress: {
+									/*
+									 是否在UglifyJS删除没有用到的代码时输出警告信息，默认为输出，可以设置为false关闭这些作用
+									 不大的警告
+									*/
+									warnings: false,
+				
+									/*
+									 是否删除代码中所有的console语句，默认为不删除，开启后，会删除所有的console语句
+									*/
+									drop_console: true,
+				
+									/*
+									 是否内嵌虽然已经定义了，但是只用到一次的变量，比如将 var x = 1; y = x, 转换成 y = 5, 默认为不
+									 转换，为了达到更好的压缩效果，可以设置为false
+									*/
+									collapse_vars: true,
+				
+									/*
+									 是否提取出现了多次但是没有定义成变量去引用的静态值，比如将 x = 'xxx'; y = 'xxx'  转换成
+									 var a = 'xxxx'; x = a; y = a; 默认为不转换，为了达到更好的压缩效果，可以设置为false
+									*/
+									reduce_vars: true
+								}
+							}
+						 })
 						// new BundleAnalyzerPlugin(),
 					 )
 			}

@@ -7,8 +7,9 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.png">
     <title>xcentz</title>
     <% for(var js of htmlWebpackPlugin.options.cdn.js) { %>
-      <script src="<%=js%>"></script>
+      <script src="<%=js%>" rel='prefetch' ></script>
     <% } %>
+
   </head>
   <body>
     <noscript>
@@ -17,4 +18,5 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+  
 </html>

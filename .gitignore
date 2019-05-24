@@ -21,3 +21,4 @@ yarn-error.log*
 *.sw?
 /server/nginx-1.16.0/logs
 /server/upload/
+/cache
