@@ -83,7 +83,7 @@ export default {
                     console.log(res.data.user)
                     let user = res.data.user
                     if(user.length>0){
-                        callback(new Error('用户名或邮箱已注册!'));
+                        callback(new Error('用户名或邮箱太受欢迎!'));
                     }else{
                         callback()
                     }
@@ -241,12 +241,6 @@ export default {
 .regiest::-webkit-scrollbar-thumb {
     background-color: #888;
 }
-// .regiest::-webkit-scrollbar-thumb:hover {
-//     background-color: #aaa;
-// }
-// .regiest::-webkit-scrollbar-thumb:active{
-//     background-color:#333;
-// }
 </style>
 
 

@@ -15,7 +15,7 @@
 
 ## server 服务端
 
-- express + express-router + mysql + ejs + redis 模板引擎
+- express + express-router + mysql + ejs + redis + pm2 + nginx 
 
 ## start 启动方式
 
@@ -32,7 +32,7 @@ alias cnpm="npm --registry=https://registry.npm.taobao.org \
 
 cnpm i //执行完上面的语句后  从淘宝镜像下载依赖.
 
-npm run dev //启动服务侧 客户侧 打开浏览器
+node server or pm2 start server.js  //启动服务侧 客户侧 打开浏览器
 
 open in http://localhost:8008/
 
@@ -57,36 +57,37 @@ open in http://localhost:8008/
 │  │
 │  ├─bin
 │  │
-│  ├─public
+│  ├─public 
 │  │
-│  ├─database
+│  ├─database //数据库
 │  │
-│  ├─middleware
+│  ├─middleware //中间件
 │  │
-│  ├─nginx
+|  ├─upload //文件上传目录
+|  |
+│  ├─nginx //代理服务器
 │  │
-│  ├─routes
+│  ├─routes //路由接口
 │  │
-│  ├─upload
+│  ├─common //工具库
 │  │
-│  ├─common
-│  │
-│  └─views
+│  └─views //视图模板
 │
-└─src //前端react+antd项目目录
+└─src //前端项目目录
     │
     │
-    ├─assets-------------¬
-    │                    |
-    ├─components         |___api
-    │                    |___js
-    ├─router             |___images
-    │                    |___styles
-    ├─views
+    ├─assets--------------------------------------
+    │                                            |
+    ├─components //组件库                         |___api
+    │                                            |___js
+    ├─router----------                           |___images
+    │                |___module //权限路由        |___styles  
+    │                |                               
+    |                |___index  //基础路由             
     │
-    ├─pages
-    │
-    |_router
+    |__views //视图
+
+
 
 
 

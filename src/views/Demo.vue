@@ -22,6 +22,8 @@
     </i-upload>
     <i-button type="primary" @click="download">下载</i-button>
 
+    <!-- socket.io -->
+    <div></div>
 
   </div>
 </template>
