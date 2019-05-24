@@ -12,7 +12,9 @@ let createError = require('http-errors'),
     history = require('connect-history-api-fallback'),//404 
     compression = require('compression'), //gzip压缩模块
     {query} = require('./database'),//数据库
-    RedisStore = require('connect-redis')(session); //redis
+    RedisStore = require('connect-redis')(session), //redis
+    fs = require('fs'),
+    spdy = require('spdy');
 app.set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
 
@@ -85,7 +87,23 @@ app.set('views', path.join(__dirname, 'views'))
 
       res.status(err.status || 500);
       res.render('error');
-    }).listen(8081,()=>{
+    });
+
+    var options = {
+      key: fs.readFileSync(__dirname + '/keys/server.key'),
+      cert: fs.readFileSync(__dirname + '/keys/server.crt'),
+      spdy: {
+        protocals: ['h2', 'spdy/3.1', 'http1.1'],
+        plain: false,
+        'x-forwarded-for': true,
+        connection: {
+          windowSize: 1024*1024,
+          autoSpdy31: false
+        }
+      }
+    };
+    var server =  spdy.createServer(options, app);
+    server.listen(8081,()=>{
       console.log('server is on 8081 .......')
     });
 
