@@ -1,4 +1,4 @@
-var {query} = require('../database'),
+let {query} = require('../database'),
     jwt = require('jsonwebtoken'),  //用来生成token
     captchapng = require('captchapng'),//生成图片
     {secretOrPrivateKey} = require('../database/config'),
@@ -10,7 +10,7 @@ var {query} = require('../database'),
     moment = require('moment'),//时间工具函数
 
     login = (req,res) => {
-        var username = req.body.username,
+        let username = req.body.username,
             password = req.body.password,
             verifyCode = req.session['captcha'],
             nowDate = +new Date();
@@ -59,7 +59,7 @@ var {query} = require('../database'),
         let toEmail = req.query.email
         let newPsw = stringRandom()
         query(`UPDATE Pub_User SET PassWord = '${newPsw}',Token='' WHERE UserId ='${userId}'`).then( (r) => {
-          var transporter = nodemailer.createTransport({
+          let transporter = nodemailer.createTransport({
             //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
             host: 'smtp.exmail.qq.com',
             port: 465, // SMTP 端口
@@ -71,7 +71,7 @@ var {query} = require('../database'),
             }
           });
         
-          var mailOptions = {
+          let mailOptions = {
               from: 'xuchangqian@yulong.com', // 发件地址
               to: toEmail, // 收件列表
               subject: 'xcentz 运营管理系统重置密码', // 标题

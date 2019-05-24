@@ -5,10 +5,10 @@ const router = express.Router();
 const xlsx = require('node-xlsx').default;
 const FormData = require('form-data');
 const multipart = require('connect-multiparty');
-var multer  = require('multer')
-var multipartMiddleware = multipart();
+const multer  = require('multer')
+const multipartMiddleware = multipart();
 
-var storage = multer.diskStorage({
+let storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './upload')
     },
@@ -16,8 +16,8 @@ var storage = multer.diskStorage({
         console.log(file)
       cb(null, file.originalname+'')
     }
-  })
-var upload = multer({ storage:storage});
+  }),
+ upload = multer({ storage:storage});
 
 
 //上传excle
@@ -32,9 +32,9 @@ router.post('/uploadExcle',function(req, res, next) {
               // console.log(data[2])
           }
     })
-  });
+  })
 
-  router.get('/downloadExcle',function(req, res, next) {
+  .get('/downloadExcle',function(req, res, next) {
       let data = [
           ['groupIdadGroupId','keywordId','rangeEnd','rangeStart','suggested'],
           ['2wqew23232wqed1','sasas232ewe1',1,1,1],

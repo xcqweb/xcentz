@@ -1,6 +1,6 @@
             
             
-    var buildTree = function(list){
+    let buildTree = function(list){
         let trees = []
         let temp = {};
         let tree = {};

@@ -1,4 +1,4 @@
-var {query} = require('../database'),
+let {query} = require('../database'),
 
     queryUser =  (req,res) => {
         let userId = req.query.userId

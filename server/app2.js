@@ -1,4 +1,4 @@
-var createError = require('http-errors'),
+let createError = require('http-errors'),
     express = require('express'),
     path = require('path'),
 
