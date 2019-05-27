@@ -1,7 +1,6 @@
 let createError = require('http-errors'),
     express = require('express'),
     path = require('path'),
-
     cookieParser = require('cookie-parser'),
     logger = require('morgan'),//日志模块
     app = express(),
@@ -13,7 +12,19 @@ let createError = require('http-errors'),
     history = require('connect-history-api-fallback'),//404 
     compression = require('compression'), //gzip压缩模块
     {query} = require('./database'),//数据库
-    RedisStore = require('connect-redis')(session); //redis
+    RedisStore = require('connect-redis')(session), //redis
+    fs = require('fs'),
+    Redis = require('ioredis'),
+    schedule = require('./common/scheduleTask'),
+    spdy = require('spdy');
+    global.redis = new Redis({
+      port: 6379,          // Redis port
+      host: '127.0.0.1',   // Redis host
+      family: 4,           // 4 (IPv4) or 6 (IPv6)
+    });
+
+    
+
 app.set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
 
@@ -86,8 +97,25 @@ app.set('views', path.join(__dirname, 'views'))
 
       res.status(err.status || 500);
       res.render('error');
-    }).listen(8082,()=>{
+    });
+
+    var options = {
+      key: fs.readFileSync(__dirname + '/keys/server.key'),
+      cert: fs.readFileSync(__dirname + '/keys/server.crt'),
+      spdy: {
+        protocals: ['h2', 'spdy/3.1', 'http1.1'],
+        plain: false,
+        'x-forwarded-for': true,
+        connection: {
+          windowSize: 1024*1024,
+          autoSpdy31: false
+        }
+      }
+    };
+    var server =  spdy.createServer(options, app);
+    server.listen(8082,()=>{
       console.log('server is on 8082 .......')
     });
 
+  schedule()//初始化定时任务
 module.exports = app;
