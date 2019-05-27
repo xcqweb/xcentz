@@ -23,8 +23,9 @@ let {query} = require('../database'),
         }else{
           redis.get('userList',  (err, result) => {
             console.log(result)
-            let users = JSON.parse(result)
-            if(users.length>0){
+            
+            if(!isNull(result)){
+              let users = JSON.parse(result)
               let index
               let r = users.find( (item,i) => {
                 if((item.UserName === username || item.Email === username ) && item.PassWord === password){
