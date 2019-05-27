@@ -22,7 +22,7 @@ let {query} = require('../database'),
             })
         }else{
           redis.get('userList',  (err, result) => {
-            
+            console.log(result)
             let users = JSON.parse(result)
             if(users.length>0){
               let index
