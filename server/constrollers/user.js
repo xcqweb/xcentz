@@ -6,7 +6,7 @@ let {query} = require('../database'),
     stringRandom = require('string-random'),//生成随机字符串
     CryptoJS = require("crypto-js"),//加密库
     uuid = require('node-uuid'), //生成唯一id
-    {buildTree} = require('../common/untl'),
+    {buildTree,isNull,clearRedis,updateUserList} = require('../common/untl'),
     moment = require('moment'),//时间工具函数
 
     login = (req,res) => {
@@ -17,41 +17,89 @@ let {query} = require('../database'),
         console.log(username,password,verifyCode)
         if(parseInt(req.body.code)!==verifyCode){
             res.status(500).send({
-            message:'验证码错误！',
-            errorCode:'10000'
+              message:'验证码错误！',
+              errorCode:'10000'
             })
         }else{
-            query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {
-            if(r.length<=0){
+          redis.get('userList',  (err, result) => {
+            
+            let users = JSON.parse(result)
+            if(users.length>0){
+              let index
+              let r = users.find( (item,i) => {
+                if((item.UserName === username || item.Email === username ) && item.PassWord === password){
+                  index = i
+                }
+                return (item.UserName === username || item.Email === username ) && item.PassWord === password
+              })
+              // console.log(r)
+              if(!r){
                 res.status(500).json({
-                message:'用户名或密码错误！',
-                errorCode:10001
+                  message:'用户名或密码错误！',
+                  errorCode:10001
                 })
-            }else{
-                let re = r[0]
-                delete re.PassWord
-                delete re.Token
-                console.log('========================')
+              }else{
+                delete r.PassWord
+                delete r.Token
+                console.log('========================redis')
                 // 这是加密的key（密钥) 
                 let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
-                    expiresIn: '1h' // 2小时过期
+                    expiresIn: '1h', // 2小时过期
+                    
                 });
-                console.log(token)
+                
+                // let index = users.findIndex( (item) => {
+                //   return (item.UserName === username || item.Email === username ) && item.PassWord === password
+                // })
+                // console.log(index)
+                users[index].LoatLoginTime = moment().format('YYYY-MM-DD HH:mm:ss')
+                users[index].Token = token
+                res.status(200).json({
+                  message:'登录成功！',
+                  token:token,
+                  user:r,
+                  errorCode:10005
+                })
                 //更新登录时间
                 query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
-                    res.status(200).json({
-                    message:'登录成功！',
-                    token:token,
-                    user:re,
-                    errorCode:10005
+                    
+              }
+            }else{
+              query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {
+                if(r.length<=0){
+                    res.status(500).json({
+                    message:'用户名或密码错误！',
+                    errorCode:10001
                     })
-                }
-            },error => {
-            console.log(error && error.code)// === 'PROTOCOL_SEQUENCE_TIMEOUT',
-            res.status(500).send({
-                errorCode:100043
-            })
-            })
+                }else{
+                    let re = r[0]
+                    delete re.PassWord
+                    delete re.Token
+                    console.log('========================')
+                    // 这是加密的key（密钥) 
+                    let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
+                        expiresIn: '1h', // 2小时过期
+                        
+                    });
+                    console.log(token)
+                    //更新登录时间
+                    query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
+                        res.status(200).json({
+                        message:'登录成功！',
+                        token:token,
+                        user:re,
+                        errorCode:10005
+                        })
+                    }
+                },error => {
+                  console.log(error && error.code)// === 'PROTOCOL_SEQUENCE_TIMEOUT',
+                  res.status(500).send({
+                      errorCode:100043
+                  })
+                })
+            }
+          })
+            
         }
     },
     resetPassword = (req,res) => {
@@ -91,6 +139,7 @@ let {query} = require('../database'),
                   message:"重置密码失败!"
                 })
               }else{
+                updateUserList()
                 res.send({
                   errorCode:100037,
                   message:"重置密码成功!"
@@ -160,6 +209,7 @@ let {query} = require('../database'),
                 if(error){
                   
                 }else{
+                  updateUserList()
                   res.status(200).json({
                     message:'新增用户成功！',
                     errorCode:10004
@@ -346,6 +396,7 @@ let {query} = require('../database'),
               if(error){
                 
               }else{
+                updateUserList()
                 res.send({
                   errorCode:100019,
                   message:'注册成功!'
@@ -361,6 +412,7 @@ let {query} = require('../database'),
     user_delete = (req,res) => {
         let userId = req.body.userId
         query(`DELETE FROM Pub_User WHERE UserId='${userId}'`).then( (r) => {
+          updateUserList()//跟新redis缓存
           res.send({
             errorCode:100023,
             message:'用户删除成功!'
@@ -373,22 +425,41 @@ let {query} = require('../database'),
         })
     },
     menu_get = (req,res) => {
-        let roleId = req.query.roleId
-        let isAdmin = req.query.isAdmin
-        let str = ''
-        if(isAdmin){
-          str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu`
-        }else{
-          str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu, Pub_Role_Menu WHERE Pub_Role_Menu.MenuId = Pub_Menu.MenuId AND Pub_Role_Menu.RoleId = ${roleId}`
-        }
-        query(str).then( (r) => {
-          query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
-            res.json({
-              maxId:response[0].maxId,
-              menuList:buildTree(r)
+      let roleId = req.query.roleId
+      let isAdmin = req.query.isAdmin
+      let str = ''
+      redis.get(`menuList${roleId?roleId:''}`, function (err, result) {
+        if(isNull(result)){
+          if(isAdmin){
+            str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu`
+          }else{
+            str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu, Pub_Role_Menu WHERE Pub_Role_Menu.MenuId = Pub_Menu.MenuId AND Pub_Role_Menu.RoleId = ${roleId}`
+          }
+          query(str).then( (r) => {
+            let trees = buildTree(r)
+            query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
+              if(isAdmin){
+                redis.set('menuList',JSON.stringify({
+                  maxId:response[0].maxId,
+                  menuList:trees
+                }))
+              }else{
+                redis.set(`menuList${roleId}`,JSON.stringify({
+                  maxId:response[0].maxId,
+                  menuList:trees
+                }))
+              }
+              res.json({
+                maxId:response[0].maxId,
+                menuList:trees
+              })
             })
           })
-        })
+        }else{
+          console.log('redis')
+          res.json(JSON.parse(result))
+        }
+      });
     },
     
     menu_post = (req,res) => {
@@ -396,10 +467,12 @@ let {query} = require('../database'),
         // let MenuId = req.body.
         // console.log(uuid.v1().replace(/\-/g,''))
         query(`INSERT INTO Pub_Menu(MenuId,MenuName,ParentId,MenuUrl,MenuIconUrl) VALUES(${reData.menuId},'${reData.menuName}',${reData.parentId},'${reData.route}','${reData.icon}')`).then( (r) => {
+          clearRedis().then( () => {
             res.json({
               errorCode:10008,
               message:'菜单添加成功!'
             })
+          })  
         }, error => {
           res.status(500).json({
             errorCode:10009,
@@ -411,10 +484,13 @@ let {query} = require('../database'),
         let reData = req.body
 
         query(`UPDATE Pub_Menu SET MenuName='${reData.menuName}',MenuUrl='${reData.route}',MenuIconUrl='${reData.icon}' WHERE MenuId = ${reData.id}`).then( (r) => {
+          clearRedis().then( () => {
             res.json({
               errorCode:100010,
               message:'菜单修改成功!'
             })
+          })
+            
         }, error => {
           res.status(500).json({
             errorCode:100011,
@@ -425,10 +501,13 @@ let {query} = require('../database'),
     menu_delete = (req,res) => {
         let ids = req.body.ids
         query(`DELETE t1,t2 FROM Pub_Menu AS t1 LEFT JOIN Pub_Role_Menu AS t2 ON t1.MenuId = t2.MenuId WHERE ${ids}`).then( (r) => {
-            res.json({
+          clearRedis().then( () => {
+             res.json({
               errorCode:10006,
               message:'菜单删除成功!',
             })
+          })
+           
         }, error => {
           res.status(500).json({
             errorCode:10007,
@@ -450,10 +529,13 @@ let {query} = require('../database'),
         query(`DELETE FROM Pub_Role_Menu WHERE RoleId = ${roleId}`).then( (r) => {
           if(!str){
             query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
-              res.json({
-                errorCode:100031,
-                message:'菜单权限配置成功!'
+              clearRedis(roleId).then( () => {
+                res.json({
+                  errorCode:100031,
+                  message:'菜单权限配置成功!'
+                })
               })
+              
             })
           }else{
             query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {

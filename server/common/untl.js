@@ -1,4 +1,4 @@
-            
+  let {query} = require('../database')          
             
     let buildTree = function(list){
         let trees = []
@@ -36,6 +36,33 @@
                 }
             }
         return trees;
+    },
+
+    isNull = function(obj){
+        return Object.prototype.toString.call(obj) === '[object Null]'
+    },
+
+    //清楚redis key 
+    clearRedis = function(key){
+        return new Promise((reslove,reject) => {
+            let str = ''
+            if(key){
+                redis.del(`menuList${key}`)
+            }else{
+               for(let i=0 ;i<30; i++){
+                    redis.del(`menuList${i?i:''}`)
+                } 
+            }
+            
+            reslove()
+        })
+    },
+
+    //更新用户列表redis
+    updateUserList = function(){
+        query('select * from Pub_User').then( (r) => {
+            redis.set('userList',JSON.stringify(r))
+        })
     }
 
-module.exports = {buildTree}
+module.exports = {buildTree,isNull,clearRedis,updateUserList}

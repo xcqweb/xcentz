@@ -55,65 +55,65 @@ export default {
             dataModule:[],
             columnsModule:[
                 {
-                        title: '序号',
-                        width: 80,
-                        type: 'index',
-                        render: (h, params) => {
-                            return h('div', [
-                                h('Icon', {
-                                    props: {
-                                        type: 'person'
-                                    }
-                                }),
-                                h('strong', params.row.name)
-                            ]);
-                        }
-                    },
-                    {
-                        title: '模块名称',
-                        key: 'ModuleName'
-                    },
-                     {
-                        title: '模块说明',
-                        key: 'Directions'
-                    },
-                    {
-                        title: '操作',
-                        key: 'action',
-                        align: 'center',
-                        render: (h, params) => {
-                            return h('div', [
-                                h('i-button', {
-                                    props: {
-                                        type: 'primary',
-                                        icon:'md-create'
-                                    },
-                                    style: {
-                                        margin: '8px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.edit(params)
-                                        }
-                                    }
-                                }, '编辑'),
-                                h('i-button', {
-                                    props: {
-                                        type: 'error',
-                                        icon:'ios-trash-outline'
-                                    },
-                                    style: {
-                                        margin: '8px',
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.remove(params)
-                                        }
-                                    }
-                                }, '删除')
-                            ]);
-                        }
+                    title: '序号',
+                    width: 80,
+                    type: 'index',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Icon', {
+                                props: {
+                                    type: 'person'
+                                }
+                            }),
+                            h('strong', params.row.name)
+                        ]);
                     }
+                },
+                {
+                    title: '模块名称',
+                    key: 'ModuleName'
+                },
+                    {
+                    title: '模块说明',
+                    key: 'Directions'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('i-button', {
+                                props: {
+                                    type: 'primary',
+                                    icon:'md-create'
+                                },
+                                style: {
+                                    margin: '8px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.edit(params)
+                                    }
+                                }
+                            }, '编辑'),
+                            h('i-button', {
+                                props: {
+                                    type: 'error',
+                                    icon:'ios-trash-outline'
+                                },
+                                style: {
+                                    margin: '8px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.remove(params)
+                                    }
+                                }
+                            }, '删除')
+                        ]);
+                    }
+                }
             ]
 
         }

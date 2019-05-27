@@ -4,5 +4,5 @@ module.exports = {
     PASSWORD:'xcentz_1',
     DATABASE:'xcentz',
 
-    secretOrPrivateKey:'ahs3273ysdsdf3465eery6ghagwe76w'
+    secretOrPrivateKey:'ahs3ysdsdf34ef65eery6ghagwe76w'
 }

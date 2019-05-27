@@ -59,7 +59,7 @@
                 </li>
             </ul>
         </i-tab-pane>
-        <i-tab-pane label="系统消息" icon="md-alarm"></i-tab-pane>
+        <i-tab-pane label="系统消息" icon="md-alarm">系统消息</i-tab-pane>
     </i-tabs>
 </template>
 

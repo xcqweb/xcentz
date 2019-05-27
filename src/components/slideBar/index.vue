@@ -133,6 +133,7 @@ export default {
             &>:nth-child(1){
                 font-style: italic;
                 font-size: 20px;
+                margin-bottom: 10px;
             }
         }
         .collapse{

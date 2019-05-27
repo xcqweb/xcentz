@@ -20,7 +20,6 @@
             <i-form ref="form_adduser" :model="addUser" :label-width="80" :rules="ruleInline" style="width:360px;">
                 <i-form-item prop="user" style="height:40px;" label='用户名'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.user" placeholder="请输入用户名">
-                        <!-- <p slot="prepend"></p> -->
                     </i-input>
                 </i-form-item>
                 <i-form-item prop="password" style="margin:26px 0;" label='密码'>
@@ -54,7 +53,6 @@
                     </i-input>
                 </i-form-item>
 
-               
             </i-form>
         </i-modal>
 

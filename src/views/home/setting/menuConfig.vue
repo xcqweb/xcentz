@@ -1,7 +1,7 @@
 <template>
     <div class="menuConfig">
         <div class="menu_tree">
-           <i-tree :data="treeData" :render="renderContent"></i-tree> 
+           <i-tree :data="treeData" :render="renderContent" empty-text=''></i-tree> 
         </div>
         <!-- 新增菜单 -->
          <i-modal
@@ -150,8 +150,6 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                 }
             },
             addMenu(data){
-                // console.log(data)
-                // return
                 this.parentId = data.parent_id
                 this.addMenuStatus = true
                 this.currentTreeData = Object.freeze(data)
@@ -165,7 +163,6 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                     expand: true
                 });
 
-
                 this.$nextTick( () => {
                     setTimeout( () => {
                         let menuId = this.maxId+1
@@ -177,9 +174,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                         },error=>{
                         })
                     },0)
-                    
                 })
-                
             },
             updateMenu(params){
                 
@@ -218,7 +213,6 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                         })
                     },
                 });
-                
             },
             createIds(ids){
                 let str = ''

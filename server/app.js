@@ -14,7 +14,17 @@ let createError = require('http-errors'),
     {query} = require('./database'),//数据库
     RedisStore = require('connect-redis')(session), //redis
     fs = require('fs'),
+    Redis = require('ioredis'),
+    schedule = require('./common/scheduleTask'),
     spdy = require('spdy');
+    global.redis = new Redis({
+      port: 6379,          // Redis port
+      host: '127.0.0.1',   // Redis host
+      family: 4,           // 4 (IPv4) or 6 (IPv6)
+    });
+
+    
+
 app.set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
 
@@ -107,4 +117,5 @@ app.set('views', path.join(__dirname, 'views'))
       console.log('server is on 8081 .......')
     });
 
+  schedule()//初始化定时任务
 module.exports = app;
