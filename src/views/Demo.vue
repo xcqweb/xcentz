@@ -38,7 +38,7 @@ export default {
   data(){
      return{
       headers:{
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+        Authorization: `Bearer__${localStorage.getItem('token')}`
       },
       auth:{},
       

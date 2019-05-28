@@ -49,21 +49,17 @@ let {query} = require('../database'),
                     
                 });
                 
-                // let index = users.findIndex( (item) => {
-                //   return (item.UserName === username || item.Email === username ) && item.PassWord === password
-                // })
-                // console.log(index)
                 users[index].LoatLoginTime = moment().format('YYYY-MM-DD HH:mm:ss')
                 users[index].Token = token
+                
+                //更新登录时间
+                query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
                 res.status(200).json({
                   message:'登录成功！',
                   token:token,
                   user:r,
                   errorCode:10005
-                })
-                //更新登录时间
-                query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
-                    
+                }) 
               }
             }else{
               query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {

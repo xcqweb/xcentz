@@ -15,12 +15,6 @@ let query = function(sql, values) {
 		(function link(){
 			pool.getConnection(function(err, connection) {
 				if (err) {
-					if(err.code === 'PROTOCOL_SEQUENCE_TIMEOUT'){
-						console.log(err)
-						console.log('==============+++++++++++++++++')
-						link()
-						return
-					}
 					reject(err)
 				} else {
 					connection.query(sql, values, (err, rows) => {
