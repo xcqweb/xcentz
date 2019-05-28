@@ -2,7 +2,7 @@
     <i-tabs>
         <i-tab-pane label="个人信息" icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
             <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="width:260px;height:300px;margin:0 36px;" @click.native='updateAvatar' />
-            <i-form ref="form_adduser" :model="addUser" :label-width="80" :rules="ruleInline" style="width:360px;">
+            <i-form ref="form_adduser" :model="addUser" :label-width="120" :rules="ruleInline" style="width:480px;">
                 <i-form-item prop="user" style="height:40px;" label='用户名'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.user" disabled/>
                 </i-form-item>
@@ -21,11 +21,19 @@
 
                 <i-form-item prop="email" style="margin:26px 0;" label='邮箱'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.email" disabled placeholder="请输入邮箱" />
+                </i-form-item>
+
+                <i-form-item prop="role" style="margin:26px 0;" label='账号创建时间'>
+                    <i-input type="text" size="large" style="width:100%;" v-model="addUser.CreateTime" disabled />
+                </i-form-item>
+
+                <i-form-item prop="role" style="margin:26px 0;" label='最近登录时间'>
+                    <i-input type="text" size="large" style="width:100%;" v-model="addUser.LoatLoginTime" disabled />
                 </i-form-item>              
             </i-form>
         </i-tab-pane>
         <i-tab-pane label="修改密码" icon="md-create">
-            <i-form ref="form_adduser" :model="addUser" :label-width="80" :rules="ruleInline" style="width:360px;">
+            <i-form ref="form_adduser" :model="addUser" :label-width="120" :rules="ruleInline" style="width:480px;">
                 <i-form-item prop="old_password" style="margin:26px 0;" label='原密码'>
                     <i-input type="password" size="large" style="width:100%;" v-model="addUser.old_password" placeholder="请输入原密码" />
                 </i-form-item>
@@ -49,7 +57,7 @@
                 </i-form-item>
 
             </i-form>
-            <i-button type="primary" @click="handlerSubmit('form_adduser')" style="float:left;margin-left:30px;width:330px;" :disabled='!(addUser.old_password && addUser.password && addUser.confirmPsw && addUser.code)'>确认</i-button>
+            <i-button type="primary" @click="handlerSubmit('form_adduser')" style="float:left;margin-left:120px;width:360px;" :disabled='!(addUser.old_password && addUser.password && addUser.confirmPsw && addUser.code)'>确认</i-button>
         </i-tab-pane>
         <i-tab-pane label="用户设置" icon="logo-tux">
             <ul style="margin-top:20px;">
@@ -95,7 +103,9 @@ export default {
                 role:21,
                 cname:'',
                 email:'',
-                code:''
+                code:'',
+                CreateTime:'',
+                LoatLoginTime:''
             },
             ruleInline: Object.freeze({
                 user: [

@@ -1,12 +1,15 @@
 module.exports = {
-  presets: [
-    '@vue/app'
-  ],
-  "plugins": [
-    ["import", {
-    "libraryName": "iview",
-    "libraryDirectory": "src/components"
-  },'iview'],
-  'lodash'
-]
+    presets: [
+        '@vue/app'
+    ],
+   "plugins": [
+        ["import", 
+            {
+                "libraryName": "iview",
+                "libraryDirectory": "src/components"
+            },
+            'iview'
+        ],
+        'lodash'
+   ]
 }

@@ -26,34 +26,34 @@
             }
         }
 
-            for(let key in tree){
-                let item = tree[key]
-                if(item.id === 0){
-                    item.children = []
-                    trees.push(item)
-                }else{
-                    trees[0].children.push(item)
-                }
+        for(let key in tree){
+            let item = tree[key]
+            if(item.id === 0){
+                item.children = []
+                trees.push(item)
+            }else{
+                trees[0].children.push(item)
             }
+        }
+        
         return trees;
     },
 
     isNull = function(obj){
-        return Object.prototype.toString.call(obj) === '[object Null]'
+        return Object.prototype.toString.call(obj) === '[object Null]' || obj==='null'
     },
 
     //清楚redis key 
-    clearRedis = function(key){
+    clearRedis = function(key,fix){
         return new Promise((reslove,reject) => {
             let str = ''
-            if(key){
-                redis.del(`menuList${key}`)
+            if(fix){
+                redis.del(`${key}${fix}`)
             }else{
                for(let i=0 ;i<30; i++){
-                    redis.del(`menuList${i?i:''}`)
+                    redis.del(`${key}${i?i:''}`)
                 } 
             }
-            
             reslove()
         })
     },
@@ -63,6 +63,8 @@
         query('select * from Pub_User').then( (r) => {
             redis.set('userList',JSON.stringify(r))
         })
-    }
+    };
+
+
 
 module.exports = {buildTree,isNull,clearRedis,updateUserList}

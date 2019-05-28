@@ -80,8 +80,8 @@ let router = new Router({
 
 router.beforeEach( (from,to,next) => {
   let token = localStorage.getItem('token')
-  if(from.name == null){//解决动态路由(addRoutes)刷新404的问题
-    console.log(from,to)
+  if(from.name == null && sessionStorage.getItem('currentRoute')!=null){//解决动态路由(addRoutes)刷新404的问题
+    console.log(from,to,sessionStorage.getItem('currentRoute'))
     let re = authRoute.find( (item) => {
       return item.children[0].path === sessionStorage.getItem('currentRoute')
     })
@@ -89,10 +89,10 @@ router.beforeEach( (from,to,next) => {
     router.push({path:sessionStorage.getItem('currentRoute')})
     return
   }
+  
   router.matcher.addRoutes([{ path: '*',name:'all', redirect: '/404',meta:{noRequire:true}}])
+
   if(token && from.path === '/login'){
-    
-    
     Vue.$Message.warning({
       content:'您已登录成功,无需重复登录!',
       duration: 3
