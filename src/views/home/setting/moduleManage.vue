@@ -127,9 +127,10 @@ export default {
             this.getModuleList()
         },
         //查询
-        search(){
+        search:debounce(function(){
             this.getModuleList()
-        },
+        },600,{leading:true}),
+        
         getModuleList(){
             queryModule({key:this.searchKey,currentPage:this.currentPage,pageSize:this.pageSize}).then( (res) => {
                 this.dataModule = res.data.moduleList
@@ -137,6 +138,13 @@ export default {
             })
         },
         addModule(){
+            if(!this.moduleAdd.moduleName){
+                this.$Message.warning({
+                    content:'权限模块名称不能为空!',
+                    duration:3
+                })
+                return
+            }
             addModule({moduleName:this.moduleAdd.moduleName,direction:this.moduleAdd.moduleDirection}).then( (res) => {
                 this.moduleAdd = {
                     moduleName:'',
@@ -156,6 +164,13 @@ export default {
             }
         },
         moduleEditHandler(){
+            if(!this.moduleEdit.moduleName){
+                this.$Message.warning({
+                    content:'权限模块名称不能为空!',
+                    duration:3
+                })
+                return
+            }
             editModule({moduleName:this.moduleEdit.moduleName,direction:this.moduleEdit.moduleDirection,id:this.moduleEdit.id}).then( (res) => {
                 this.$set(this.dataModule[this.moduleEdit.index],'ModuleName',this.moduleEdit.moduleName)
                 this.$set(this.dataModule[this.moduleEdit.index],'Directions',this.moduleEdit.moduleDirection)

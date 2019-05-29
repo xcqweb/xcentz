@@ -1,7 +1,7 @@
 var CommpressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
-
+const webpack = require('webpack')
 
 function resolve (dir) {
     return path.join(__dirname, dir)
@@ -17,8 +17,6 @@ const cdn = {
 		'https://cdn.bootcss.com/xlsx/0.14.3/xlsx.full.min.js',
 	]
 }
-
-
 
 module.exports = {
     //关闭eslint
@@ -59,6 +57,12 @@ module.exports = {
             .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
             .set('@api',resolve('src/assets/api'))
             .set('@@', resolve('src/components'))
+
+        // config.plugin('provide')
+        //     .use(webpack.ProvidePlugin, [{
+        //         _debounce:['lodash','debounce'],
+        //         _throttle:['lodash','throttle'],
+        //     }]);
 
         config.plugin('html')
             .tap(args => {
@@ -138,18 +142,15 @@ module.exports = {
                                         不大的警告
                                     */
                                     warnings: false,
-                
                                     /*
                                         是否删除代码中所有的console语句，默认为不删除，开启后，会删除所有的console语句
                                     */
                                     drop_console: true,
-                
                                     /*
                                         是否内嵌虽然已经定义了，但是只用到一次的变量，比如将 var x = 1; y = x, 转换成 y = 5, 默认为不
                                         转换，为了达到更好的压缩效果，可以设置为false
                                     */
                                     collapse_vars: true,
-                
                                     /*
                                         是否提取出现了多次但是没有定义成变量去引用的静态值，比如将 x = 'xxx'; y = 'xxx'  转换成
                                         var a = 'xxxx'; x = a; y = a; 默认为不转换，为了达到更好的压缩效果，可以设置为false

@@ -26,20 +26,18 @@ let {query} = require('../database'),
                     let users = JSON.parse(result)
                     let index
                     let r = users.find( (item,i) => {
-                        if((item.UserName === username || item.Email === username ) && item.PassWord === password){
+                        if(((item.UserName === username) || (item.Email === username) ) && item.PassWord === password){
                             index = i
                         }
                         return (item.UserName === username || item.Email === username ) && item.PassWord === password
                     })
-                // console.log(r)
                 if(!r){
                     res.status(500).json({
                         message:'用户名或密码错误！',
                         errorCode:10001
                     })
                 }else{
-                    delete r.PassWord
-                    delete r.Token
+                    
                     console.log('========================redis')
                     // 这是加密的key（密钥) 
                     let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
@@ -50,6 +48,8 @@ let {query} = require('../database'),
                     users[index].LoatLoginTime = moment().format('YYYY-MM-DD HH:mm:ss')
                     users[index].Token = token
                     redis.set('userList',JSON.stringify(users))
+                    delete r.PassWord
+                    delete r.Token
                     //更新登录时间
                     query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
                     res.status(200).json({
@@ -465,7 +465,7 @@ let {query} = require('../database'),
         // let MenuId = req.body.
         // console.log(uuid.v1().replace(/\-/g,''))
         query(`INSERT INTO Pub_Menu(MenuId,MenuName,ParentId,MenuUrl,MenuIconUrl) VALUES(${reData.menuId},'${reData.menuName}',${reData.parentId},'${reData.route}','${reData.icon}')`).then( (r) => {
-          clearRedis('menuList').then( () => {
+            Promise.all([clearRedis('menuList'),clearRedis('menuAuthList')]).then( () => {
             res.json({
               errorCode:10008,
               message:'菜单添加成功!'
@@ -482,7 +482,7 @@ let {query} = require('../database'),
         let reData = req.body
 
         query(`UPDATE Pub_Menu SET MenuName='${reData.menuName}',MenuUrl='${reData.route}',MenuIconUrl='${reData.icon}' WHERE MenuId = ${reData.id}`).then( (r) => {
-          clearRedis('menuList').then( () => {
+            Promise.all([clearRedis('menuList'),clearRedis('menuAuthList')]).then( () => {
             res.json({
               errorCode:100010,
               message:'菜单修改成功!'
@@ -499,7 +499,7 @@ let {query} = require('../database'),
     menu_delete = (req,res) => {
         let ids = req.body.ids
         query(`DELETE t1,t2 FROM Pub_Menu AS t1 LEFT JOIN Pub_Role_Menu AS t2 ON t1.MenuId = t2.MenuId WHERE ${ids}`).then( (r) => {
-          clearRedis('menuList').then( () => {
+            Promise.all([clearRedis('menuList'),clearRedis('menuAuthList')]).then( () => {
              res.json({
               errorCode:10006,
               message:'菜单删除成功!',

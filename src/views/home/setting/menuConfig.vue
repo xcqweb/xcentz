@@ -134,6 +134,13 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
             },
             //编辑菜单
             editMenuHandler(){
+                if(!this.editFrom.menuName){
+                    this.$Message.warning({
+                        content:'菜单名称不能为空!',
+                        duration:3
+                    })
+                    return
+                }
                 editMenu({menuName:this.editFrom.menuName,route:this.editFrom.route,icon:this.editFrom.icon,id:this.editFrom.id}).then( (res) => {
                     this.queryMenu()
                     this.$root.eventBus.$emit('getMenu')
@@ -155,6 +162,13 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                 this.currentTreeData = Object.freeze(data)
             },
             append (data,menu) {
+                if(!menu.menuName){
+                    this.$Message.warning({
+                        content:'菜单名称不能为空!',
+                        duration:3
+                    })
+                    return
+                }
                 let parentId = data.id
                 
                 const children = data.children || [];

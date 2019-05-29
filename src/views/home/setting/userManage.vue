@@ -280,9 +280,9 @@ export default {
             this.currentPage = page
             this.getUserList()
         },
-        search(){
+        search:debounce(function(){
             this.getUserList()
-        },
+        },600,{leading:true}),
         //获取角色列表
         getRoleHandler(){
             roleList().then( (res) =>{

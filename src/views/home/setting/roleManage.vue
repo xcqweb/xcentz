@@ -223,11 +223,18 @@ export default {
             })
         },
         //搜索
-        search(){
+        search:debounce(function(){
             this.getRoleList()
-        },
+        },600,{leading:true}),
         //新增角色
         addRole(){
+            if(!this.roleAdd.roleName || !this.roleAdd.roleDirection){
+                this.$Message.warning({
+                    content:'角色名和角色说明不能为空!',
+                    duration:3
+                })
+                return
+            }
             addRole({roleName:this.roleAdd.roleName,direction:this.roleAdd.roleDirection}).then( (res) => {
                 this.roleAdd = {
                     roleName:'',
@@ -238,6 +245,13 @@ export default {
         },
         //编辑角色
         editRole(){
+            if(!this.roleEdit.roleName || !this.roleEdit.roleDirection){
+                this.$Message.warning({
+                    content:'角色名和角色说明不能为空!',
+                    duration:3
+                })
+                return
+            }
             editRole({roleName:this.roleEdit.roleName,direction:this.roleEdit.roleDirection,id:this.roleEdit.id}).then( (res) => {
                 this.$set(this.dataRole[this.roleEdit.index],'RoleName',this.roleEdit.roleName)
                 this.$set(this.dataRole[this.roleEdit.index],'Directions',this.roleEdit.roleDirection)

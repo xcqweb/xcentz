@@ -7,6 +7,11 @@ import '@/assets/styles/main.less'
 
 import 'iview/dist/styles/iview.css';
 import '@/assets/js/iview'
+
+import {throttle,debounce} from 'lodash'
+
+window.throttle = throttle
+window.debounce = debounce
 Vue.config.productionTip = false
 
 Vue.mixin({

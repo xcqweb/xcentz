@@ -4,7 +4,6 @@
 
 <script>
 import Echarts from 'echarts'
-import {throttle} from 'lodash'
 export default {
     data(){
         return{

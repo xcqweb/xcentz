@@ -34,7 +34,11 @@ import {
     Tabs,
     TabPane,
     Switch,
-    Spin
+    Spin,
+    Divider,
+    Step,
+    Steps,
+    Card
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
@@ -78,7 +82,11 @@ let modules = [
     Tabs,
     TabPane,
     Switch,
-    Spin
+    Spin,
+    Divider,
+    Step,
+    Steps,
+    Card  
 ]
 for(let item of modules){
     let hasI = item.name.charAt(0) === 'i'

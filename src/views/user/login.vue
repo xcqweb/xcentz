@@ -37,7 +37,6 @@
 <script>
 
 import {login,getCode,checkCode} from '@api'
-import { error } from 'util';
 	export default{
 		name:'login',
 		data(){

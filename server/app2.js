@@ -18,6 +18,7 @@ let createError = require('http-errors'),
     Redis = require('ioredis'),
     schedule = require('./common/scheduleTask'),
     spdy = require('spdy');
+    vhost = require('vhost'),
     global.redis = new Redis({
         port: 6379,          // Redis port
         host: '127.0.0.1',   // Redis host
@@ -51,7 +52,6 @@ app.set('views', path.join(__dirname, 'views'))
         name:'xcentz',       //..这里的name指的是cookie的name，默认cookie的name是：connect.sid
         secret:'sdso7sash734u347dd34',   //  加密key 可以随意书写
         cookie:{maxAge:60*60*1000},   //  两次请求的时间差，即超过这个时间再去访问session会失效
-        secure:true,
         resave:true,
         saveUninitialized:true,
         store: new RedisStore({host:'localhost',port:6379,maxAge : 60*60*1000}) //解决多进程session不能共享的问题
@@ -60,7 +60,6 @@ app.set('views', path.join(__dirname, 'views'))
     .use(jwtAuth)
 
     .use('/',function(req, res, next) {
-        res.set('Cache-Control', 'max-age=3600');
         let path = req.path
         let unLessPath = [
             "/api/xcentz/v1/users/login", 
