@@ -15,17 +15,17 @@
             @on-ok="addModule"
             @on-cancel="addModuleStatus=false">
             <div class="center_g marginTop10"><p class="label_g">模块名称</p><i-input v-model="moduleAdd.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">模块说明</p><i-input v-model="moduleAdd.moduleDirection" placeholder="请输入模块说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块说明</p><i-input type='textarea' autosize v-model="moduleAdd.moduleDirection" placeholder="请输入模块说明..." /></div>
         </i-modal>
 
         <!-- 编辑模块 -->
          <i-modal
             v-model="editModuleStatus"
-            title="编辑模块"
+            :title="modalTitle"
             @on-ok="moduleEditHandler"
             @on-cancel="editModuleStatus=false">
             <div class="center_g marginTop10"><p class="label_g">模块名称</p><i-input v-model="moduleEdit.moduleName" :maxlength=8 placeholder="请输入模块名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">模块说明</p><i-input v-model="moduleEdit.moduleDirection" placeholder="请输入模块说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">模块说明</p><i-input type='textarea' autosize v-model="moduleEdit.moduleDirection" placeholder="请输入模块说明..." /></div>
         </i-modal>
     </div>
 </template>
@@ -35,6 +35,7 @@ import {addModule,queryModule,editModule,delModule} from '@api'
 export default {
     data(){
         return{
+            modalTitle:'',
             addModuleStatus:false,
             searchKey:'',
             moduleAdd:{
@@ -155,6 +156,7 @@ export default {
         },
         //编辑模块
         edit (data) {
+            this.modalTitle = `编辑模块 - ${data.row.ModuleName}`
             this.editModuleStatus = true
             this.moduleEdit = {
                 moduleName:data.row.ModuleName,
@@ -180,7 +182,7 @@ export default {
         remove (data) {
             this.$Modal.confirm({
                 title: '提示',
-                content: '<p>确定要要删除该角色?</p>',
+                content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${data.row.ModuleName}</span> 模块?</p>`,
                 onOk: () => {
                     delModule({id:data.row.ModuleId}).then( (res) => {
                         this.dataModule.splice(data.index,1)

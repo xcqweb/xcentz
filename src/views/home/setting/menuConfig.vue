@@ -17,7 +17,7 @@
         <!-- 编辑菜单 -->
          <i-modal
             v-model="editMenuStatus"
-            title="编辑菜单"
+            :title="modalTitle"
             @on-ok="editMenuHandler"
             @on-cancel="editMenuStatus=false">
             <div class="center_g marginTop10"><p class="label_g">菜单名称</p><i-input v-model="editFrom.menuName" placeholder="请输入菜单名..." /></div>
@@ -31,6 +31,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
     export default {
         data () {
             return {
+                modalTitle:'',
                 formItem:{
                   menuName:'',
                   route:'',
@@ -123,6 +124,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                 ]);
             },
             edit(root, node, data){
+                this.modalTitle = `编辑菜单 - ${node.node.title}`
                 this.parentId = data.parent_id
                 this.editMenuStatus = true
                 this.editFrom = {
@@ -186,13 +188,12 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                             this.queryMenu()
                             this.$root.eventBus.$emit('getMenu')
                         },error=>{
+
                         })
                     },0)
                 })
             },
-            updateMenu(params){
-                
-            },
+            
             remove (root, node, data) {
                 if(typeof node.parent === 'undefined'){
                     this.$Message.warning({
@@ -203,7 +204,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                 }
                  this.$Modal.confirm({
                     title: '提示',
-                    content: '<p>确定要要删除菜单?</p>',
+                    content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${node.node.title}</span> 菜单?</p>`,
                     onOk: () => {
                         let arr = []
                         function loop(node){

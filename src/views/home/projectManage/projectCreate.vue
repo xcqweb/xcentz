@@ -129,6 +129,11 @@
                     </i-select>
                 </div>
 
+                <div class="pro_item">
+                    <span class="pro_label">备注:</span>
+                    <i-input type='textarea' autosize style="width:320px;"></i-input>
+                </div>
+
                 <div class="project_top">
                     <i-button style="width:160px;" type="primary" @click="addProject">确认立项</i-button> 
                 </div>
@@ -161,6 +166,11 @@
             </div>
         </div>
         
+        <!-- 产品库 -->
+        <div class="productLibrary">
+            <i-divider>产品库</i-divider>
+            
+        </div>
     </div>
 </template>
 
@@ -281,6 +291,9 @@ export default {
                     align-items: center;
                 }
             }
+        }
+        .productLibrary{
+            margin-top: 100px;
         }
     }
 </style>

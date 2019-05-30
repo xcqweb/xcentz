@@ -1,9 +1,9 @@
   let {query} = require('../database')          
             
-    let buildTree = function(list){
-        let trees = []
-        let temp = {};
-        let tree = {};
+    var buildTree = function(list){
+        var trees = []
+        var temp = {};
+        var tree = {};
         for(let i in list){
             temp[list[i].id] = list[i];
         }
@@ -27,7 +27,8 @@
         }
 
         for(let key in tree){
-            let item = tree[key]
+            
+            var item = tree[key]
             if(item.id === 0){
                 item.children = []
                 trees.push(item)
@@ -35,7 +36,7 @@
                 trees[0].children.push(item)
             }
         }
-        
+        // console.log(trees[0].children[0])
         return trees;
     },
 

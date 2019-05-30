@@ -1,8 +1,9 @@
 <template>
     <div class="projectApproval">
         <!-- 审批 -->
+        <i-divider>待审批流程</i-divider>
         <div class="approval">
-            <i-card style="width:45%;margin:30px 30px" v-for="i in 2">
+            <i-card style="width:42%;margin:30px 30px;min-width:360px;" v-for="i in 2">
                 <p slot="title">
                     <i-icon type="ios-film-outline"></i-icon>
                     项目{{i}}
@@ -59,8 +60,13 @@
                 <i-form-item label="宇龙编码" prop="ylCode">
                     <i-input v-model="formsPro.ylCode" placeholder="请输入宇龙编码"></i-input>
                 </i-form-item>
+
                 <i-form-item label="项目编码" prop="projectName">
                     <i-input v-model="formsPro.projectName" placeholder="请输入项目编码"></i-input>
+                </i-form-item>
+
+                <i-form-item label="备注" prop="message">
+                    <i-input type='textarea' autosize v-model="formsPro.message" placeholder="请输入备注"></i-input>
                 </i-form-item>
             </i-form>
 
@@ -77,6 +83,10 @@
                 <i-form-item label="ParentAsin" prop="parentAsin">
                     <i-input v-model="formsOp.parentAsin" placeholder="请输入parentAsin"></i-input>
                 </i-form-item>
+
+                <i-form-item label="备注" prop="message">
+                    <i-input type='textarea' autosize v-model="formsOp.message" placeholder="请输入备注"></i-input>
+                </i-form-item>
             </i-form>
         </i-modal>
     </div>
@@ -89,7 +99,8 @@ export default {
             approvalStatus:false,
             formsPro:{
                 ylCode:'',
-                projectName:''
+                projectName:'',
+                message:''
             },
             rulesPro:{
                 ylCode:[
@@ -102,7 +113,8 @@ export default {
             formsOp:{
                 sku:'',
                 asin:'',
-                parentAsin:''
+                parentAsin:'',
+                message:''
             },
             rulesOp:{
                 sku:[
@@ -119,7 +131,6 @@ export default {
     },
     methods:{
         approval(){
-            console.log(87887)
             this.approvalStatus = true
         },
         approvalOk(){

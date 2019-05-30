@@ -59,7 +59,7 @@
         <!-- 分配角色 -->
          <i-modal
             v-model="assignRoleStatus"
-            title="分配角色"
+            :title="assignRoleTitle"
             @on-ok="assignRole"
             @on-cancel="assignRoleStatus=false">
             <i-select v-model="selectRole" filterable>
@@ -151,6 +151,7 @@ export default {
             addUserStatus:false,
             assignRoleStatus:false,
             isLoading:false,
+            assignRoleTitle:'',
             roleAssign:{
                 roleName:'',
             },
@@ -296,7 +297,7 @@ export default {
                 
                 this.$Modal.confirm({
                     title: '提示',
-                    content: `<p style='letter-spacing:2px;line-height:26px;'>确定重置${row.UserName}用户的密码? <br /> <span style="color:#999;">重置密码后新密码将发至该用户的账户邮箱<span></p>`,
+                    content: `<p style='letter-spacing:2px;line-height:26px;'>确定重置 <span style='color:#2d8cf0;'> ${row.UserName} </span> 用户的密码? <br /> <span style="color:#999;">重置密码后新密码将发至该用户的账户邮箱<span></p>`,
                     onOk: () => {
                         resetPassword({userId:row.UserId,email:row.Email})
                     },
@@ -304,6 +305,7 @@ export default {
                 break;
 
                 case 2://角色分配
+                this.assignRoleTitle = `分配角色 - ${row.UserName} `
                 this.assignRoleStatus = true
                 this.selectRole = row.RoleId
                 this.currentRow = Object.freeze(row)
@@ -313,7 +315,7 @@ export default {
                 case 3://删除用户
                 this.$Modal.confirm({
                     title: '提示',
-                    content: '<p>确定要删除该用户?</p>',
+                    content: `<p>确定要删除 <span style='color:#2d8cf0;'> ${row.UserName} </span> 用户?</p>`,
                     onOk: () => {
                         delUser({userId:row.UserId}).then( (res) => {
                             this.userData.splice(row._index,1)

@@ -426,51 +426,30 @@ let {query} = require('../database'),
       let roleId = req.query.roleId
       let isAdmin = req.query.isAdmin
       let str = ''
-      redis.get(`menuList${roleId?roleId:''}`, function (err, result) {
-        if(isNull(result)){
           if(isAdmin){
             str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu`
           }else{
             str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu, Pub_Role_Menu WHERE Pub_Role_Menu.MenuId = Pub_Menu.MenuId AND Pub_Role_Menu.RoleId = ${roleId}`
           }
           query(str).then( (r) => {
-            let trees = buildTree(r)
+              let trees = buildTree(r)
             query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
-              if(isAdmin){
-                redis.set('menuList',JSON.stringify({
-                  maxId:response[0].maxId,
-                  menuList:trees
-                }))
-              }else{
-                redis.set(`menuList${roleId}`,JSON.stringify({
-                  maxId:response[0].maxId,
-                  menuList:trees
-                }))
-              }
               res.json({
                 maxId:response[0].maxId,
                 menuList:trees
               })
             })
           })
-        }else{
-          console.log('redis')
-          res.json(JSON.parse(result))
-        }
-      });
+        
     },
     
     menu_post = (req,res) => {
         let reData = req.body
-        // let MenuId = req.body.
-        // console.log(uuid.v1().replace(/\-/g,''))
         query(`INSERT INTO Pub_Menu(MenuId,MenuName,ParentId,MenuUrl,MenuIconUrl) VALUES(${reData.menuId},'${reData.menuName}',${reData.parentId},'${reData.route}','${reData.icon}')`).then( (r) => {
-            Promise.all([clearRedis('menuList'),clearRedis('menuAuthList')]).then( () => {
             res.json({
               errorCode:10008,
               message:'菜单添加成功!'
             })
-          })  
         }, error => {
           res.status(500).json({
             errorCode:10009,
@@ -482,13 +461,10 @@ let {query} = require('../database'),
         let reData = req.body
 
         query(`UPDATE Pub_Menu SET MenuName='${reData.menuName}',MenuUrl='${reData.route}',MenuIconUrl='${reData.icon}' WHERE MenuId = ${reData.id}`).then( (r) => {
-            Promise.all([clearRedis('menuList'),clearRedis('menuAuthList')]).then( () => {
             res.json({
               errorCode:100010,
               message:'菜单修改成功!'
             })
-          })
-            
         }, error => {
           res.status(500).json({
             errorCode:100011,
@@ -499,13 +475,10 @@ let {query} = require('../database'),
     menu_delete = (req,res) => {
         let ids = req.body.ids
         query(`DELETE t1,t2 FROM Pub_Menu AS t1 LEFT JOIN Pub_Role_Menu AS t2 ON t1.MenuId = t2.MenuId WHERE ${ids}`).then( (r) => {
-            Promise.all([clearRedis('menuList'),clearRedis('menuAuthList')]).then( () => {
-             res.json({
+            res.json({
               errorCode:10006,
               message:'菜单删除成功!',
             })
-          })
-           
         }, error => {
           res.status(500).json({
             errorCode:10007,
@@ -515,24 +488,11 @@ let {query} = require('../database'),
     },
     menuAuth_get = (req,res) => {
         let roleId = req.query.roleId
-        redis.get(`menuAuthList${roleId}`,(err,result) => {
-            // console.log(isNull(result),result)
-            if(isNull(result)){
-                query(`SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route, t.checked FROM Pub_Menu LEFT JOIN (SELECT Pub_Role_Menu.RoleId AS checked, Pub_Role_Menu.MenuId FROM Pub_Role_Menu WHERE Pub_Role_Menu.RoleId = ${roleId}) AS t ON t.MenuId = Pub_Menu.MenuId`).then( (r) => {
-                    let trees = buildTree(r)
-                    redis.set(`menuAuthList${roleId}`,JSON.stringify(trees))
-                    res.json({
-                        menuList:trees
-                    })
-                })
-            }else{
-                console.log('redis === menuauth')
-                res.json({
-                    menuList:JSON.parse(result)
-                })
-            }
+        query(`SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route, t.checked FROM Pub_Menu LEFT JOIN (SELECT Pub_Role_Menu.RoleId AS checked, Pub_Role_Menu.MenuId FROM Pub_Role_Menu WHERE Pub_Role_Menu.RoleId = ${roleId}) AS t ON t.MenuId = Pub_Menu.MenuId`).then( (r) => {
+            res.json({
+                menuList:buildTree(r)
+            })
         })
-        
     },
     menuAuth_put = (req,res) => {
         let str = req.body.str
@@ -540,21 +500,17 @@ let {query} = require('../database'),
         query(`DELETE FROM Pub_Role_Menu WHERE RoleId = ${roleId}`).then( (r) => {
             if(!str){
                 query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
-                    Promise.all([clearRedis('menuList',roleId),clearRedis('menuAuthList',roleId)]).then( () => {
-                        res.json({
-                            errorCode:100031,
-                            message:'菜单权限配置成功!'
-                        })
+                    res.json({
+                        errorCode:100031,
+                        message:'菜单权限配置成功!'
                     })
                 })
             }else{
                 query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {
                     query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
-                        Promise.all([clearRedis('menuList',roleId),clearRedis('menuAuthList',roleId)]).then( () => {
-                            res.json({
-                                errorCode:100031,
-                                message:'菜单权限配置成功!'
-                            })
+                        res.json({
+                            errorCode:100031,
+                            message:'菜单权限配置成功!'
                         })
                     })
                 },error => {

@@ -14,23 +14,23 @@
             @on-ok="addRole"
             @on-cancel="addRoleStatus=false">
             <div class="center_g marginTop10"><p class="label_g">角色名称</p><i-input v-model="roleAdd.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input v-model="roleAdd.roleDirection" placeholder="请输入角色说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input type='textarea' autosize v-model="roleAdd.roleDirection" placeholder="请输入角色说明..." /></div>
         </i-modal>
 
         <!-- 编辑角色 -->
          <i-modal
             v-model="editRoleStatus"
-            title="编辑角色"
+            :title="modalTitle"
             @on-ok="editRole"
             @on-cancel="editRoleStatus=false">
             <div class="center_g marginTop10"><p class="label_g">角色名称</p><i-input v-model="roleEdit.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input v-model="roleEdit.roleDirection" placeholder="请输入角色说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input type='textarea' autosize v-model="roleEdit.roleDirection" placeholder="请输入角色说明..." /></div>
         </i-modal>
 
         <!-- 菜单权限分配 -->
          <i-modal
             v-model="menuAuthStatus"
-            title="菜单权限分配"
+            :title="modalTitle"
             width='600'
             @on-ok="menuAuthHandler"
             @on-cancel="menuAuthStatus=false">
@@ -40,7 +40,7 @@
         <!-- 模块权限分配 -->
          <i-modal
             v-model="moduleAuthStatus"
-            title="模块权限分配"
+            :title="modalTitle"
             width='800'
             @on-ok="moduleAuthHandler"
             @on-cancel="moduleAuthStatus=false">
@@ -63,6 +63,7 @@ import {roleList,addRole,editRole,delRole,queryAuthMenu,updateAuthMenu,queryAuth
 export default {
     data(){
         return{
+            modalTitle:'',
             indeterminate:false,
             checkAll:false,
             checkAllGroup:[],
@@ -270,6 +271,7 @@ export default {
         },
         //编辑角色
         edit (data) {
+            this.modalTitle = `编辑角色 - ${data.row.RoleName}`
             this.editRoleStatus = true
             this.roleEdit = {
                 roleName:data.row.RoleName,
@@ -283,7 +285,7 @@ export default {
             console.log(data)
             this.$Modal.confirm({
                 title: '提示',
-                content: '<p>确定要要删除该角色?</p>',
+                content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${data.row.RoleName}</span> 角色?</p>`,
                 onOk: () => {
                     delRole({id:data.row.RoleId}).then( (res) => {
                         this.dataRole.splice(data.index,1)
@@ -293,6 +295,7 @@ export default {
         },
         //模块权限分配
         moduleAuthAssign(data){
+            this.modalTitle = `模块权限分配 - ${data.row.RoleName}`
             this.checkAllGroup = []
             this.checkAll = false
             this.moduleAuthStatus = true
@@ -313,7 +316,8 @@ export default {
             })
         },
         //菜单权限分配
-        menuAuthAssign({row:{RoleId}}){
+        menuAuthAssign({row:{RoleId,RoleName}}){
+            this.modalTitle = `菜单权限分配 - ${RoleName}`
             this.menuAuthStatus = true
             this.currentRoleId = RoleId
             this.queryAuthMenu(RoleId)

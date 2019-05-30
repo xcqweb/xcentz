@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from '@/router'
+
 import '@/assets/styles/reset.less'
+import '@/assets/js/iview'
+import 'iview/dist/styles/iview.css';
 import '@/assets/styles/main.less'
 
 
-import 'iview/dist/styles/iview.css';
-import '@/assets/js/iview'
+
 
 import {throttle,debounce} from 'lodash'
 
