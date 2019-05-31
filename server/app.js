@@ -37,7 +37,7 @@ app.set('views', path.join(__dirname, 'views'))
             to: function(context) {
                 return context.parsedUrl.pathname;
             }
-        }
+        },
       ]
     }))
     .use(logger('dev'))

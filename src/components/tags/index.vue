@@ -1,11 +1,25 @@
 <template>
     <div class="tags">
         <div class="tags_con" :style="{minWidth:`${comWidth}px`}">
-            <span v-for="item in tags">
-               <i-tag closable :color="isActive(item)?'primary':'default'" @on-close='closeTag(item)'>
+            <span v-for="(item ,index) in tags">
+               <i-tag closable :color="isActive(item)?'primary':'default'" @on-close='closeTag(item)' @contextmenu.prevent.native="menuRight($event,index,item)">
                    <router-link :to="item.path">{{item.meta.title}}</router-link>
                 </i-tag> 
             </span>
+            <div :style="{left:position.left+'px',top:position.top+'px'}" style="position:absolute;left: -50px;top: 16px;">
+                <i-poptip placement="bottom" v-model="visible">
+                
+                    <div slot="content">
+                        <i-dropdown @click.native='itemHandler'>
+                            <i-dropdown-item data-index='1'>关闭当前</i-dropdown-item>
+                            <i-dropdown-item divided data-index='2'>关闭其他</i-dropdown-item>
+                            <i-dropdown-item divided data-index='3'>关闭右侧</i-dropdown-item>
+                            <i-dropdown-item divided data-index='4'>全部关闭</i-dropdown-item>
+                        </i-dropdown>
+                    </div>
+                </i-poptip>
+            </div>
+            
         </div>
     </div>
 </template>
@@ -15,6 +29,13 @@ import Bscroll from 'better-scroll'
 export default {
     data(){
         return{
+            position:{
+                left:0,
+                top:0
+            },
+            visible:false,
+            seletedIndex:0,
+            seletedItem:{},
             tags:[],
             comWidth:0,
 
@@ -23,6 +44,7 @@ export default {
     watch:{
         '$route':{
             handler(){
+                this.visible = false
                 this.getTags()
             }
         }
@@ -33,6 +55,48 @@ export default {
     },
 
     methods:{
+        itemHandler(e){
+            let $index = e.target.dataset.index
+            switch($index){
+                case '1'://关闭当前
+                    this.tags.splice(this.seletedIndex,1)
+                    this.visible = false
+                    this.initRoute()
+                break;
+
+                case '2'://关闭其他
+                    this.tags = this.tags.filter( (item,index) => {
+                        return item.meta.title === this.seletedItem.meta.title
+                    })
+                    this.visible = false
+                    this.initRoute()
+                break;
+
+                case '3'://关闭右侧
+                    this.tags.splice(this.seletedIndex)
+                    this.visible = false
+                    this.initRoute()
+                break;
+
+                case '4'://关闭全部
+                    this.tags = []
+                    this.visible = false
+                    this.initRoute()
+                break;
+            } 
+        },
+        //右键
+        menuRight(e,index,item){
+            console.log(index,item)
+            this.seletedIndex = index
+            this.seletedItem = item
+            this.position = {
+                left:e.clientX,
+                top:e.clientY
+            }
+            this.visible = true
+            return
+        },
         initScroll(){
             this.$nextTick( () => {
                 let warpper = document.querySelector('.tags') 
@@ -42,9 +106,10 @@ export default {
                     click:true,
                     mouseWheel:true
                 })
+                this.comWidth = 0
                 let arr = Array.from(document.querySelector('.tags_con').children)
                 for(let item of arr){
-                    this.comWidth += item.offsetWidth+36.5
+                    this.comWidth += item.offsetWidth+5
                 }
             })
         },
@@ -70,6 +135,7 @@ export default {
                   meta:{title:this.$route.meta.title}
               })  
             }
+            this.initScroll()
         },
         closeTag(data){
             
@@ -79,6 +145,9 @@ export default {
             
             this.tags.splice(index,1)
             // console.log(this.tags)
+            this.initRoute()
+        },
+        initRoute(){
             if(this.tags.length>=1){
                 this.$router.push(this.tags.slice(-1)[0].path)
             }else{

@@ -1,5 +1,5 @@
 <template>
-    <i-tabs>
+    <i-tabs class="usercenter_info">
         <i-tab-pane label="个人信息" icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
             <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="width:260px;height:300px;margin:0 36px;" @click.native='updateAvatar' />
             <i-form ref="form_adduser" :model="addUser" :label-width="120" :rules="ruleInline" style="width:480px;">
@@ -8,7 +8,10 @@
                 </i-form-item>
 
                 <i-form-item prop="phone" style="margin:26px 0;" label='电话'>
-                    <i-input type="text" size="large" style="width:100%;" @on-blur="editUser" v-model="addUser.phone"/>
+                    <i-input type="text" size="large" style="width:100%;" @on-blur="editUser('phone')" v-model="addUser.phone"/>
+                    <i-spin fix style="position:absolute;right:-36px;width:36px;height:36px;width:100%" v-show="phoneStatus">
+                        <i-icon type="ios-loading" size=18 class="demo-spin-icon-load"></i-icon>
+                    </i-spin>
                 </i-form-item>
 
                 <i-form-item prop="role" style="margin:26px 0;" label='角色'>
@@ -16,7 +19,10 @@
                 </i-form-item>
 
                 <i-form-item prop="cname" style="margin:26px 0;" label='中文名'>
-                    <i-input type="text" size="large" style="width:100%;" @on-blur="editUser" v-model="addUser.cname" />
+                    <i-input type="text" size="large" style="width:100%;" @on-blur="editUser('cname')" v-model="addUser.cname" />
+                    <i-spin fix style="position:absolute;right:-36px;width:36px;height:36px;width:100%" v-show="cnameStatus">
+                        <i-icon type="ios-loading" size=18 class="demo-spin-icon-load"></i-icon>
+                    </i-spin>
                 </i-form-item>
 
                 <i-form-item prop="email" style="margin:26px 0;" label='邮箱'>
@@ -91,6 +97,8 @@ export default {
             }
         };
         return{
+            phoneStatus:false,
+            cnameStatus:false,
             loading:false,
             isSend:false,
             isSendText:'获取邮箱验证码',
@@ -167,7 +175,6 @@ export default {
         },
         //修改密码
         handlerSubmit(name){
-            console.log(this.addUser)
             this.$refs[name].validate((valid) => {
                 if (valid) {
                     editPassword({user:JSON.stringify(this.addUser),userId:this.userInfo.UserId}).then( (res) => {
@@ -181,10 +188,13 @@ export default {
             })
         },
         //更新信息
-        editUser(){
+        editUser(type){
+            this[`${type}Status`] = true
             let params = {phone:this.addUser.phone,cname:this.addUser.cname,userId:this.userInfo.UserId}
             edituserInfo(params).then( (res) => {
-
+                this[`${type}Status`] = false
+            },error => {
+                this[`${type}Status`] = false
             })
         },
         //更新头像
@@ -197,8 +207,6 @@ export default {
 
 <style lang="less" scoped>
 .usercenter_info{
-    display: flex;
-    margin-top: 30px;
 }
 
 </style>

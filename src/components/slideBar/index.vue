@@ -7,7 +7,7 @@
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <i-icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
-                <span class="txt">Collapse sidebar</span>
+                <span class="txt">Collapse</span>
             </p>
         </div>
 
@@ -17,7 +17,11 @@
                 <span>xcentz</span>
                 <span>后台运营管理系统</span>
             </p>
-            <MenuTree :menus='menus' @onSelected='selectItem' ref="menu" />
+            <Menu-tree :menus='menus' @onSelected='selectItem' ref="menu" />
+            <span style="color:#ccc;cursor:pointer;position:relative;top:100px;" v-if="menus.length===0" @click="queryMenu">
+               <i-icon type="ios-refresh" style="color:#ccc;font-size:26px;"  />
+               重新加载
+            </span>
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <i-icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />

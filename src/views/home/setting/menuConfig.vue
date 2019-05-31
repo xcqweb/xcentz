@@ -6,9 +6,11 @@
         <!-- 新增菜单 -->
          <i-modal
             v-model="addMenuStatus"
-            title="新增菜单"
-            @on-ok="addMenuHandler"
-            @on-cancel="addMenuStatus=false">
+            title="新增菜单">
+            <div slot="footer">
+                <i-button @click="addMenuStatus = false">取消</i-button>
+                <i-button type='primary' @click="addMenuHandler" :loading='loading'>确定</i-button>
+            </div>
             <div class="center_g marginTop10"><p class="label_g">菜单名称</p><i-input v-model="formItem.menuName" placeholder="请输入菜单名..." /></div>
             <div class="center_g marginTop10"><p class="label_g">菜单路径</p><i-input v-model="formItem.route" placeholder="请输入菜单路径..." /></div>
             <div class="center_g marginTop10"><p class="label_g">菜单图标</p><i-input v-model="formItem.icon" placeholder="请输入菜单图标..." /></div>
@@ -17,9 +19,11 @@
         <!-- 编辑菜单 -->
          <i-modal
             v-model="editMenuStatus"
-            :title="modalTitle"
-            @on-ok="editMenuHandler"
-            @on-cancel="editMenuStatus=false">
+            :title="modalTitle">
+            <div slot="footer">
+                <i-button @click="editMenuStatus = false">取消</i-button>
+                <i-button type='primary' @click="editMenuHandler" :loading='loading'>确定</i-button>
+            </div>
             <div class="center_g marginTop10"><p class="label_g">菜单名称</p><i-input v-model="editFrom.menuName" placeholder="请输入菜单名..." /></div>
             <div class="center_g marginTop10"><p class="label_g">菜单路径</p><i-input v-model="editFrom.route" placeholder="请输入菜单路径..." /></div>
             <div class="center_g marginTop10"><p class="label_g">菜单图标</p><i-input v-model="editFrom.icon" placeholder="请输入菜单图标..." /></div>
@@ -31,6 +35,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
     export default {
         data () {
             return {
+                loading:false,
                 modalTitle:'',
                 formItem:{
                   menuName:'',
@@ -143,15 +148,18 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                     })
                     return
                 }
+                this.loading = true
                 editMenu({menuName:this.editFrom.menuName,route:this.editFrom.route,icon:this.editFrom.icon,id:this.editFrom.id}).then( (res) => {
+                    this.loading = false
+                    this.editMenuStatus = false
                     this.queryMenu()
                     this.$root.eventBus.$emit('getMenu')
                 })
             },
             //新增菜单
             addMenuHandler(){
+                this.loading = true
                 this.append(this.currentTreeData,this.formItem)
-                this.addMenuStatus = false
                 this.formItem = {
                     menuName:'',
                     route:'',
@@ -185,6 +193,8 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                         let menuName = menu.menuName
                         
                         addMenu({parentId,menuName,menuId,route:menu.route,icon:menu.icon}).then( (res) => {
+                            this.loading = false
+                            this.addMenuStatus = false
                             this.queryMenu()
                             this.$root.eventBus.$emit('getMenu')
                         },error=>{
@@ -204,6 +214,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                 }
                  this.$Modal.confirm({
                     title: '提示',
+                    loading: true,
                     content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${node.node.title}</span> 菜单?</p>`,
                     onOk: () => {
                         let arr = []
@@ -223,6 +234,7 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                         let ids = loop(node.node)
 
                         removeMenu({ids:this.createIds(ids)}).then( (res) => {
+                            this.$Modal.remove();
                             this.queryMenu()
                             this.$root.eventBus.$emit('getMenu')
                         })

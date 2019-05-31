@@ -71,7 +71,7 @@ import {login,getCode,checkCode} from '@api'
 					password: '',
 					code:''
 				},
-				ruleInline: {
+				ruleInline: Object.freeze({
 					user: [
 						{ required: true, message: '请输入用户名', trigger: 'blur' }
 					],
@@ -82,7 +82,7 @@ import {login,getCode,checkCode} from '@api'
 					code: [
 						{ validator: validateCode, trigger: 'blur' }
 					]
-				}
+				})
 			}
 		},
 		watch:{

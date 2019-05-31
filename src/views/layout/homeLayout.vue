@@ -48,7 +48,7 @@ export default {
             return this.hoverIndex*48+'px'
         },
          comToolTip(){
-            return this.hoverIndex*56+'px'
+            return this.hoverIndex*54+'px'
         },
     },
     methods:{
@@ -59,7 +59,7 @@ export default {
             this.visible = true
             this.$refs.toolTip.visible = true
             this.hoverIndex = index
-            this.hoverMenus = item
+            this.hoverMenus = Object.freeze(item)
         },
         collapse(flag){
             this.$refs.toolTip.visible = false

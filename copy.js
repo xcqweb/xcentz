@@ -66,4 +66,4 @@ function emptyDir(fileUrl){
 }
 
 emptyDir('./server/public')
-exists('./dist','./server/public',copy)
+exists('./dist','./server/nginx-1.16.0/html',copy)

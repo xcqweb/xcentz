@@ -38,10 +38,9 @@ export default {
         '$route'(val){ //动态响应展开菜单
             let _this = this
             let ids = []
-            function findParent(menus,pId){
+            function findParent(menus,pId){ //查找上级节点id
                 for(let item of menus){
                     if(item.id === pId){
-                        console.log(item)
                         ids.push(item.id)
                     }
                     if(item.children){
@@ -51,7 +50,7 @@ export default {
                 return ids
             }
 
-            function loop(menus){
+            function loop(menus){//递归查找
                for(let item of menus){
                    if(item.route.indexOf('/')>-1?item.route:`/${item.route}` === val.path){
                         _this.openNames = findParent(_this.menus,item.parent_id)
@@ -63,7 +62,8 @@ export default {
                 } 
             }
             loop(this.menus)
-            this.$nextTick( () => {
+
+            this.$nextTick( () => {//手动跟新展开菜单
                this.$refs.menu.updateOpened() 
             })
             
