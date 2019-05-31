@@ -59,7 +59,9 @@ export default {
             let $index = e.target.dataset.index
             switch($index){
                 case '1'://关闭当前
-                    this.tags.splice(this.seletedIndex,1)
+                    this.tags = this.tags.filter( (item,index) => {
+                        return item.meta.title !== this.seletedItem.meta.title
+                    })
                     this.visible = false
                     this.initRoute()
                 break;
@@ -73,7 +75,7 @@ export default {
                 break;
 
                 case '3'://关闭右侧
-                    this.tags.splice(this.seletedIndex)
+                    this.tags.splice(this.seletedIndex+1)
                     this.visible = false
                     this.initRoute()
                 break;
@@ -87,7 +89,6 @@ export default {
         },
         //右键
         menuRight(e,index,item){
-            console.log(index,item)
             this.seletedIndex = index
             this.seletedItem = item
             this.position = {
@@ -144,7 +145,6 @@ export default {
             })
             
             this.tags.splice(index,1)
-            // console.log(this.tags)
             this.initRoute()
         },
         initRoute(){
