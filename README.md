@@ -18,12 +18,12 @@
 
 ## 其他页面
 ![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/03.PNG)
-(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/04.PNG)
-(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/05.PNG)
-(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/06.PNG)
-(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/07.PNG)
-(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/08.PNG)
-(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/09.PNG)
+![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/04.PNG)
+![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/05.PNG)
+![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/06.PNG)
+![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/07.PNG)
+![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/08.PNG)
+![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/09.PNG)
 
 ## client 浏览器端
 
