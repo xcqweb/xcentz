@@ -69,7 +69,7 @@ export default {
             // console.log(this.setOption)
             let dom = document.querySelector(`#${this.id}`)
             let myChart = this.myChart = Echarts.init(dom)
-            this.setOption ? myChart.setOption(this.setOption) :myChart.setOption({...this.option,...this.setOption})
+            this.setOption ? myChart.setOption(Object.freeze(this.setOption)) :myChart.setOption(Object.freeze({...this.option,...this.setOption}))
         }
     }
 }

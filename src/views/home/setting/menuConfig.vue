@@ -215,7 +215,8 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                  this.$Modal.confirm({
                     title: '提示',
                     loading: true,
-                    content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${node.node.title}</span> 菜单?</p>`,
+                    closable:true,
+                    content: `<p>确定要删除 <span style='color:#2d8cf0;'>${node.node.title}</span> 菜单?</p>`,
                     onOk: () => {
                         let arr = []
                         function loop(node){

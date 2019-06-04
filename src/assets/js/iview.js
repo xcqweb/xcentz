@@ -38,7 +38,8 @@ import {
     Divider,
     Step,
     Steps,
-    Card
+    Card,
+    Circle 
 } from 'iview'
 
 // Vue.prototype.$Loading = LoadingBar;
@@ -86,7 +87,8 @@ let modules = [
     Divider,
     Step,
     Steps,
-    Card  
+    Card,
+    Circle 
 ]
 for(let item of modules){
     let hasI = item.name.charAt(0) === 'i'

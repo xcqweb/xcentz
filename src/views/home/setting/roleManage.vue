@@ -287,7 +287,7 @@ export default {
         },
         //编辑角色
         edit (data) {
-            this.modalTitle = `编辑角色 - ${data.row.RoleName}`
+            this.modalTitle = `编辑角色 - ${data.row.Directions}`
             this.editRoleStatus = true
             this.roleEdit = {
                 roleName:data.row.RoleName,
@@ -302,6 +302,7 @@ export default {
             this.$Modal.confirm({
                 title: '提示',
                 loading:true,
+                closable:true,
                 content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${data.row.RoleName}</span> 角色?</p>`,
                 onOk: () => {
                     delRole({id:data.row.RoleId}).then( (res) => {
@@ -313,7 +314,7 @@ export default {
         },
         //模块权限分配
         moduleAuthAssign(data){
-            this.modalTitle = `模块权限分配 - ${data.row.RoleName}`
+            this.modalTitle = `模块权限分配 - ${data.row.Directions}`
             this.checkAllGroup = []
             this.checkAll = false
             this.moduleAuthStatus = true
@@ -336,8 +337,8 @@ export default {
             })
         },
         //菜单权限分配
-        menuAuthAssign({row:{RoleId,RoleName}}){
-            this.modalTitle = `菜单权限分配 - ${RoleName}`
+        menuAuthAssign({row:{RoleId,Directions}}){
+            this.modalTitle = `菜单权限分配 - ${Directions}`
             this.menuAuthStatus = true
             this.currentRoleId = RoleId
             this.queryAuthMenu(RoleId)

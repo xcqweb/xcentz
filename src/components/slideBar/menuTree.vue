@@ -6,20 +6,20 @@
                 {{item.title}}
             </template>
 
-            <i-submenu :name="child.id" v-if="child.children" v-for="child in item.children">
+            <i-submenu :name="child.id" v-if="child.children" v-for="child in item.children" :key="child.id">
                 <template slot="title">{{child.title}}</template>
-                <i-menu-item :name='childItem.route' v-for="childItem in child.children" :class="$route.path===`/${childItem.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+                <i-menu-item :name='childItem.route' v-for="childItem in child.children" :key="childItem.id" :class="$route.path===`/${childItem.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
                     {{childItem.title}}
                 </i-menu-item>
             </i-submenu> 
 
-            <i-menu-item :name='child.route' v-for="child in item.children" v-if="!child.children" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+            <i-menu-item :name='child.route' v-for="child in item.children" :key="child.id" v-if="!child.children" :class="$route.path===`/${child.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
                 {{child.title}}
             </i-menu-item> 
             
         </i-submenu>
 
-        <i-menu-item :name='item.route' v-for="item in menus" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
+        <i-menu-item :name='item.route' v-for="item in menus" :key="item.id" v-if="!item.children" :class="$route.path===`/${item.route}`?['ivu-menu-item-active', 'ivu-menu-item-selected', 'ivu-menu-item-active']:''">
         <i-icon :type="item.icon" />
             {{item.title}}
         </i-menu-item>
@@ -75,10 +75,7 @@ export default {
             default:function(){
                 return []
             }
-        },
-        // openNames:{
-        //     type:Array
-        // }
+        }
     },
     
     methods:{

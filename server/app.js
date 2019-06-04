@@ -90,7 +90,7 @@ app.set('views', path.join(__dirname, 'views'))
                         return item.Token === token
                     })
                     if(r){
-                        next()
+                        next();
                     }else{
                         next(createError(401));
                     }
@@ -115,7 +115,7 @@ app.set('views', path.join(__dirname, 'views'))
         res.status(err.status || 500);
         res.render('error');
     });
-
+    
     var options = {
         key: fs.readFileSync(__dirname + '/keys/server.key'),
         cert: fs.readFileSync(__dirname + '/keys/server.crt'),
@@ -129,7 +129,9 @@ app.set('views', path.join(__dirname, 'views'))
             }
         }
     };
+
     var server =  spdy.createServer(options, app);
+
     server.listen(8081,()=>{
         console.log('server is on 8081 .......')
     });

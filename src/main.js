@@ -7,9 +7,6 @@ import '@/assets/js/iview'
 import 'iview/dist/styles/iview.css';
 import '@/assets/styles/main.less'
 
-
-
-
 import {throttle,debounce} from 'lodash'
 
 window.throttle = throttle

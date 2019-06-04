@@ -98,6 +98,7 @@ export default {
             this.visible = true
             return
         },
+        // 初始化better-scroll
         initScroll(){
             this.$nextTick( () => {
                 let warpper = document.querySelector('.tags') 

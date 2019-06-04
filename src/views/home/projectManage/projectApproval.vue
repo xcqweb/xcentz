@@ -8,7 +8,7 @@
                     <i-icon type="ios-film-outline"></i-icon>
                     项目{{i}}
                 </p>
-                <!-- <i-button type="text" slot="extra" icon="ios-loop-strong">审批</i-button> -->
+
                 <a href="javascript:;" slot="extra" @click="approval()">
                     <i-icon type></i-icon>
                     审批
@@ -21,28 +21,47 @@
                 </ul>
             </i-card>
         </div>
+
         <!-- 项目审批流程 -->
         <div>
             <i-divider>项目审批流程</i-divider>
             <div class="flow">
                 <div class="flow_item">
                     <span>项目一</span>
-                    <i-steps :current="1">
+                        <i-steps :current="4">
                         <i-step title="项目立项" content="项目立项"></i-step>
                         <i-step title="项目经理审批" content="项目经理审批"></i-step>
-                        <i-step title="运营审批" content="运营审批"></i-step>
-                        <i-step title="项目审批通过" content="项目审批通过"></i-step>
-                    </i-steps> 
+                        <i-step title="运营审批" content="不符合要求"></i-step>
+                        <!-- <i-step title="项目审批通过" content="项目审批通过"></i-step> -->
+                    </i-steps>
+                    <div class="status">
+                        <i-circle :size="36" :percent="100" :stroke-width="8" stroke-color="#5cb85c">
+                            <i-icon v-if="100" type="ios-checkmark" size="36" style="color:#5cb85c"></i-icon>
+                        </i-circle>
+                        <span style="margin-left:6px;">已完成</span>
+                    </div>
+                    <div class="operate">
+                        <Operate @operateHandler='operateHandler'></Operate>
+                    </div>
                 </div>
                 
                 <div class="flow_item">
                     <span>项目二</span>
-                    <i-steps :current="2" status="error">
+                        <i-steps :current="3" status="finish">
                         <i-step title="项目立项" content="项目立项"></i-step>
                         <i-step title="项目经理审批" content="项目经理审批"></i-step>
                         <i-step title="运营审批" content="不符合要求"></i-step>
-                        <i-step title="项目审批通过" content="项目审批通过"></i-step>
+                        <!-- <i-step title="项目审批通过" content="项目审批通过"></i-step> -->
                     </i-steps>
+                    <div class="status">
+                        <i-circle :size="36" :percent="100" :stroke-width="8" stroke-color="#5cb85c">
+                            <i-icon v-if="100" type="ios-checkmark" size="36" style="color:#5cb85c"></i-icon>
+                        </i-circle>
+                        <span style="margin-left:6px;">已完成</span>
+                    </div>
+                    <div class="operate">
+                        <Operate @operateHandler='operateHandler'></Operate>
+                    </div>
                 </div>
             </div>
         </div>
@@ -50,28 +69,31 @@
         <!-- 审核 -->
         <i-modal
             v-model="approvalStatus"
+            width='700'
+            :styles="{marginBottom:'60px'}"
             title="项目审批">
             <div slot="footer">
-                <i-button @click="approvalStatus = false">取消</i-button>
-                <i-button type='error' @click="approvalCancel">不通过</i-button>
-                <i-button type='primary' @click="approvalOk">通过</i-button>
+                <i-button @click="approvalStatus = false" size='large'>取消</i-button>
+                <i-button type='error' style="margin:0 20px;" @click="approvalCancel" size='large'>不通过</i-button>
+                <i-button type='primary' @click="approvalOk" size='large'>通过</i-button>
             </div>
-            <i-form  ref="formApproval" :model="formsPro" :rules="rulesPro" :label-width="120" v-if="userInfo.RoleId===24 || userInfo.RoleId===10">
+
+            <i-form  ref="formApproval" :model="formsPro" :rules="rulesPro" style="margin:20px 60px;" :label-width="100" v-if="userInfo.RoleId===24 || userInfo.RoleId===10">
                 <i-form-item label="宇龙编码" prop="ylCode">
                     <i-input v-model="formsPro.ylCode" placeholder="请输入宇龙编码"></i-input>
                 </i-form-item>
 
-                <i-form-item label="项目编码" prop="projectName">
-                    <i-input v-model="formsPro.projectName" placeholder="请输入项目编码"></i-input>
+                <i-form-item label="项目名称" prop="projectName">
+                    <i-input v-model="formsPro.projectName" placeholder="请输入项目名称"></i-input>
                 </i-form-item>
 
                 <i-form-item label="备注" prop="message">
-                    <i-input type='textarea' autosize v-model="formsPro.message" placeholder="请输入备注"></i-input>
+                    <i-input type='textarea' :autosize='{minRows: 6}' v-model="formsPro.message" placeholder="请输入备注"></i-input>
                 </i-form-item>
             </i-form>
 
             <!-- 运营 -->
-            <i-form  ref="formApproval" :model="formsOp" :rules="rulesOp" :label-width="120" v-if="userInfo.RoleId===24 || userInfo.RoleId===2">
+            <i-form  ref="formApproval" :model="formsOp" :rules="rulesOp" style="margin:20px 60px;" :label-width="100" v-if="userInfo.RoleId===24 || userInfo.RoleId===2">
                 <i-form-item label="Sku" prop="sku">
                     <i-input v-model="formsOp.sku" placeholder="请输入sku"></i-input>
                 </i-form-item>
@@ -85,17 +107,37 @@
                 </i-form-item>
 
                 <i-form-item label="备注" prop="message">
-                    <i-input type='textarea' autosize v-model="formsOp.message" placeholder="请输入备注"></i-input>
+                    <i-input type='textarea' :autosize='{minRows: 6}' v-model="formsOp.message" placeholder="请输入备注"></i-input>
                 </i-form-item>
             </i-form>
+        </i-modal>
+
+        <!-- 查看项目 -->
+        <i-modal
+            v-model="scanProjectStatus"
+            width='700'
+            :styles="{marginBottom:'60px'}"
+            footer-hide
+            title="项目详情">
+            <div style="margin:20px;">
+                <ul class="approval_item">
+                    <li v-for="i in 20" :key="i">
+                        <span>品类:</span>
+                        <span>cable</span>
+                    </li>
+                </ul>
+            </div>
         </i-modal>
     </div>
 </template>
 
 <script>
+import Operate from './components/operatePop'
+
 export default {
     data(){
         return{
+            scanProjectStatus:false,
             approvalStatus:false,
             formsPro:{
                 ylCode:'',
@@ -107,8 +149,8 @@ export default {
                     { required: true, message: '请输入宇龙编码', trigger: 'blur' }
                 ],
                 projectName:[
-                    { required: true, message: '请输入项目编码', trigger: 'blur' }
-                ],
+                    { required: true, message: '请输入项目名称', trigger: 'blur' }
+                ]
             },
             formsOp:{
                 sku:'',
@@ -125,10 +167,11 @@ export default {
                 ],
                 parentAsin:[
                     { required: true, message: '请输入parentAsin', trigger: 'blur' }
-                ],
+                ]
             }
         }
     },
+    components:{Operate},
     methods:{
         approval(){
             this.approvalStatus = true
@@ -142,6 +185,13 @@ export default {
         },
         approvalCancel(){
             
+        },
+        operateHandler(type){
+            switch(type){
+                case 1:
+                    this.scanProjectStatus = true
+                break;
+            }
         }
     }
 }
@@ -152,24 +202,19 @@ export default {
         .approval{
             display: flex;
             flex-wrap: wrap;
-            .approval_item{
-                display: flex;
-                flex-wrap: wrap;
-                &>li{
-                    width: 50%;
-                    display: flex;
-                    &>span:nth-child(2){
-                        margin-left:10px;
-                    }
-                }
-            }
         }
         .flow{
             margin-top: 50px;
             .flow_item{
                 display: flex;
                 &>span{
-                    flex-basis: 120px;
+                    flex-basis: 100px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .operate,.status{
+                    width: 120px;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -177,6 +222,22 @@ export default {
             }
         }
     }
+
+     .approval_item{
+            display: flex;
+            flex-wrap: wrap;
+            &>li{
+                width: 50%;
+                display: flex;
+                height:30px;
+                line-height: 30px;
+                display: flex;
+                justify-content: center;
+                &>span:nth-child(2){
+                    margin-left:10px;
+                }
+            }
+        }
 </style>
 
 

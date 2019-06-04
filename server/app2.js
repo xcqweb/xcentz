@@ -37,7 +37,7 @@ app.set('views', path.join(__dirname, 'views'))
             to: function(context) {
                 return context.parsedUrl.pathname;
             }
-        }
+        },
       ]
     }))
     .use(logger('dev'))
@@ -52,6 +52,7 @@ app.set('views', path.join(__dirname, 'views'))
         name:'xcentz',       //..这里的name指的是cookie的name，默认cookie的name是：connect.sid
         secret:'sdso7sash734u347dd34',   //  加密key 可以随意书写
         cookie:{maxAge:60*60*1000},   //  两次请求的时间差，即超过这个时间再去访问session会失效
+        httpOnly: true,
         resave:true,
         saveUninitialized:true,
         store: new RedisStore({host:'localhost',port:6379,maxAge : 60*60*1000}) //解决多进程session不能共享的问题
@@ -89,7 +90,7 @@ app.set('views', path.join(__dirname, 'views'))
                         return item.Token === token
                     })
                     if(r){
-                        next()
+                        next();
                     }else{
                         next(createError(401));
                     }
@@ -114,7 +115,7 @@ app.set('views', path.join(__dirname, 'views'))
         res.status(err.status || 500);
         res.render('error');
     });
-
+    
     var options = {
         key: fs.readFileSync(__dirname + '/keys/server.key'),
         cert: fs.readFileSync(__dirname + '/keys/server.crt'),
@@ -128,7 +129,9 @@ app.set('views', path.join(__dirname, 'views'))
             }
         }
     };
+
     var server =  spdy.createServer(options, app);
+
     server.listen(8082,()=>{
         console.log('server is on 8082 .......')
     });

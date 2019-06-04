@@ -194,6 +194,7 @@ export default {
             this.$Modal.confirm({
                 title: '提示',
                 loading:true,
+                closable:true,
                 content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${data.row.ModuleName}</span> 模块?</p>`,
                 onOk: () => {
                     delModule({id:data.row.ModuleId}).then( (res) => {
