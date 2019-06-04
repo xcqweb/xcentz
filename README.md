@@ -16,6 +16,15 @@
 
 ![主界面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/home.PNG)
 
+## 其他页面
+![其他页面](https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/03.PNG)
+(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/04.PNG)
+(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/05.PNG)
+(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/06.PNG)
+(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/07.PNG)
+(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/08.PNG)
+(https://raw.githubusercontent.com/xcqweb/xcentz/master/remade/09.PNG)
+
 ## client 浏览器端
 
 - vue + iview + webpack + less + vue-cli3 + axios
@@ -24,7 +33,7 @@
 
 - express + express-router + mysql + ejs + redis + pm2 + nginx + http2.0
 
-## start 启动方式
+## start 运行方式
 
 - 启动 pm2 start server.js 或 pm2 start server.js -i max 
 - 重启 pm2 restart all 或 pm2 restart id(进程id) 
