@@ -1,4 +1,4 @@
-var CommpressionPlugin = require('compression-webpack-plugin');
+const CommpressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
@@ -14,7 +14,7 @@ const cdn = {
 		'https://cdn.bootcss.com/axios/0.18.0/axios.min.js',
 		'https://cdn.bootcss.com/echarts/4.2.1/echarts.min.js',
 		'https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.js',
-		'https://cdn.bootcss.com/xlsx/0.14.3/xlsx.full.min.js',
+		'https://cdn.bootcss.com/xlsx/0.14.3/xlsx.full.min.js'
 	]
 }
 
