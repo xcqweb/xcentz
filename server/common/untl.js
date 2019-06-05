@@ -36,7 +36,6 @@
                 trees[0].children.push(item)
             }
         }
-        // console.log(trees[0].children[0])
         return trees;
     },
 

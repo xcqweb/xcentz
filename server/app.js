@@ -15,18 +15,21 @@ let createError = require('http-errors'),
     {isNull} = require('./common/untl'),
     RedisStore = require('connect-redis')(session), //redis
     fs = require('fs'),
-    Redis = require('ioredis'),
+    Redis = require('redis'),
     schedule = require('./common/scheduleTask'),
     spdy = require('spdy');
-    vhost = require('vhost'),
-    global.redis = new Redis({
-        port: 6379,          // Redis port
-        host: '127.0.0.1',   // Redis host
-        family: 4,           // 4 (IPv4) or 6 (IPv6)
-    });
+    vhost = require('vhost');
 
-    
+    global.redis = Redis.createClient()
 
+    redis.on('error', function (err) {
+        console.log('Error :', err)
+    })
+
+    redis.on('connect', function () {
+        console.log('Redis连接成功.')
+    })
+   
 app.set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
 
@@ -75,8 +78,20 @@ app.set('views', path.join(__dirname, 'views'))
             next();
         }else{//验证同一时间,不同地点一个账号只允许登录一次 新登录会挤掉上一次登录
             let token = req.headers.authorization ? req.headers.authorization.split('__')[1] : req.query.token
-            redis.get('userList',(err,result) => {
-                if(isNull(result)){
+            redis.exists('userList',(err,result) => {
+                if(result){
+                    redis.get('userList',(err,result) => {
+                        let users = JSON.parse(result)
+                        let r = users.find( (item) => {
+                            return item.Token === token
+                        })
+                        if(r){
+                            next();
+                        }else{
+                            next(createError(401));
+                        }
+                    })
+                }else{
                     query(`SELECT Token FROM Pub_User WHERE Token='${token}'`).then( (r) => {
                         if(r.length){
                             next();
@@ -84,19 +99,8 @@ app.set('views', path.join(__dirname, 'views'))
                             next(createError(401));
                         }
                     })
-                }else{
-                    let users = JSON.parse(result)
-                    let r = users.find( (item) => {
-                        return item.Token === token
-                    })
-                    if(r){
-                        next();
-                    }else{
-                        next(createError(401));
-                    }
                 }
             })
-            
         }
     })
 
