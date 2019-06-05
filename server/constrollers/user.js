@@ -21,8 +21,9 @@ let {query} = require('../database'),
                 errorCode:'10000'
             })
         }else{
-          redis.get('userList',  (err, result) => {
-            if(!isNull(result)){
+          redis.exists('userList',  (err, resdata) => {
+            if(resdata){
+                redis.get('userList',  (err, result) => {
                     let users = JSON.parse(result)
                     let index
                     let r = users.find( (item,i) => {
@@ -31,34 +32,35 @@ let {query} = require('../database'),
                         }
                         return (item.UserName === username || item.Email === username ) && item.PassWord === password
                     })
-                if(!r){
-                    res.status(500).json({
-                        message:'用户名或密码错误！',
-                        errorCode:10001
-                    })
-                }else{
-                    
-                    console.log('========================redis')
-                    // 这是加密的key（密钥) 
-                    let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
-                        expiresIn: '1h', // 2小时过期
+                    if(!r){
+                        res.status(500).json({
+                            message:'用户名或密码错误！',
+                            errorCode:10001
+                        })
+                    }else{
                         
-                    });
-                    
-                    users[index].LoatLoginTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                    users[index].Token = token
-                    redis.set('userList',JSON.stringify(users))
-                    delete r.PassWord
-                    delete r.Token
-                    //更新登录时间
-                    query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
-                    res.status(200).json({
-                        message:'登录成功！',
-                        token:token,
-                        user:r,
-                        errorCode:10005
-                    }) 
-                }
+                        console.log('========================redis')
+                        // 这是加密的key（密钥) 
+                        let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
+                            expiresIn: '1h', // 2小时过期
+                            
+                        });
+                        
+                        users[index].LoatLoginTime = moment().format('YYYY-MM-DD HH:mm:ss')
+                        users[index].Token = token
+                        redis.set('userList',JSON.stringify(users))
+                        delete r.PassWord
+                        delete r.Token
+                        //更新登录时间
+                        query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
+                        res.status(200).json({
+                            message:'登录成功！',
+                            token:token,
+                            user:r,
+                            errorCode:10005
+                        }) 
+                    }
+                })
             }else{
                 query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {
                 if(r.length<=0){
