@@ -92,23 +92,23 @@ open in http://localhost:8008/
 │  │
 │  ├─common //工具库
 |  |
-|  |── controllers 
+|  ├─controllers 
 │  │
 │  └─views //视图模板
 │
 └─src //前端项目目录
     │
     │
-    ├─assets--------------------------------------
+    ├──────────────────────────────────────────assets
     │                                            |
-    ├─components //组件库                         |___api
-    │                                            |___js
-    ├─router----------                           |___images
-    │                |___module //权限路由        |___styles  
+    ├───components//组件库                        |───api
+    │                                            |───js
+    ├─router─────────|                           |───images
+    │                |──module //权限路由         |───styles  
     │                |                               
-    |                |___index  //基础路由             
+    |                |──index  //基础路由             
     │
-    |__views //视图
+    └─views //视图
 
 
 
