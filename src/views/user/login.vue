@@ -37,7 +37,6 @@
 <script>
 
 import {login,getCode,checkCode} from '@api'
-import { error } from 'util';
 	export default{
 		name:'login',
 		data(){
@@ -72,7 +71,7 @@ import { error } from 'util';
 					password: '',
 					code:''
 				},
-				ruleInline: {
+				ruleInline: Object.freeze({
 					user: [
 						{ required: true, message: '请输入用户名', trigger: 'blur' }
 					],
@@ -83,7 +82,7 @@ import { error } from 'util';
 					code: [
 						{ validator: validateCode, trigger: 'blur' }
 					]
-				}
+				})
 			}
 		},
 		watch:{

@@ -30,8 +30,8 @@ export default {
             // return false
         },
         handleSuccess({ results, header }) {
-            this.tableData = results
-            this.tableHeader = header
+            this.tableData = Object.freeze(results)
+            this.tableHeader = Object.freeze(header)
             console.log(results, header)
         },
     }  

@@ -7,7 +7,7 @@
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <i-icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
-                <span class="txt">Collapse sidebar</span>
+                <span class="txt">Collapse</span>
             </p>
         </div>
 
@@ -17,7 +17,11 @@
                 <span>xcentz</span>
                 <span>后台运营管理系统</span>
             </p>
-            <MenuTree :menus='menus' @onSelected='selectItem' ref="menu" />
+            <Menu-tree :menus='menus' @onSelected='selectItem' ref="menu" />
+            <span style="color:#ccc;cursor:pointer;position:relative;top:100px;font-size:12px;" v-if="err" @click="queryMenu">
+               <i-icon type="ios-refresh" style="color:#ccc;font-size:20px;"  />
+               重新加载
+            </span>
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <i-icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
@@ -35,6 +39,7 @@ import authRoute from '@/router/modules/authRoute'
 export default {
     data(){
         return{
+            err:false,
             visible:false,
             isCollapse:false,
             currentIndex:'',
@@ -76,11 +81,14 @@ export default {
         },
         queryMenu(){
             queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
+                this.err = false
                 let menuList = res.data.menuList
                 this.menus = Object.freeze(menuList[0].children)
                 //配置权限动态路由
                 let filterAuthRoutes = this.fliterRoute(flatten(menuList))
                 this.$router.matcher.addRoutes(filterAuthRoutes)
+            },error => {
+                this.err = true
             })
         },
         selectItem(name){

@@ -8,9 +8,9 @@
         
         <div slot="content">
             <i-dropdown @click.native='itemHandler'>
-                <i-dropdown-item data-index='1'>重置密码 <Icon type="md-radio-button-on" /></i-dropdown-item>
-                <i-dropdown-item divided data-index='2'>分配角色 <Icon type="md-create" /></i-dropdown-item>
-                <i-dropdown-item divided data-index='3'>删除 <Icon type="ios-trash" /></i-dropdown-item>
+                <i-dropdown-item data-index='1'>重置密码 <i-icon type="md-radio-button-on" /></i-dropdown-item>
+                <i-dropdown-item divided data-index='2'>分配角色 <i-icon type="md-create" /></i-dropdown-item>
+                <i-dropdown-item divided data-index='3'>删除 <i-icon type="ios-trash" /></i-dropdown-item>
             </i-dropdown>
         </div>
     </i-poptip>

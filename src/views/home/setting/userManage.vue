@@ -10,45 +10,45 @@
         <!-- 添加用户 -->
          <i-modal
             v-model="addUserStatus"
-            :styles="{top: '50px'}"
+            :styles="{top: '50px',marginBottom:'60px'}"
             title="添加用户">
             <div slot="footer">
                 <i-button type="text" size="large" @click="addUserStatus = false">取消</i-button>
-                <i-button type="primary" size="large" @click="addUserHandler">确定</i-button>
+                <i-button type="primary" size="large" @click="addUserHandler" :loading='loading'>确定</i-button>
             </div>
 
-            <i-form ref="form_adduser" :model="addUser" :label-width="80" :rules="ruleInline" style="width:360px;">
+            <i-form ref="form_adduser" :model="addUser" :label-width="100" :rules="ruleInline" style="display:flex;flex-direction:column;margin-right:30px;">
                 <i-form-item prop="user" style="height:40px;" label='用户名'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.user" placeholder="请输入用户名">
                     </i-input>
                 </i-form-item>
-                <i-form-item prop="password" style="margin:26px 0;" label='密码'>
+                <i-form-item prop="password" style="margin:6px 0 16px 0;" label='密码'>
                     <i-input type="password" size="large" style="width:100%;" v-model="addUser.password" placeholder="请输入密码">
                     </i-input>
                 </i-form-item>
 
-                <i-form-item prop="confirmPsw" style="margin:26px 0;" label='确认密码'>
+                <i-form-item prop="confirmPsw" style="margin:16px 0;" label='确认密码'>
                     <i-input type="password" size="large" style="width:100%;" v-model="addUser.confirmPsw" placeholder="请再次输入密码">
                     </i-input>
                 </i-form-item>
 
-                <i-form-item prop="phone" style="margin:26px 0;" label='电话'>
+                <i-form-item prop="phone" style="margin:16px 0;" label='电话'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.phone" placeholder="请输入电话">
                     </i-input>
                 </i-form-item>
 
-                <i-form-item prop="role" style="margin:26px 0;" label='角色'>
+                <i-form-item prop="role" style="margin:16px 0;" label='角色'>
                     <i-select v-model="addUser.role" filterable>
                         <i-option v-for="item in roleList" :value="item.RoleId" :key="item.RoleName">{{ item.Directions }}</i-option>
                     </i-select>
                 </i-form-item>
 
-                <i-form-item prop="cname" style="margin:26px 0;" label='中文名'>
+                <i-form-item prop="cname" style="margin:16px 0;" label='中文名'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.cname" placeholder="请输入中文名">
                     </i-input>
                 </i-form-item>
 
-                <i-form-item prop="email" style="margin:26px 0;" label='邮箱'>
+                <i-form-item prop="email" style="margin:16px 0;" label='邮箱'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.email" placeholder="请输入邮箱">
                     </i-input>
                 </i-form-item>
@@ -59,9 +59,11 @@
         <!-- 分配角色 -->
          <i-modal
             v-model="assignRoleStatus"
-            title="分配角色"
-            @on-ok="assignRole"
-            @on-cancel="assignRoleStatus=false">
+            :title="assignRoleTitle">
+            <div slot="footer">
+                <i-button @click="assignRoleStatus = false">取消</i-button>
+                <i-button type='primary' @click="assignRole" :loading='loading'>确定</i-button>
+            </div>
             <i-select v-model="selectRole" filterable>
                 <i-option v-for="item in roleList" :value="item.RoleId" :key="item.RoleName">{{ item.Directions }}</i-option>
             </i-select>
@@ -142,15 +144,17 @@ export default {
         };
         let _this = this
         return{
+            loading:false,
             pageSize:10,
             totalCount:0,
             currentPage:1,
             searchKey:'',
-            currentRow:'',
+            currentRow:{},
             selectRole:'',
             addUserStatus:false,
             assignRoleStatus:false,
             isLoading:false,
+            assignRoleTitle:'',
             roleAssign:{
                 roleName:'',
             },
@@ -195,7 +199,7 @@ export default {
                         render: (h, params) => {
                             return h(Expand, {
                                 props: {
-                                    row: params.row
+                                    row: Object.freeze(params.row)
                                 }
                             })
                         }
@@ -204,14 +208,12 @@ export default {
                     {
                         title: '中文名',
                         key: 'Cname',
-                        // width:120,
                         align:'center'
                     },
                    
                     {
                         title: '角色',
                         key: 'Directions',
-                        // width:120,
                         align:'center',
                     },
                     {
@@ -280,9 +282,9 @@ export default {
             this.currentPage = page
             this.getUserList()
         },
-        search(){
+        search:debounce(function(){
             this.getUserList()
-        },
+        },600,{leading:true}),
         //获取角色列表
         getRoleHandler(){
             roleList().then( (res) =>{
@@ -294,39 +296,50 @@ export default {
             switch(index){
                 case 1://重置密码
                 
-                this.$Modal.confirm({
-                    title: '提示',
-                    content: `<p style='letter-spacing:2px;line-height:26px;'>确定重置${row.UserName}用户的密码? <br /> <span style="color:#999;">重置密码后新密码将发至该用户的账户邮箱<span></p>`,
-                    onOk: () => {
-                        resetPassword({userId:row.UserId,email:row.Email})
-                    },
-                });
+                    this.$Modal.confirm({
+                        title: '提示',
+                        loading:true,
+                        closable:true,
+                        content: `<p style='letter-spacing:2px;line-height:26px;'>确定重置 <span style='color:#2d8cf0;'> ${row.Cname} </span> 用户的密码? <br /> <span style="color:#999;">重置密码后新密码将发至该用户的账户邮箱<span></p>`,
+                        onOk: () => {
+                            resetPassword({userId:row.UserId,email:row.Email}).then( () => {
+                                this.$Modal.remove()
+                            })
+                        },
+                    });
                 break;
 
                 case 2://角色分配
-                this.assignRoleStatus = true
-                this.selectRole = row.RoleId
-                this.currentRow = Object.freeze(row)
+                    this.assignRoleTitle = `分配角色 - ${row.Cname} `
+                    this.assignRoleStatus = true
+                    this.selectRole = row.RoleId
+                    this.currentRow = Object.freeze(row)
 
                 break;
 
                 case 3://删除用户
-                this.$Modal.confirm({
-                    title: '提示',
-                    content: '<p>确定要删除该用户?</p>',
-                    onOk: () => {
-                        delUser({userId:row.UserId}).then( (res) => {
-                            this.userData.splice(row._index,1)
-                        })
-                    },
-                });
+                    this.$Modal.confirm({
+                        title: '提示',
+                        loading:true,
+                        closable:true,
+                        content: `<p>确定要删除 <span style='color:#2d8cf0;'> ${row.Cname} </span> 用户?</p>`,
+                        onOk: () => {
+                            delUser({userId:row.UserId}).then( (res) => {
+                                this.$Modal.remove()
+                                this.userData.splice(row._index,1)
+                            })
+                        },
+                    });
                 break;
 
             }
         },
         //分配角色
         assignRole(){
+            this.loading = true
             assignRole({roleId:this.selectRole,userId:this.currentRow.UserId}).then( (res) => {
+                this.loading = false
+                this.assignRoleStatus = false
                 this.currentRow.RoleId = this.selectRole
 
                 this.currentRow.Directions = this.roleList.find( (item) => {
@@ -340,6 +353,7 @@ export default {
         addUserHandler(){
             this.$refs['form_adduser'].validate((valid) => {
                 if (valid) {
+                    this.loading = true
                     let params = {
                         username:this.addUser.user,
                         password:this.addUser.password,
@@ -349,6 +363,7 @@ export default {
                         role:this.addUser.role
                     }
                     addUser(params).then( (res) => {
+                        this.loading = false
                         this.addUserStatus = false
                         this.$refs['form_adduser'].resetFields();
                         this.getUserList()

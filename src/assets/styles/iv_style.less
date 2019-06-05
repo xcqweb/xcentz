@@ -38,6 +38,10 @@
     background: #2d8cf0!important 
 }
 
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item:hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title:hover,.ivu-menu-dark.ivu-menu-vertical .ivu-menu .ivu-menu-submenu .ivu-menu-item:hover,.ivu-menu-dark.ivu-menu-vertical>.ivu-menu .ivu-menu-item:hover{
+    color: #2d8cf0 !important;
+}
+
 .popTip{
     .ivu-poptip-arrow{
         display: none;
@@ -68,4 +72,30 @@
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 0 10px 0 30px;
+}
+
+.ivu-steps .ivu-steps-tail{
+    left: 120px !important;
+}
+.ivu-steps .ivu-steps-tail>i:after{
+    left:0 !important;
+}
+
+.ivu-steps{
+    margin-top: 20px;
+}
+
+.demo-spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+    from { transform: rotate(0deg);}
+    50%  { transform: rotate(180deg);}
+    to   { transform: rotate(360deg);}
+}
+
+.usercenter_info{
+    .ivu-input[disabled], fieldset[disabled] .ivu-input{
+        color: #515a6e;
+    }
 }

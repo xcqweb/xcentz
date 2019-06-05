@@ -11,7 +11,7 @@ import Chart from '@@/chart'
 export default {
     data(){
         return{
-            optionRadar:{
+            optionRadar:Object.freeze({
                  title: {
                     text: 'xcentz',
                     subtext: '',
@@ -79,7 +79,7 @@ export default {
                     }
                     return series;
                 })()
-            }
+            })
         }
     },
     components:{

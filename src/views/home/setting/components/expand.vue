@@ -24,11 +24,6 @@
                 <span class="expand-key">账号创建时间: </span>
                 <span class="expand-value">{{ row.CreateTime }}</span>
             </i-col>
-            
-            <!-- <i-Col span="8">
-                <span class="expand-key">Favorite music: </span>
-                <span class="expand-value">{{ row.music }}</span>
-            </i-Col> -->
         </i-row>
     </div>
 </template>
@@ -39,9 +34,6 @@ export default {
         row:{
             type:Object
         }
-    },
-    created(){
-        console.log(this.row)
     }
 }
 </script>

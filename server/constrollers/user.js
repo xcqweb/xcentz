@@ -17,60 +17,54 @@ let {query} = require('../database'),
         console.log(username,password,verifyCode)
         if(parseInt(req.body.code)!==verifyCode){
             res.status(500).send({
-              message:'验证码错误！',
-              errorCode:'10000'
+                message:'验证码错误！',
+                errorCode:'10000'
             })
         }else{
           redis.get('userList',  (err, result) => {
-            console.log(result)
-            
             if(!isNull(result)){
-              let users = JSON.parse(result)
-              let index
-              let r = users.find( (item,i) => {
-                if((item.UserName === username || item.Email === username ) && item.PassWord === password){
-                  index = i
+                    let users = JSON.parse(result)
+                    let index
+                    let r = users.find( (item,i) => {
+                        if(((item.UserName === username) || (item.Email === username) ) && item.PassWord === password){
+                            index = i
+                        }
+                        return (item.UserName === username || item.Email === username ) && item.PassWord === password
+                    })
+                if(!r){
+                    res.status(500).json({
+                        message:'用户名或密码错误！',
+                        errorCode:10001
+                    })
+                }else{
+                    
+                    console.log('========================redis')
+                    // 这是加密的key（密钥) 
+                    let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
+                        expiresIn: '1h', // 2小时过期
+                        
+                    });
+                    
+                    users[index].LoatLoginTime = moment().format('YYYY-MM-DD HH:mm:ss')
+                    users[index].Token = token
+                    redis.set('userList',JSON.stringify(users))
+                    delete r.PassWord
+                    delete r.Token
+                    //更新登录时间
+                    query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
+                    res.status(200).json({
+                        message:'登录成功！',
+                        token:token,
+                        user:r,
+                        errorCode:10005
+                    }) 
                 }
-                return (item.UserName === username || item.Email === username ) && item.PassWord === password
-              })
-              // console.log(r)
-              if(!r){
-                res.status(500).json({
-                  message:'用户名或密码错误！',
-                  errorCode:10001
-                })
-              }else{
-                delete r.PassWord
-                delete r.Token
-                console.log('========================redis')
-                // 这是加密的key（密钥) 
-                let token = jwt.sign({username:username,password:password,now:nowDate}, secretOrPrivateKey, {
-                    expiresIn: '1h', // 2小时过期
-                    
-                });
-                
-                // let index = users.findIndex( (item) => {
-                //   return (item.UserName === username || item.Email === username ) && item.PassWord === password
-                // })
-                // console.log(index)
-                users[index].LoatLoginTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                users[index].Token = token
-                res.status(200).json({
-                  message:'登录成功！',
-                  token:token,
-                  user:r,
-                  errorCode:10005
-                })
-                //更新登录时间
-                query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
-                    
-              }
             }else{
-              query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {
+                query(`SELECT * FROM Pub_User WHERE (UserName='${username}' OR Email='${username}') AND PassWord='${password}'`).then( (r) => {
                 if(r.length<=0){
                     res.status(500).json({
-                    message:'用户名或密码错误！',
-                    errorCode:10001
+                        message:'用户名或密码错误！',
+                        errorCode:10001
                     })
                 }else{
                     let re = r[0]
@@ -85,18 +79,21 @@ let {query} = require('../database'),
                     console.log(token)
                     //更新登录时间
                     query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
+                    query('select * from Pub_User').then( (r) => {
+                        redis.set('userList',JSON.stringify(r))
+                    })
                         res.status(200).json({
-                        message:'登录成功！',
-                        token:token,
-                        user:re,
-                        errorCode:10005
+                            message:'登录成功！',
+                            token:token,
+                            user:re,
+                            errorCode:10005
                         })
                     }
                 },error => {
-                  console.log(error && error.code)// === 'PROTOCOL_SEQUENCE_TIMEOUT',
-                  res.status(500).send({
-                      errorCode:100043
-                  })
+                    console.log(error && error.code)// === 'PROTOCOL_SEQUENCE_TIMEOUT',
+                    res.status(500).send({
+                        errorCode:100043
+                    })
                 })
             }
           })
@@ -108,45 +105,45 @@ let {query} = require('../database'),
         let toEmail = req.query.email
         let newPsw = stringRandom()
         query(`UPDATE Pub_User SET PassWord = '${newPsw}',Token='' WHERE UserId ='${userId}'`).then( (r) => {
-          let transporter = nodemailer.createTransport({
-            //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
-            host: 'smtp.exmail.qq.com',
-            port: 465, // SMTP 端口
-            secure: true,
-            auth: {
-                user: 'xuchangqian@yulong.com',
-                //这里密码不是qq密码，是你设置的smtp密码
-                pass: 'Xcq123456'
-            }
-          });
+            let transporter = nodemailer.createTransport({
+                //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
+                host: 'smtp.exmail.qq.com',
+                port: 465, // SMTP 端口
+                secure: true,
+                auth: {
+                    user: 'xuchangqian@yulong.com',
+                    //这里密码不是qq密码，是你设置的smtp密码
+                    pass: 'Xcq123456'
+                }
+            });
         
-          let mailOptions = {
-              from: 'xuchangqian@yulong.com', // 发件地址
-              to: toEmail, // 收件列表
-              subject: 'xcentz 运营管理系统重置密码', // 标题
-              //text和html两者只支持一种
-              text: `${toEmail} 用户的新密码为：${newPsw}`, // 标题
-              html: `<b>${toEmail} 用户的新密码为：<em style='font-weight:100;text-decoration:underline;'>${newPsw} <br />
+            let mailOptions = {
+                from: 'xuchangqian@yulong.com', // 发件地址
+                to: toEmail, // 收件列表
+                subject: 'xcentz 运营管理系统重置密码', // 标题
+                //text和html两者只支持一种
+                text: `${toEmail} 用户的新密码为：${newPsw}`, // 标题
+                html: `<b>${toEmail} 用户的新密码为：<em style='font-weight:100;text-decoration:underline;'>${newPsw} <br />
                     <p style='text-align:right;font-size:12px;'>xcentz</p>
                     <p style='text-align:right;font-size:12px;'>${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
-              ` // html 内容
-          };
+                ` // html 内容
+            };
         
-          // send mail with defined transport object
-          transporter.sendMail(mailOptions, function(error, info){
-              if(error){
-                res.send({
-                  errorCode:100036,
-                  message:"重置密码失败!"
-                })
-              }else{
-                updateUserList()
-                res.send({
-                  errorCode:100037,
-                  message:"重置密码成功!"
-                })
-              }
-          });
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, function(error, info){
+                if(error){
+                    res.send({
+                        errorCode:100036,
+                        message:"重置密码失败!"
+                    })
+                }else{
+                    updateUserList()
+                        res.send({
+                            errorCode:100037,
+                            message:"重置密码成功!"
+                        })
+                    }
+            });
         },error =>{
       
         })
@@ -168,29 +165,29 @@ let {query} = require('../database'),
     register = (req,res) => {
         let reData = req.body
         if(req.body.code != req.session['verifyEmail'].verifyEmailCode){
-          res.status(500).json({
-            message:'验证码错误！',
-            errorCode:'10000'
-          })
+            res.status(500).json({
+                message:'验证码错误！',
+                errorCode:'10000'
+            })
         }else if(+new Date() - req.session['verifyEmail'].expires>60*60*1000){
-          res.status(500).json({
-            message:'验证码过期！',
-            errorCode:'10002'
-          })
+            res.status(500).json({
+                message:'验证码过期！',
+                errorCode:'10002'
+            })
         }else{
           query(`INSERT INTO Pub_User(UserId,UserName,Email,Cname,PassWord,RoleId,Phone,CreateTime) VALUES('${uuid.v1().replace(/\-/g,'')}','${reData.username}','${reData.email}','${reData.cname}','${reData.password}',21,${reData.phone},'${ moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
             
             var transporter = nodemailer.createTransport({
-              //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
-              host: 'smtp.exmail.qq.com',
-              port: 465, // SMTP 端口
-              secure: true,
-              auth: {
-                  user: 'xuchangqian@yulong.com',
-                  //这里密码不是qq密码，是你设置的smtp密码
-                  // pass: 'fuyatraecdgxbhih'
-                  pass: 'Xcq123456'
-              }
+                //https://github.com/andris9/nodemailer-wellknown#supported-services 支持列表
+                host: 'smtp.exmail.qq.com',
+                port: 465, // SMTP 端口
+                secure: true,
+                auth: {
+                    user: 'xuchangqian@yulong.com',
+                    //这里密码不是qq密码，是你设置的smtp密码
+                    // pass: 'fuyatraecdgxbhih'
+                    pass: 'Xcq123456'
+                }
             });
           
             var mailOptions = {
@@ -210,11 +207,11 @@ let {query} = require('../database'),
                 if(error){
                   
                 }else{
-                  updateUserList()
-                  res.status(200).json({
-                    message:'新增用户成功！',
-                    errorCode:10004
-                  })
+                    updateUserList()
+                    res.status(200).json({
+                        message:'新增用户成功！',
+                        errorCode:10004
+                    })
                 }
             });
           },error => {
@@ -285,29 +282,29 @@ let {query} = require('../database'),
         req.session['verifyEmail'] =  {verifyEmailCode:verifyEmail,expires:+new Date()}; 
         // console.log(req.session)
         if(type==='edit'){
-          var mailOptions = {
+            var mailOptions = {
             from: 'xuchangqian@yulong.com', // 发件地址
             to: toEmail, // 收件列表
             subject: 'xcentz 运营管理系统验证码', // 标题
             //text和html两者只支持一种
             text: `xcentz 运营系统验证码：${verifyEmail} 一小时内有效`, // 标题
             html: `<b>xcentz 运营系统验证码：<em style='font-weight:100;text-decoration:underline;'>${verifyEmail}<em> 2小时内有效</b> <br />
-                  <p style='text-align:right;font-size:12px;'>xcentz</p>
-                  <p style='text-align:right;font-size:12px;'>${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
+                    <p style='text-align:right;font-size:12px;'>xcentz</p>
+                    <p style='text-align:right;font-size:12px;'>${moment().format('YYYY-MM-DD HH:mm:ss')}</p>
             ` // html 内容
-          };
+            };
         }else{
-          var mailOptions = {
+            var mailOptions = {
             from: 'xuchangqian@yulong.com', // 发件地址
             to: toEmail, // 收件列表
             subject: 'xcentz 运营管理系统注册验证', // 标题
             //text和html两者只支持一种
             text: `xcentz 运营系统注册码：${verifyEmail} 一小时内有效`, // 标题
             html: `<b>xcentz 运营系统注册码：<em style='font-weight:100;text-decoration:underline;'>${verifyEmail}<em> 2小时内有效</b> <br />
-                  <p style='text-align:right;font-size:12px;'>xcentz</p>
-                  <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
+                <p style='text-align:right;font-size:12px;'>xcentz</p>
+                <p style='text-align:right;font-size:12px;'>${new Date().toLocaleDateString().replace(/\//g, "-") + " " + new Date().toTimeString().substr(0, 8)}</p>
             ` // html 内容
-          };
+            };
         }
         
       
@@ -342,27 +339,27 @@ let {query} = require('../database'),
         let curPage = Number(req.query.currentPage) || 1
         let pageSize = Number(req.query.pageSize) || 15
         Promise.all([query(`SELECT
-              Pub_User.UserId,
-              Pub_User.UserName,
-              Pub_User.Email,
-              Pub_User.Cname,
-              Pub_User.RoleId,
-              Pub_User.Phone,
-              Pub_Role.Directions,
-              Pub_Role.RoleId,
-              date_format(Pub_User.CreateTime, '%Y-%m-%d% %H:%i:%s') AS CreateTime,
-              date_format(Pub_User.LoatLoginTime, '%Y-%m-%d% %H:%i:%s') AS LoatLoginTime
-              FROM 
-              Pub_Role,
-              Pub_User
-              WHERE Pub_Role.RoleId=Pub_User.RoleId AND CONCAT(Pub_User.UserName,Pub_User.Cname,Pub_User.Email,Pub_Role.Directions,Pub_User.Phone) LIKE '%${key}%'
-              LIMIT ${(curPage-1)*pageSize},${pageSize}`),
-              query('SELECT COUNT(*) AS total FROM Pub_User')]).then( (val) => {
-              res.json({
+            Pub_User.UserId,
+            Pub_User.UserName,
+            Pub_User.Email,
+            Pub_User.Cname,
+            Pub_User.RoleId,
+            Pub_User.Phone,
+            Pub_Role.Directions,
+            Pub_Role.RoleId,
+            date_format(Pub_User.CreateTime, '%Y-%m-%d% %H:%i:%s') AS CreateTime,
+            date_format(Pub_User.LoatLoginTime, '%Y-%m-%d% %H:%i:%s') AS LoatLoginTime
+            FROM 
+            Pub_Role,
+            Pub_User
+            WHERE Pub_Role.RoleId=Pub_User.RoleId AND CONCAT(Pub_User.UserName,Pub_User.Cname,Pub_User.Email,Pub_Role.Directions,Pub_User.Phone) LIKE '%${key}%'
+            LIMIT ${(curPage-1)*pageSize},${pageSize}`),
+            query('SELECT COUNT(*) AS total FROM Pub_User')]).then( (val) => {
+            res.json({
                 userList:val[0],
                 total:val[1][0].total
-              })
             })
+        })
     },
     user_post = (req,res) => {
         let reData = req.body
@@ -429,51 +426,30 @@ let {query} = require('../database'),
       let roleId = req.query.roleId
       let isAdmin = req.query.isAdmin
       let str = ''
-      redis.get(`menuList${roleId?roleId:''}`, function (err, result) {
-        if(isNull(result)){
           if(isAdmin){
             str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu`
           }else{
             str = `SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route FROM Pub_Menu, Pub_Role_Menu WHERE Pub_Role_Menu.MenuId = Pub_Menu.MenuId AND Pub_Role_Menu.RoleId = ${roleId}`
           }
           query(str).then( (r) => {
-            let trees = buildTree(r)
+              let trees = buildTree(r)
             query(`SELECT MAX(MenuId) as maxId FROM Pub_Menu`).then( (response) => {
-              if(isAdmin){
-                redis.set('menuList',JSON.stringify({
-                  maxId:response[0].maxId,
-                  menuList:trees
-                }))
-              }else{
-                redis.set(`menuList${roleId}`,JSON.stringify({
-                  maxId:response[0].maxId,
-                  menuList:trees
-                }))
-              }
               res.json({
                 maxId:response[0].maxId,
                 menuList:trees
               })
             })
           })
-        }else{
-          console.log('redis')
-          res.json(JSON.parse(result))
-        }
-      });
+        
     },
     
     menu_post = (req,res) => {
         let reData = req.body
-        // let MenuId = req.body.
-        // console.log(uuid.v1().replace(/\-/g,''))
         query(`INSERT INTO Pub_Menu(MenuId,MenuName,ParentId,MenuUrl,MenuIconUrl) VALUES(${reData.menuId},'${reData.menuName}',${reData.parentId},'${reData.route}','${reData.icon}')`).then( (r) => {
-          clearRedis().then( () => {
             res.json({
               errorCode:10008,
               message:'菜单添加成功!'
             })
-          })  
         }, error => {
           res.status(500).json({
             errorCode:10009,
@@ -485,13 +461,10 @@ let {query} = require('../database'),
         let reData = req.body
 
         query(`UPDATE Pub_Menu SET MenuName='${reData.menuName}',MenuUrl='${reData.route}',MenuIconUrl='${reData.icon}' WHERE MenuId = ${reData.id}`).then( (r) => {
-          clearRedis().then( () => {
             res.json({
               errorCode:100010,
               message:'菜单修改成功!'
             })
-          })
-            
         }, error => {
           res.status(500).json({
             errorCode:100011,
@@ -502,13 +475,10 @@ let {query} = require('../database'),
     menu_delete = (req,res) => {
         let ids = req.body.ids
         query(`DELETE t1,t2 FROM Pub_Menu AS t1 LEFT JOIN Pub_Role_Menu AS t2 ON t1.MenuId = t2.MenuId WHERE ${ids}`).then( (r) => {
-          clearRedis().then( () => {
-             res.json({
+            res.json({
               errorCode:10006,
               message:'菜单删除成功!',
             })
-          })
-           
         }, error => {
           res.status(500).json({
             errorCode:10007,
@@ -520,7 +490,7 @@ let {query} = require('../database'),
         let roleId = req.query.roleId
         query(`SELECT Pub_Menu.MenuId as id ,1 as expand, MenuName as title,ParentId as parent_id,MenuIconUrl as icon,MenuUrl as route, t.checked FROM Pub_Menu LEFT JOIN (SELECT Pub_Role_Menu.RoleId AS checked, Pub_Role_Menu.MenuId FROM Pub_Role_Menu WHERE Pub_Role_Menu.RoleId = ${roleId}) AS t ON t.MenuId = Pub_Menu.MenuId`).then( (r) => {
             res.json({
-              menuList:buildTree(r)
+                menuList:buildTree(r)
             })
         })
     },
@@ -528,32 +498,28 @@ let {query} = require('../database'),
         let str = req.body.str
         let roleId = Number(req.body.roleId)
         query(`DELETE FROM Pub_Role_Menu WHERE RoleId = ${roleId}`).then( (r) => {
-          if(!str){
-            query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
-              clearRedis(roleId).then( () => {
-                res.json({
-                  errorCode:100031,
-                  message:'菜单权限配置成功!'
+            if(!str){
+                query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+                    res.json({
+                        errorCode:100031,
+                        message:'菜单权限配置成功!'
+                    })
                 })
-              })
-              
-            })
-          }else{
-            query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {
-              query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
-                res.json({
-                  errorCode:100031,
-                  message:'菜单权限配置成功!'
+            }else{
+                query(` INSERT INTO Pub_Role_Menu(RoleId,MenuId) VALUES${str}`).then( () => {
+                    query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+                        res.json({
+                            errorCode:100031,
+                            message:'菜单权限配置成功!'
+                        })
+                    })
+                },error => {
+                    res.status(500).json({
+                        errorCode:100032,
+                        message:'菜单权限配置失败!'
+                    })
                 })
-              })
-              
-            },error => {
-              res.status(500).json({
-                errorCode:100032,
-                message:'菜单权限配置失败!'
-              })
-            })
-          }
+            }
         })
     },
     role_get = (req,res) => {
@@ -571,7 +537,6 @@ let {query} = require('../database'),
     },
     role_post = (req,res) => {
         let reData = req.body
-        // console.log(reData)
         query(`INSERT INTO Pub_Role(RoleName,Directions) VALUES('${reData.roleName}','${reData.direction}')`).then( (r) => {
           res.send({
             errorCode:100013,
@@ -669,67 +634,65 @@ let {query} = require('../database'),
         })
     },
     module_delete = (req,res) => {
-        let reData = req.body
-        //连表删除
-        query(`DELETE t1,t2 FROM Pub_Module AS t1 LEFT JOIN Pub_Role_Moudule AS t2 ON t1.ModuleId = t2.ModuleId WHERE t1.ModuleId = ${reData.id} `).then( (r) => {
-          res.send({
-            errorCode:100029,
-            message:'删除模块成功!'
-          })
-        },error =>{
-          res.status(500).send({
-            errorCode:100030,
-            message:'删除模块失败!'
-          })
+      let reData = req.body
+      //连表删除
+      query(`DELETE t1,t2 FROM Pub_Module AS t1 LEFT JOIN Pub_Role_Moudule AS t2 ON t1.ModuleId = t2.ModuleId WHERE t1.ModuleId = ${reData.id} `).then( (r) => {
+        res.send({
+          errorCode:100029,
+          message:'删除模块成功!'
         })
+      },error =>{
+        res.status(500).send({
+          errorCode:100030,
+          message:'删除模块失败!'
+        })
+      })
     },
     authModule_get = (req,res) => {
-        let roleId = req.query.roleId
-        let isAdmin = req.query.isAdmin
-        let str = ''
-        if(isAdmin){
-          str = `SELECT Pub_Module.ModuleId,Pub_Module.ModuleName,Pub_Module.Directions,t.selected FROM Pub_Module  LEFT JOIN (SELECT Pub_Role_Moudule.RoleId AS selected ,Pub_Role_Moudule.ModuleId FROM Pub_Role_Moudule WHERE Pub_Role_Moudule.RoleId = ${roleId}) AS t ON t.ModuleId =  Pub_Module.ModuleId`
-        }else{
-          str = `SELECT Pub_Module.ModuleId,Pub_Module.ModuleName,Pub_Module.Directions FROM Pub_Module ,Pub_Role_Moudule WHERE Pub_Role_Moudule.ModuleId =  Pub_Module.ModuleId AND Pub_Role_Moudule.RoleId = ${roleId}`
-        }
-        query(str).then( (r) => {
-          res.send({
-            muduleList:r
-          })
+      let roleId = req.query.roleId
+      let isAdmin = req.query.isAdmin
+      let str = ''
+      if(isAdmin){
+        str = `SELECT Pub_Module.ModuleId,Pub_Module.ModuleName,Pub_Module.Directions,t.selected FROM Pub_Module  LEFT JOIN (SELECT Pub_Role_Moudule.RoleId AS selected ,Pub_Role_Moudule.ModuleId FROM Pub_Role_Moudule WHERE Pub_Role_Moudule.RoleId = ${roleId}) AS t ON t.ModuleId =  Pub_Module.ModuleId`
+      }else{
+        str = `SELECT Pub_Module.ModuleId,Pub_Module.ModuleName,Pub_Module.Directions FROM Pub_Module ,Pub_Role_Moudule WHERE Pub_Role_Moudule.ModuleId =  Pub_Module.ModuleId AND Pub_Role_Moudule.RoleId = ${roleId}`
+      }
+      query(str).then( (r) => {
+        res.send({
+          muduleList:r
         })
+      })
     },
     authModule_put = (req,res) => {
-        let str = req.body.str
-        let roleId = Number(req.body.roleId)
-        query(`DELETE FROM Pub_Role_Moudule WHERE RoleId = ${roleId}`).then( () => {
-          if(!str){
+      let str = req.body.str
+      let roleId = Number(req.body.roleId)
+      query(`DELETE FROM Pub_Role_Moudule WHERE RoleId = ${roleId}`).then( () => {
+        if(!str){
+          query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+            res.json({
+              errorCode:100034,
+              message:'模块权限配置成功!'
+            })
+          })
+        }else{
+          query(`INSERT INTO Pub_Role_Moudule(RoleId,ModuleId) VALUES${str}`).then( () => {
             query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
               res.json({
                 errorCode:100034,
                 message:'模块权限配置成功!'
               })
             })
-          }else{
-            query(`INSERT INTO Pub_Role_Moudule(RoleId,ModuleId) VALUES${str}`).then( () => {
-              query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
-                res.json({
-                  errorCode:100034,
-                  message:'模块权限配置成功!'
-                })
-              })
-              
-            },error => {
-              res.status(500).json({
-                errorCode:100035,
-                message:'模块权限配置失败!'
-              })
+            
+          },error => {
+            res.status(500).json({
+              errorCode:100035,
+              message:'模块权限配置失败!'
             })
-          }
-        })
+          })
+        }
+      })
     };
     
-
-
 
 
 

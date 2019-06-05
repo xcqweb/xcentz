@@ -10,40 +10,48 @@
         <!-- 新增角色 -->
          <i-modal
             v-model="addRoleStatus"
-            title="新增角色"
-            @on-ok="addRole"
-            @on-cancel="addRoleStatus=false">
+            title="新增角色">
+            <div slot="footer">
+                <i-button @click="addRoleStatus = false">取消</i-button>
+                <i-button type='primary' @click="addRole" :loading='loading'>确定</i-button>
+            </div>
             <div class="center_g marginTop10"><p class="label_g">角色名称</p><i-input v-model="roleAdd.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input v-model="roleAdd.roleDirection" placeholder="请输入角色说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input type='textarea' autosize v-model="roleAdd.roleDirection" placeholder="请输入角色说明..." /></div>
         </i-modal>
 
         <!-- 编辑角色 -->
          <i-modal
             v-model="editRoleStatus"
-            title="编辑角色"
-            @on-ok="editRole"
-            @on-cancel="editRoleStatus=false">
+            :title="modalTitle">
+            <div slot="footer">
+                <i-button @click="editRoleStatus = false">取消</i-button>
+                <i-button type='primary' @click="editRole" :loading='loading'>确定</i-button>
+            </div>
             <div class="center_g marginTop10"><p class="label_g">角色名称</p><i-input v-model="roleEdit.roleName" placeholder="请输入角色名..." /></div>
-            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input v-model="roleEdit.roleDirection" placeholder="请输入角色说明..." /></div>
+            <div class="center_g marginTop10"><p class="label_g">角色说明</p><i-input type='textarea' autosize v-model="roleEdit.roleDirection" placeholder="请输入角色说明..." /></div>
         </i-modal>
 
         <!-- 菜单权限分配 -->
          <i-modal
             v-model="menuAuthStatus"
-            title="菜单权限分配"
-            width='600'
-            @on-ok="menuAuthHandler"
-            @on-cancel="menuAuthStatus=false">
+            :title="modalTitle"
+            width='600'>
+            <div slot="footer">
+                <i-button @click="menuAuthStatus = false">取消</i-button>
+                <i-button type='primary' @click="menuAuthHandler" :loading='loading'>确定</i-button>
+            </div>
             <i-tree :data="treeData" show-checkbox multiple @on-check-change='checkedChange' ref='MenuTree'></i-tree>
         </i-modal>
 
         <!-- 模块权限分配 -->
          <i-modal
             v-model="moduleAuthStatus"
-            title="模块权限分配"
-            width='800'
-            @on-ok="moduleAuthHandler"
-            @on-cancel="moduleAuthStatus=false">
+            :title="modalTitle"
+            width='800'>
+            <div slot="footer">
+                <i-button @click="moduleAuthStatus = false">取消</i-button>
+                <i-button type='primary' @click="moduleAuthHandler" :loading='loading'>确定</i-button>
+            </div>
             <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-bottom:6px;">
                 <i-checkbox
                     :indeterminate="indeterminate"
@@ -63,6 +71,8 @@ import {roleList,addRole,editRole,delRole,queryAuthMenu,updateAuthMenu,queryAuth
 export default {
     data(){
         return{
+            loading:false,
+            modalTitle:'',
             indeterminate:false,
             checkAll:false,
             checkAllGroup:[],
@@ -90,7 +100,7 @@ export default {
             currentRoleId:'',
             moduleAuthStatus:false,
             treeData:[],
-            columnsRole: [
+            columnsRole: Object.freeze([
                     {
                         title: '序号',
                         width: 80,
@@ -182,7 +192,7 @@ export default {
                             ]);
                         }
                     }
-                ],
+                ]),
                 dataRole: []
         }
     },
@@ -223,12 +233,23 @@ export default {
             })
         },
         //搜索
-        search(){
+        search:debounce(function(){
             this.getRoleList()
-        },
+        },600,{leading:true}),
         //新增角色
         addRole(){
+            this.addRoleStatus = true
+            if(!this.roleAdd.roleName || !this.roleAdd.roleDirection){
+                this.$Message.warning({
+                    content:'角色名和角色说明不能为空!',
+                    duration:3
+                })
+                return
+            }
+            this.loading = true
             addRole({roleName:this.roleAdd.roleName,direction:this.roleAdd.roleDirection}).then( (res) => {
+                this.loading = false
+                this.addRoleStatus = false
                 this.roleAdd = {
                     roleName:'',
                     roleDirection:''
@@ -238,7 +259,17 @@ export default {
         },
         //编辑角色
         editRole(){
+            if(!this.roleEdit.roleName || !this.roleEdit.roleDirection){
+                this.$Message.warning({
+                    content:'角色名和角色说明不能为空!',
+                    duration:3
+                })
+                return
+            }
+            this.loading = true
             editRole({roleName:this.roleEdit.roleName,direction:this.roleEdit.roleDirection,id:this.roleEdit.id}).then( (res) => {
+                this.loading = false
+                this.editRoleStatus = false
                 this.$set(this.dataRole[this.roleEdit.index],'RoleName',this.roleEdit.roleName)
                 this.$set(this.dataRole[this.roleEdit.index],'Directions',this.roleEdit.roleDirection)
             })
@@ -256,6 +287,7 @@ export default {
         },
         //编辑角色
         edit (data) {
+            this.modalTitle = `编辑角色 - ${data.row.Directions}`
             this.editRoleStatus = true
             this.roleEdit = {
                 roleName:data.row.RoleName,
@@ -269,9 +301,12 @@ export default {
             console.log(data)
             this.$Modal.confirm({
                 title: '提示',
-                content: '<p>确定要要删除该角色?</p>',
+                loading:true,
+                closable:true,
+                content: `<p>确定要要删除 <span style='color:#2d8cf0;'>${data.row.RoleName}</span> 角色?</p>`,
                 onOk: () => {
                     delRole({id:data.row.RoleId}).then( (res) => {
+                        this.$Modal.remove()
                         this.dataRole.splice(data.index,1)
                     })
                 }
@@ -279,6 +314,7 @@ export default {
         },
         //模块权限分配
         moduleAuthAssign(data){
+            this.modalTitle = `模块权限分配 - ${data.row.Directions}`
             this.checkAllGroup = []
             this.checkAll = false
             this.moduleAuthStatus = true
@@ -294,12 +330,15 @@ export default {
             })
         },
         moduleAuthHandler(){
+            this.loading = true
             configAuthModule({str:this.updateAuthModuleStr,roleId:this.currentRoleId}).then( (res) => {
-
+                this.loading = false
+                this.moduleAuthStatus = false
             })
         },
         //菜单权限分配
-        menuAuthAssign({row:{RoleId}}){
+        menuAuthAssign({row:{RoleId,Directions}}){
+            this.modalTitle = `菜单权限分配 - ${Directions}`
             this.menuAuthStatus = true
             this.currentRoleId = RoleId
             this.queryAuthMenu(RoleId)
@@ -339,8 +378,11 @@ export default {
         },
         //确定 == 菜单权限分配
         menuAuthHandler(){
+            this.loading = true
             this.checkedChange()
             updateAuthMenu({str:this.updateAuthMenuStr,roleId:this.currentRoleId}).then( (res) => {
+                this.loading = false
+                this.menuAuthStatus = false
                 if(this.currentRoleId === this.userInfo.RoleId){
                   this.$root.eventBus.$emit('getMenu')  
                 }

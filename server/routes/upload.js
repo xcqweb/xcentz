@@ -10,42 +10,46 @@ const multipartMiddleware = multipart();
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './upload')
+        cb(null, './upload')
     },
     filename: function (req, file, cb) {
         console.log(file)
-      cb(null, file.originalname+'')
+        cb(null, file.originalname+'')
     }
-  }),
- upload = multer({ storage:storage});
+}),
+upload = multer({ storage:storage});
 
 
 //上传excle
 router.post('/uploadExcle',function(req, res, next) {
     upload.single('file')(req,res,function(err){
-        if (err instanceof multer.MulterError) {
+            if (err instanceof multer.MulterError) {
             // 发生错误
-          } else if (err) {
-            // 发生错误
-          }else{
-              let data = xlsx.parse(fs.readFileSync(path.join(__dirname,'../upload/Amz后台广告说明&样例.xlsx')))
-              // console.log(data[2])
-          }
+            } else if (err) {
+                // 发生错误
+            }else{
+                let data = xlsx.parse(fs.readFileSync(path.join(__dirname,`../upload/${req.file.originalname}`)))
+                console.log(req.file.originalname)
+                res.send({
+                    message:'上传成功!',
+                    data
+                })
+            }
+        })
     })
-  })
 
-  .get('/downloadExcle',function(req, res, next) {
-      let data = [
-          ['groupIdadGroupId','keywordId','rangeEnd','rangeStart','suggested'],
-          ['2wqew23232wqed1','sasas232ewe1',1,1,1],
-          ['2wqew23232wqed2','sasas232ewe2',2,2,2],
-          ['2wqew23232wqed3','sasas232ewe3',3,3,3],
-      ]
+    .get('/downloadExcle',function(req, res, next) {
+        let data = [
+            ['groupIdadGroupId','keywordId','rangeEnd','rangeStart','suggested'],
+            ['2wqew23232wqed1','sasas232ewe1',1,1,1],
+            ['2wqew23232wqed2','sasas232ewe2',2,2,2],
+            ['2wqew23232wqed3','sasas232ewe3',3,3,3],
+        ]
     let buffer = xlsx.build([{
         name: "xxx.xlsx",
         data: data
     }]);
-    
+
     fs.writeFile(path.join(__dirname,'../upload/report_01.xlsx'), buffer, function (err,a,b,c) {
         if (err) {
             throw err;
@@ -54,7 +58,7 @@ router.post('/uploadExcle',function(req, res, next) {
             fs.readFileSync(path.join(__dirname,'../upload/report_01.xlsx'))
         )
     });
-    
-  });
+
+    });
 
 module.exports = router;

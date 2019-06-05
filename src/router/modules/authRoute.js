@@ -126,6 +126,34 @@ export default[
         }
       ]
     },
+
+    //项目立项
+    {
+        path: '/',
+        component: HomeLayout,
+        children:[
+          {
+            path:'/projectCreate',
+            component:() => import('@/views/home/projectManage/projectCreate'),
+            name:'projectApproval',
+            meta:{title:'项目立项'}
+          }
+        ]
+      },
+
+      //项目审批
+    {
+        path: '/',
+        component: HomeLayout,
+        children:[
+          {
+            path:'/projectApproval',
+            component:() => import('@/views/home/projectManage/projectApproval'),
+            name:'projectCreate',
+            meta:{title:'项目审批'}
+          }
+        ]
+      },
 ]
 
 
