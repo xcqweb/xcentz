@@ -1,6 +1,4 @@
 
-
-
 import Vue from 'vue'
 import Router from 'vue-router'
 import layout from '@/views/layout/appMain'
@@ -72,19 +70,21 @@ let staticRoute = [
     },
   ]
 
-  // console.log(authRoute,staticRoute)
+
 let router = new Router({
   mode:'history',
   routes: [...staticRoute]
 })
 
 router.beforeEach( (from,to,next) => {
+
   let token = localStorage.getItem('token')
   if(from.name == null && sessionStorage.getItem('currentRoute')!=null){//解决动态路由(addRoutes)刷新404的问题
-    console.log(from,to,sessionStorage.getItem('currentRoute'))
+    
     let re = authRoute.find( (item) => {
       return item.children[0].path === sessionStorage.getItem('currentRoute')
     })
+
     router.matcher.addRoutes([re,{ path: '*',name:'all', redirect: '/404',meta:{noRequire:true}}])
     router.push({path:sessionStorage.getItem('currentRoute')})
     return

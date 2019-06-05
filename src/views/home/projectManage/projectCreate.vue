@@ -241,7 +241,7 @@ export default {
                 battery:'',
                 remarks:''
             },
-            ruleProject:{
+            ruleProject:Object.freeze({
                 projectName:[
                     { required: true, message: '请输入项目名称', trigger: 'blur' }
                 ],
@@ -281,46 +281,46 @@ export default {
                 battery:[
                     { required: true, message: '请选择电池容量', trigger: 'blur' }
                 ],
-            }
+            })
         }
     },
     components:{Operate},
     computed:{
         products(){
-            return product
+            return Object.freeze(product)
         },
         productChilds(){
-            return productChild[this.modelProject.product]
+            return Object.freeze(productChild[this.modelProject.product])
         },
         suppliers(){
-            return supplier[this.modelProject.productChild]
+            return Object.freeze(supplier[this.modelProject.productChild])
         },
         sellStatus(){
-            return sellStatus
+            return Object.freeze(sellStatus)
         },
         packs(){
-            return packs
+            return Object.freeze(packs)
         },
         lineLengths(){
-            return lineLengths
+            return Object.freeze(lineLengths)
         },
         portMaterials(){
-            return portMaterials
+            return Object.freeze(portMaterials)
         },
         outMaterials(){
-            return outMaterials
+            return Object.freeze(outMaterials)
         },
         colors(){
-            return colors
+            return Object.freeze(colors)
         },
         ports(){
-            return ports
+            return Object.freeze(ports)
         },
         charges(){
-            return charges
+            return Object.freeze(charges)
         },
         batterys(){
-            return batterys
+            return Object.freeze(batterys)
         }
     },
     watch:{

@@ -144,21 +144,21 @@ export default {
                 projectName:'',
                 message:''
             },
-            rulesPro:{
+            rulesPro:Object.freeze({
                 ylCode:[
                     { required: true, message: '请输入宇龙编码', trigger: 'blur' }
                 ],
                 projectName:[
                     { required: true, message: '请输入项目名称', trigger: 'blur' }
                 ]
-            },
+            }),
             formsOp:{
                 sku:'',
                 asin:'',
                 parentAsin:'',
                 message:''
             },
-            rulesOp:{
+            rulesOp:Object.freeze({
                 sku:[
                     { required: true, message: '请输入sku', trigger: 'blur' }
                 ],
@@ -168,7 +168,7 @@ export default {
                 parentAsin:[
                     { required: true, message: '请输入parentAsin', trigger: 'blur' }
                 ]
-            }
+            })
         }
     },
     components:{Operate},
