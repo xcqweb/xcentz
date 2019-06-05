@@ -140,6 +140,6 @@ app.set('views', path.join(__dirname, 'views'))
         console.log('server is on 8081 .......')
     });
 
-    // schedule()//初始化定时任务
+    schedule()//初始化定时任务
 
 module.exports = app;

@@ -26,7 +26,7 @@ poolCluster.add('MASTER', masterConfig);
 
 let query = function(sql, values) {
 	return new Promise((resolve, reject) => {
-        poolCluster.getConnection('MASTER',function(err, connection) {
+        poolCluster.getConnection(function(err, connection) {
             if (err) {
                 reject(err)
             } else {
@@ -46,7 +46,7 @@ let query = function(sql, values) {
 
 let query_blog = function(sql, values) {
 	return new Promise((resolve, reject) => {
-        poolCluster.getConnection(function(err, connection) {
+        poolCluster.getConnection('MASTER',function(err, connection) {
             if (err) {
                 reject(err)
             } else {
