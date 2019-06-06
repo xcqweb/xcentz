@@ -1,7 +1,7 @@
-const CommpressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
-const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const webpack = require('webpack')
+const CommpressionPlugin = require('compression-webpack-plugin');
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
 function resolve (dir) {
     return path.join(__dirname, dir)

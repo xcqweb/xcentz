@@ -13,7 +13,7 @@ deploy:                     # 部署脚本
     port: 22                # ssh端口
     ref: origin/master      # 要拉取的git分支
     ssh_options: ["StrictHostKeyChecking=no", "PasswordAuthentication=no"] # SSH 公钥检查
-    repo: https://github.com/xcqweb/xcentz.git # 远程仓库地址
+    repo: https://github.com/xxxxx # 远程仓库地址
     path: ./              # 拉取到服务器某个目录下
     pre-deploy: git fetch --all # 部署前执行
     post-deploy: npm install &&  pm2 reload deploy.yaml --env production # 部署后执行
