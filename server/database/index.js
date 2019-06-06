@@ -4,13 +4,13 @@ const config = require('./config')
 var poolCluster = mysql.createPoolCluster();
 
 let masterConfig = {
-    host:'10.11.220.148',
+    host:'localhost',
     user:'root',
     password:'xcq123456',
-    database:'blog',
+    database:'project',
 }
 
-poolCluster.add('blog',config);
+poolCluster.add('project',config);
 poolCluster.add('MASTER', masterConfig); 
 
 // const pool = mysql.createPool({
@@ -26,7 +26,7 @@ poolCluster.add('MASTER', masterConfig);
 
 let query = function(sql, values) {
 	return new Promise((resolve, reject) => {
-        poolCluster.getConnection('blog',function(err, connection) {
+        poolCluster.getConnection('project',function(err, connection) {
             if (err) {
                 reject(err)
             } else {
