@@ -44,9 +44,9 @@ function exists( src, dst, callback ){
 			}
 			// 不存在
 			else{
-					fs.mkdir( dst, function(){
-                        callback( src, dst );
-					});
+                fs.mkdir( dst, function(){
+                    callback( src, dst );
+                });
 			}
 	});
 };

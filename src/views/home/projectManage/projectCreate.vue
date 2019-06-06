@@ -216,44 +216,6 @@
                     </div>
                 </div>
                 
-                <!-- <div class="flow_item">
-                    <span>项目二</span>
-                        <i-steps :current="3" status="finish">
-                        <i-step title="项目立项" content="项目立项"></i-step>
-                        <i-step title="项目经理审批" content="项目经理审批"></i-step>
-                        <i-step title="运营审批" content="不符合要求"></i-step>
-                        <i-step title="项目审批通过" content="项目审批通过"></i-step>
-                    </i-steps>
-                    <div class="status">
-                        <i-circle :size="36" :percent="100" :stroke-width="8" stroke-color="#5cb85c">
-                            <i-icon v-if="100" type="ios-checkmark" size="36" style="color:#5cb85c"></i-icon>
-                        </i-circle>
-                        <span style="margin-left:6px;">已完成</span>
-                    </div>
-                    <div class="operate">
-                        <Operate @operateHandler='operateHandler'></Operate>
-                    </div>
-                </div>
-
-                <div class="flow_item">
-                    <span>项目三</span>
-                        <i-steps :current="2" status="error">
-                        <i-step title="项目立项" content="项目立项"></i-step>
-                        <i-step title="项目经理审批" content="项目经理审批"></i-step>
-                        <i-step title="运营审批" content="不符合要求"></i-step>
-                    </i-steps>
-                    <div class="status">
-                        <i-circle :size="36" :percent="100" :stroke-width="8" stroke-color="#ed4014">
-                            <i-icon v-if="100" type="ios-close" size="36" style="color:#ed4014"></i-icon>
-                        </i-circle>
-                        <span style="margin-left:6px;">已取消</span>
-                    </div>
-                    <div class="operate">
-                        <Operate @operateHandler='operateHandler'></Operate>
-                    </div>
-                </div> -->
-
-
             </div>
         </div>
     </div>
@@ -332,11 +294,9 @@ export default {
                 battery:[
                     { required: true, message: '请选择电池容量', trigger: 'blur' }
                 ],
-
                 projector:[
                     { required: true, message: '请选择项目经理', trigger: 'blur' }
                 ],
-
                 operator:[
                     { required: true, message: '请选择运营', trigger: 'blur' }
                 ],
