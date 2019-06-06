@@ -7,6 +7,7 @@ let createError = require('http-errors'),
     usersRouter = require('./routes/users'),
     uploadRouter = require('./routes/upload'),
     userCenterRouter = require('./routes/userCenter'),
+    projectRouter = require('./routes/project'),
     jwtAuth = require('./middleware/jwtAuth'),//权限认证
     session = require("express-session"),//session
     history = require('connect-history-api-fallback'),//404 
@@ -107,6 +108,7 @@ app.set('views', path.join(__dirname, 'views'))
     .use('/api/xcentz/v1/users', usersRouter)
     .use('/api/xcentz/v1/upload', uploadRouter)
     .use('/api/xcentz/v1/userCenter', userCenterRouter)
+    .use('/api/xcentz/v1/project', projectRouter)
 
     .use(function(req, res, next) {
         next(createError(404));

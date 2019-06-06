@@ -217,6 +217,7 @@
 <script>
 import {product,productChild,supplier,sellStatus,packs,lineLengths,portMaterials,outMaterials,colors,ports,charges,batterys} from './products.json'
 import Operate from './components/operatePop'
+import {queryProject,addProject} from '@api/project'
 
 export default {
     data(){
@@ -332,11 +333,26 @@ export default {
             this.modelProject.supplier = ''
         }
     },
+    activated(){
+        queryProject()
+    },
     methods:{
         addProjectHandler(name){
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    this.$Message.success('Success!');
+                    console.log(666)
+                    let params = {
+                        status:2,
+                        curNode:1,
+                        userId:this.userInfo.UserId,
+                        proInfo:JSON.stringify(this.modelProject)
+
+                    }
+                    
+                    console.log(params)
+                    addProject(params).then( () => {
+                        this.scanProjectStatus = false
+                    })
                 }
             })
         },
