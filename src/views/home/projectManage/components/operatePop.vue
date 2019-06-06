@@ -3,9 +3,9 @@
         <i-icon type='ios-add' style="color:#888;font-size:26px;cursor:pointer;background:#f6f6f6;border-radius:50%;"></i-icon>
         <i-dropdown slot="content" @click.native='getSelected'>
             <i-dropdown-item data-index='1'><i-icon type="md-information-circle" /> 详情</i-dropdown-item>
-            <i-dropdown-item data-index='2' divided v-if="userInfo.RoleId === 6 || userInfo.RoleId === 24"><i-icon type="md-create" /> 编辑</i-dropdown-item>
-            <i-dropdown-item data-index='3' divided v-if="userInfo.RoleId === 6 || userInfo.RoleId === 24"><i-icon type="ios-trash" /> 删除</i-dropdown-item>
-            <i-dropdown-item data-index='4' divided v-if="userInfo.RoleId !== 2 || userInfo.RoleId === 24"><i-icon type="md-notifications" /> 通知</i-dropdown-item>
+            <i-dropdown-item data-index='2' divided v-if="(userInfo.RoleId === 6 || userInfo.RoleId === 24) && item.ProjectStatus===2 "><i-icon type="md-create" /> 编辑</i-dropdown-item>
+            <i-dropdown-item data-index='3' divided v-if="(userInfo.RoleId === 6 || userInfo.RoleId === 24) && item.ProjectStatus!==1" ><i-icon type="ios-trash" /> 删除</i-dropdown-item>
+            <i-dropdown-item data-index='4' divided v-if="(userInfo.RoleId !== 2 || userInfo.RoleId === 24) && item.ProjectStatus===2"><i-icon type="md-notifications" /> 通知</i-dropdown-item>
         </i-dropdown>
     </i-poptip>
 </template>
@@ -17,13 +17,21 @@ export default {
 
         }
     },
+    props:{
+        item:{
+            type:Object,
+            default:() => {
+                return {}
+            }
+        }
+    },
     methods:{
         getSelected(e){
             let $index = e.target.dataset.index
             switch($index){
 
                 case '1':
-                    this.$emit('operateHandler',1)
+                    this.$emit('operateHandler',1,this.item)
                 break;
 
                 case '2'://编辑

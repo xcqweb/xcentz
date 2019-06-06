@@ -5,9 +5,13 @@ var poolCluster = mysql.createPoolCluster();
 
 let masterConfig = {
     host:'localhost',
-    user:'root',
-    password:'xcq123456',
+    user:'xcq',
+    password:'123456',
     database:'project',
+    multipleStatements:true,
+    dateStrings:true,
+    connectTimeout:30000,
+    connectionLimit:30
 }
 
 poolCluster.add('project',config);
@@ -18,10 +22,10 @@ poolCluster.add('MASTER', masterConfig);
 // 	user: config.USERNAME,
 // 	password: config.PASSWORD,
 //     database: config.DATABASE,
-//     multipleStatements:true,
-//     dateStrings:true,
-//     connectTimeout:30000,
-//     connectionLimit:30
+    // multipleStatements:true,
+    // dateStrings:true,
+    // connectTimeout:30000,
+    // connectionLimit:30
 // })
 
 let query = function(sql, values) {

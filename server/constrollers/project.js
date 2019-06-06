@@ -1,4 +1,4 @@
-let {query_blog} = require('../database'),
+let {query_blog,query} = require('../database'),
 uuid = require('node-uuid'), //生成唯一id
 moment = require('moment'),//时间工具函数
 
@@ -15,15 +15,32 @@ addProject = (req,res) => {
     console.log(reData)
     var projectId = uuid.v4().replace(/\-/g,'')
     
-    Promise.all([query_blog(`insert into pub_approval_workflow(ProjectId,ProjectStatus,CreateUserId,CurrentNode,ProductionInfo,CreateTime) values('${projectId}',${reData.status},'${reData.userId}',${reData.curNode},'${reData.proInfo}','${moment().format('YYYY-MM-DD HH:mm:ss')}')`),query_blog(`insert into pub_workflow_node(NodeId,ProjectId,NodeType,NodeStatus) values('${uuid.v4().replace(/\-/g,'')}','${projectId}',1,1),('${uuid.v4().replace(/\-/g,'')}','${projectId}',2,2),('${uuid.v4().replace(/\-/g,'')}','${projectId}',3,3)`)]).then( (r) => {
+    query_blog(`insert into Pub_approval_Workflow(ProjectId,ProjectStatus,ProductorUserId,ProjectorUserId,OperatorUserId,CurrentNode,ProductionInfo,ProductorRemark,CreateTime) values('${projectId}',${reData.status},'${reData.userId}','${reData.projectorId}','${reData.operatorId}',${reData.curNode},'${reData.proInfo}','${reData.remarks}','${moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
         res.send({
-            items:r
+            errorCode:100044,
+            message:'项目创建成功!'
+        })
+    },error => {
+        res.send({
+            errorCode:100045,
+            message:'项目创建失败!'
         })
     })
+},
+
+queryRoleUser = (req,res) => {
+    let roles = req.query.roles.split(',')
+    query(`select UserId,UserName,Cname from Pub_User where RoleId = ${roles[0]};select UserId,UserName,Cname from Pub_User where RoleId = ${roles[1]}`).then( (r) => {
+        res.send({
+            roles:r
+        })
+    })
+    
 }
 
 
 module.exports = {
     queryProject,
     addProject,
+    queryRoleUser
 }

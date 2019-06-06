@@ -16,7 +16,7 @@
                 <i-button @click="addProjectStatus = false" size='large' style="margin-right:20px;">取消</i-button>
                 <i-button type='primary' @click="addProjectHandler('formProject')" :loading='loading' size='large'>确定</i-button>
             </div>
-            
+            <i-divider>产品信息录入</i-divider>
             <i-form ref="formProject" :model="modelProject" :rules="ruleProject" :label-width="120" style="display:flex;flex-direction:column;align-items:center;margin:20px 0;">
                 <!-- <i-form-item label="项目名称" prop="projectName" class="pro_item">
                     <i-input ref="input" v-model="modelProject.projectName" />
@@ -126,7 +126,26 @@
                 <i-form-item label="备注" prop="remarks" class="pro_item">
                     <i-input type='textarea' v-model="modelProject.remarks" clearable placeholder="请输入备注" :autosize='{minRows: 6}'></i-input>
                 </i-form-item>
+
+                <i-divider>选择审批相关人</i-divider>
+
+                <i-form-item label="项目经理" prop="projector" class="pro_item">
+                    <i-select 
+                        clearable   
+                        v-model="modelProject.projector">
+                        <i-option v-for="option in roles[0]" :value="option.UserId" :key="option.UserId">{{option.Cname}}</i-option>
+                    </i-select>
+                </i-form-item>
+
+                <i-form-item label="运营" prop="operator" class="pro_item">
+                    <i-select 
+                        clearable   
+                        v-model="modelProject.operator">
+                        <i-option v-for="option in roles[1]" :value="option.UserId" :key="option.UserId">{{option.Cname}}</i-option>
+                    </i-select>
+                </i-form-item>
             </i-form>
+            
         </i-modal>
 
         <!-- 查看项目 -->
@@ -137,10 +156,34 @@
             footer-hide
             title="项目详情">
             <div style="margin:20px;">
+                <i-divider>项目详情</i-divider>
                 <ul class="approval_item">
-                    <li v-for="i in 20">
-                        <span>品类:</span>
-                        <span>cable</span>
+                    <li>
+                        <span>创建人:</span>
+                        <span>xxx</span>
+                    </li>
+                    <li>
+                        <span>创建时间:</span>
+                        <span>{{scanProjectInfo.CreateTime}}</span>
+                    </li>
+                </ul>
+
+                <i-divider>产品信息</i-divider>
+                <ul class="approval_item">
+                    <li v-for="item in scanProjectInfo.productionInfo " v-show='item.value && transformName(item.name)'>
+                        <span>{{transformName(item.name)}}:</span>
+                        <span>{{item.value}}</span>
+                    </li>
+                </ul>
+                <i-divider>审批信息</i-divider>
+                <ul class="approval_item">
+                    <li>
+                        <span>项目经理审批:</span>
+                        <span>等待审批</span>
+                    </li>
+                    <li>
+                        <span>运营审批:</span>
+                        <span>等待审批</span>
                     </li>
                 </ul>
             </div>
@@ -151,32 +194,35 @@
         <div style="margin-top:20px;">
             <i-divider>项目审批流程</i-divider>
             <div class="flow">
-                <div class="flow_item">
+                <div class="flow_item" v-for="item in projects">
                     <span>项目一</span>
-                    <i-steps :current="1">
-                        <i-step title="项目立项" content="项目立项"></i-step>
-                        <i-step title="项目经理审批" content="项目经理审批"></i-step>
-                        <i-step title="运营审批" content="运营审批"></i-step>
-                        <!-- <i-step title="项目审批通过" content="项目审批通过"></i-step> -->
+                    <i-steps :current="item.CurrentNode+1">
+                        <i-step title="项目立项" :content="item.ProductorRemark"></i-step>
+                        <i-step title="项目经理审批" :content="item.ProjectorRemark"></i-step>
+                        <i-step title="运营审批" :content="item.OperatorRemark"></i-step>
                     </i-steps>
                     <div class="status">
-                        <i-circle :size="36" :percent="50" :stroke-width="8">
-                            <i-icon v-if="0" type="ios-checkmark" size="36" style="color:#5cb85c"></i-icon>
+                        <i-circle v-if="item.ProjectStatus===3" :size="36" :percent="100" :stroke-width="8">
+                            <i-icon type="ios-checkmark" size="36" style="color:#ff5500"></i-icon>
                         </i-circle>
-                        <span style="margin-left:6px;">进行中</span>
+
+                        <i-circle v-else :size="36" :percent="item.CurrentNode ? item.CurrentNode===1?66.6:100:33.3" :stroke-width="8">
+                            <i-icon v-if="item.CurrentNode===2" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===2?'#5cb85c':'#5cb85c'}"></i-icon>
+                        </i-circle>
+                        <span style="margin-left:6px;">{{transformStatus(item.ProjectStatus)}}</span>
                     </div>
                     <div class="operate">
-                        <Operate @operateHandler='operateHandler'></Operate>
+                        <Operate @operateHandler='operateHandler' :item='item'></Operate>
                     </div>
                 </div>
                 
-                <div class="flow_item">
+                <!-- <div class="flow_item">
                     <span>项目二</span>
                         <i-steps :current="3" status="finish">
                         <i-step title="项目立项" content="项目立项"></i-step>
                         <i-step title="项目经理审批" content="项目经理审批"></i-step>
                         <i-step title="运营审批" content="不符合要求"></i-step>
-                        <!-- <i-step title="项目审批通过" content="项目审批通过"></i-step> -->
+                        <i-step title="项目审批通过" content="项目审批通过"></i-step>
                     </i-steps>
                     <div class="status">
                         <i-circle :size="36" :percent="100" :stroke-width="8" stroke-color="#5cb85c">
@@ -195,7 +241,6 @@
                         <i-step title="项目立项" content="项目立项"></i-step>
                         <i-step title="项目经理审批" content="项目经理审批"></i-step>
                         <i-step title="运营审批" content="不符合要求"></i-step>
-                        <!-- <i-step title="项目审批通过" content="项目审批通过"></i-step> -->
                     </i-steps>
                     <div class="status">
                         <i-circle :size="36" :percent="100" :stroke-width="8" stroke-color="#ed4014">
@@ -206,7 +251,7 @@
                     <div class="operate">
                         <Operate @operateHandler='operateHandler'></Operate>
                     </div>
-                </div>
+                </div> -->
 
 
             </div>
@@ -217,7 +262,7 @@
 <script>
 import {product,productChild,supplier,sellStatus,packs,lineLengths,portMaterials,outMaterials,colors,ports,charges,batterys} from './products.json'
 import Operate from './components/operatePop'
-import {queryProject,addProject} from '@api/project'
+import {queryProject,addProject,queryRoleUser} from '@api/project'
 
 export default {
     data(){
@@ -226,6 +271,9 @@ export default {
             scanProjectStatus:false,
             loading:false,
             addProjectStatus:false,
+            projects:[],
+            roles:[],
+            scanProjectInfo:{},
             modelProject:{
                 projectName:'',
                 product:'',
@@ -240,7 +288,9 @@ export default {
                 port:'',
                 charge:'',
                 battery:'',
-                remarks:''
+                remarks:'',
+                projector:'',
+                opertator:''
             },
             ruleProject:Object.freeze({
                 projectName:[
@@ -281,6 +331,14 @@ export default {
                 ],
                 battery:[
                     { required: true, message: '请选择电池容量', trigger: 'blur' }
+                ],
+
+                projector:[
+                    { required: true, message: '请选择项目经理', trigger: 'blur' }
+                ],
+
+                operator:[
+                    { required: true, message: '请选择运营', trigger: 'blur' }
                 ],
             })
         }
@@ -334,32 +392,117 @@ export default {
         }
     },
     activated(){
-        queryProject()
+        this.queryProject()
+        this.queryRoleUser()
     },
     methods:{
+        transformStatus(status){
+            switch(status){
+                case 1:
+                return '已完成'
+
+                case 2:
+                return '进行中'
+
+                case 3:
+                return '已取消'
+            }
+        },
+        transformName(key){
+            switch(key){
+                case 'projectName':
+                return '项目名称'
+
+                case 'product':
+                return '品类'
+
+                case 'productChild':
+                return '子品类'
+
+                case 'supplier':
+                return '供应商'
+
+                case 'sellStatu':
+                return '项目立项'
+
+                case 'pack':
+                return '包装'
+
+                case 'color':
+                return '颜色'
+
+                case 'lineLength':
+                return '线材长度'
+
+                case 'outMaterial':
+                return '外被材质'
+
+                case 'portMaterial':
+                return '端子材质'
+
+                case 'port':
+                return '口数'
+
+                case 'charge':
+                return '充电技术'
+
+                case 'battery':
+                return '电池容量(mAh)'
+
+                // case 'remarks':
+                // return '口数'
+            }
+
+        },
+        //查询角色用户
+        queryRoleUser(){
+            queryRoleUser({roles:'10,2'}).then( (res) => {
+                this.roles = Object.freeze(res.data.roles)
+            })
+        },
+        queryProject(){
+            queryProject().then( (res) => {
+                console.log(res.data.items)
+                this.projects = Object.freeze(res.data.items)
+            })
+        },
         addProjectHandler(name){
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    console.log(666)
                     let params = {
                         status:2,
-                        curNode:1,
+                        curNode:0,
                         userId:this.userInfo.UserId,
+                        projectorId:this.modelProject.projector,
+                        operatorId:this.modelProject.opertator,
+                        remarks:this.modelProject.remarks,
                         proInfo:JSON.stringify(this.modelProject)
-
                     }
-                    
                     console.log(params)
+                    // return
                     addProject(params).then( () => {
-                        this.scanProjectStatus = false
+                        this.queryProject()
+                        this.addProjectStatus = false
+                        this.$refs['formProject'].resetFields();
                     })
                 }
             })
         },
-        operateHandler(type){
+        operateHandler(type,item){
             switch(type){
                 case 1:
                     this.scanProjectStatus = true
+                    this.scanProjectInfo = {...this.scanProjectInfo,...item}
+                    this.scanProjectInfo.productionInfo = []
+                    let list = JSON.parse(item.ProductionInfo)
+                    for(let key in list){
+                        this.scanProjectInfo.productionInfo.push({
+                            name:key,
+                            value:list[key]
+                        })
+                        
+                    }
+                    console.log(list)
                 break;
 
                 case 2:
@@ -408,12 +551,20 @@ export default {
         &>li{
             width: 50%;
             display: flex;
-            height:30px;
-            line-height: 30px;
+            height:36px;
+            line-height: 36px;
             display: flex;
             justify-content: center;
+             &>span:nth-child(1){
+                flex: 1;
+                text-align: right;
+                font-weight: bold;
+                font-size: 14px;
+            }
             &>span:nth-child(2){
+                flex: 2;
                 margin-left:10px;
+                text-align: left;
             }
         }
     }

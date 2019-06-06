@@ -3,6 +3,10 @@ module.exports = {
     user:'develep',
     password:'xcentz_1',
     database:'xcentz',
+    multipleStatements:true,
+    dateStrings:true,
+    connectTimeout:30000,
+    connectionLimit:30,
 
     
 

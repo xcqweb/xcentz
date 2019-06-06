@@ -17,3 +17,12 @@ export function addProject(params){
         data:params
     })
 }
+
+// 查询角色用户
+export function queryRoleUser(params){
+    return request({
+        url:'/project/queryRoleUser',
+        method:'get',
+        params
+    })
+}

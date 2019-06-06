@@ -6,9 +6,10 @@ let express = require('express'),
 
 
 
-//查询用户信息
-router.get('/queryProject',constroller.queryProject)
-      .post('/addProject',constroller.addProject)
+        
+router.get('/queryProject',constroller.queryProject)//查询项目信息
+      .post('/addProject',constroller.addProject)//新增项目
+      .get('/queryRoleUser',constroller.queryRoleUser)//存续角色用户
 
 
 
