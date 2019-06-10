@@ -3,7 +3,7 @@
     <!-- 项目立项 -->
     <div class="projectCreate">
         <div style="text-align:left;">
-          <i-button type='primary' @click="addProjectStatus = true;modalTitle='新增项目'" icon='ios-add'>新增项目</i-button>  
+          <i-button type='primary' @click="addProjectStatus = true;isEdit = false;modalTitle='新增项目'" icon='ios-add'>新增项目</i-button>  
         </div>
         
         <!-- 新增或编辑项目 -->
@@ -16,7 +16,7 @@
                 <i-button @click="addProjectStatus = false" size='large' style="margin-right:20px;">取消</i-button>
                 <i-button type='primary' @click="addProjectHandler('formProject')" :loading='loading' size='large'>确定</i-button>
             </div>
-            <i-divider>产品信息录入</i-divider>
+            <i-divider>产品信息{{isEdit?'修改':'录入'}}</i-divider>
             <i-form ref="formProject" :model="modelProject" :rules="ruleProject" :label-width="120" style="display:flex;flex-direction:column;align-items:center;margin:20px 0;">
                 <!-- <i-form-item label="项目名称" prop="projectName" class="pro_item">
                     <i-input ref="input" v-model="modelProject.projectName" />
@@ -24,6 +24,7 @@
                 <i-form-item label="品类" prop="product" class="pro_item">
                     <i-select 
                         clearable
+                        @on-change='selectChangePro'
                         v-model="modelProject.product">
                         <i-option v-for="option in products" :value="option" :key="option">{{option}}</i-option>
                     </i-select>
@@ -32,6 +33,7 @@
                 <i-form-item label="子品类" prop="productChild" class="pro_item">
                     <i-select 
                         clearable
+                        @on-change='selectChangeProChild'
                         :disabled='modelProject.product?false:true'
                         v-model="modelProject.productChild">
                         <i-option v-for="option in productChilds" :value="option" :key="option">{{option}}</i-option>
@@ -132,16 +134,18 @@
                 <i-form-item label="项目经理" prop="projector" class="pro_item">
                     <i-select 
                         clearable   
+                        :disabled='currentNode===1 || currentNode===2?true:false'
                         v-model="modelProject.projector">
-                        <i-option v-for="option in roles[0]" :value="option.UserId" :key="option.UserId">{{option.Cname}}</i-option>
+                        <i-option v-for="option in roles.slice(3)" :value="option.UserId" :key="option.UserId">{{option.Cname}}</i-option>
                     </i-select>
                 </i-form-item>
 
                 <i-form-item label="运营" prop="operator" class="pro_item">
                     <i-select 
-                        clearable   
+                        clearable
+                        :disabled='currentNode===2?true:false'  
                         v-model="modelProject.operator">
-                        <i-option v-for="option in roles[1]" :value="option.UserId" :key="option.UserId">{{option.Cname}}</i-option>
+                        <i-option v-for="option in roles.slice(0,3)" :value="option.UserId" :key="option.UserId">{{option.Cname}}</i-option>
                     </i-select>
                 </i-form-item>
             </i-form>
@@ -158,13 +162,43 @@
             <div style="margin:20px;">
                 <i-divider>项目详情</i-divider>
                 <ul class="approval_item">
-                    <li>
+                    <li v-if="scanProjectInfo.ProjectName">
+                        <span>项目名称:</span>
+                        <span>{{scanProjectInfo.ProjectName}}</span>
+                    </li>
+
+                     <li v-if="scanProjectInfo.YLCode">
+                        <span>宇龙编码:</span>
+                        <span>{{scanProjectInfo.YLCode}}</span>
+                    </li>
+
+                    <li v-if="scanProjectInfo.Sku">
+                        <span>Sku:</span>
+                        <span>{{scanProjectInfo.Sku}}</span>
+                    </li>
+
+                    <li v-if="scanProjectInfo.Asin">
+                        <span>Asin:</span>
+                        <span>{{scanProjectInfo.Asin}}</span>
+                    </li>
+
+                    <li v-if="scanProjectInfo.ParentAsin">
+                        <span>ParentAsin:</span>
+                        <span>{{scanProjectInfo.ParentAsin}}</span>
+                    </li>
+
+                     <li>
                         <span>创建人:</span>
-                        <span>xxx</span>
+                        <span>{{approvalUsers[2] && approvalUsers[2].Cname}}</span>
                     </li>
                     <li>
                         <span>创建时间:</span>
                         <span>{{scanProjectInfo.CreateTime}}</span>
+                    </li>
+
+                    <li v-if="!isNull(scanProjectInfo.EndTime)">
+                        <span>结束时间:</span>
+                        <span>{{isNull(scanProjectInfo.EndTime)?'':scanProjectInfo.EndTime}}</span>
                     </li>
                 </ul>
 
@@ -177,13 +211,19 @@
                 </ul>
                 <i-divider>审批信息</i-divider>
                 <ul class="approval_item">
-                    <li>
-                        <span>项目经理审批:</span>
-                        <span>等待审批</span>
+                    <li style="width:100%;">
+                        <span>项目经理审批 ({{ approvalUsers[1] && approvalUsers[1].Cname}}) :</span>
+                        <span>{{scanProjectInfo.ProjectStatus===4 && scanProjectInfo.CurrentNode===-1?'审核不通过':scanProjectInfo.CurrentNode===0?'等待审批':`审批通过 / ${isNull(scanProjectInfo.ProjectorApprovalTime)?'':scanProjectInfo.ProjectorApprovalTime}`}}
+                            <i-icon v-if='scanProjectInfo.CurrentNode>0' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                            <i-icon v-if='scanProjectInfo.ProjectStatus===4' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
+                        </span>
                     </li>
-                    <li>
-                        <span>运营审批:</span>
-                        <span>等待审批</span>
+                    <li style="width:100%;">
+                        <span>运营审批  ({{approvalUsers[0] && approvalUsers[0].Cname}}) :</span>
+                        <span>{{scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1?'审核不通过':scanProjectInfo.CurrentNode===0 || scanProjectInfo.CurrentNode===1 || scanProjectInfo.CurrentNode===-1 ?'等待审批':`审批通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`}}
+                            <i-icon v-if='scanProjectInfo.CurrentNode>0 && scanProjectInfo.CurrentNode===2' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                            <i-icon v-if='scanProjectInfo.ProjectStatus===5' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -194,19 +234,19 @@
         <div style="margin-top:20px;">
             <i-divider>项目审批流程</i-divider>
             <div class="flow">
-                <div class="flow_item" v-for="item in projects">
-                    <span>项目一</span>
+                <div class="flow_item" v-for="(item,index) in projects">
+                    <span>项目{{index+1}}</span>
                     <i-steps :current="item.CurrentNode+1">
                         <i-step title="项目立项" :content="item.ProductorRemark"></i-step>
                         <i-step title="项目经理审批" :content="item.ProjectorRemark"></i-step>
                         <i-step title="运营审批" :content="item.OperatorRemark"></i-step>
                     </i-steps>
                     <div class="status">
-                        <i-circle v-if="item.ProjectStatus===3" :size="36" :percent="100" :stroke-width="8">
-                            <i-icon type="ios-checkmark" size="36" style="color:#ff5500"></i-icon>
+                        <i-circle v-if="item.ProjectStatus===4" :size="36" :percent="100" :stroke-width="8" stroke-color='#ff5500'>
+                            <i-icon type="ios-close" size="36" style="color:#ff5500"></i-icon>
                         </i-circle>
 
-                        <i-circle v-else :size="36" :percent="item.CurrentNode ? item.CurrentNode===1?66.6:100:33.3" :stroke-width="8">
+                        <i-circle v-else :size="36" :percent="item.CurrentNode ? item.CurrentNode===1?66.6:100:33.3" :stroke-width="8" :stroke-color="item.ProjectStatus===1?'#5cb85c':'#2d8cf0'">
                             <i-icon v-if="item.CurrentNode===2" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===2?'#5cb85c':'#5cb85c'}"></i-icon>
                         </i-circle>
                         <span style="margin-left:6px;">{{transformStatus(item.ProjectStatus)}}</span>
@@ -215,7 +255,6 @@
                         <Operate @operateHandler='operateHandler' :item='item'></Operate>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -224,18 +263,30 @@
 <script>
 import {product,productChild,supplier,sellStatus,packs,lineLengths,portMaterials,outMaterials,colors,ports,charges,batterys} from './products.json'
 import Operate from './components/operatePop'
-import {queryProject,addProject,queryRoleUser} from '@api/project'
+import {
+    queryProject,
+    addProject,
+    queryRoleUser,
+    queryUserById,
+    editProject
+} from '@api/project'
 
 export default {
     data(){
         return{
+            currentNode:0,
+            projectId:'',
+            isEdit:false,
             modalTitle:'',
             scanProjectStatus:false,
             loading:false,
             addProjectStatus:false,
             projects:[],
             roles:[],
-            scanProjectInfo:{},
+            approvalUsers:[],
+            scanProjectInfo:{
+                userInfo:{}
+            },
             modelProject:{
                 projectName:'',
                 product:'',
@@ -252,7 +303,7 @@ export default {
                 battery:'',
                 remarks:'',
                 projector:'',
-                opertator:''
+                operator:''
             },
             ruleProject:Object.freeze({
                 projectName:[
@@ -342,20 +393,20 @@ export default {
             return Object.freeze(batterys)
         }
     },
-    watch:{
-        'modelProject.product'(){
-            this.modelProject.supplier = ''
-            this.modelProject.productChild = ''
-        },
-        'modelProject.productChild'(){
-            this.modelProject.supplier = ''
-        }
-    },
+    
     activated(){
         this.queryProject()
         this.queryRoleUser()
     },
     methods:{
+        selectChangePro(){
+            this.modelProject.supplier = ''
+            this.modelProject.productChild = ''
+        },
+        selectChangeProChild(){
+            this.modelProject.supplier = ''
+        },
+       
         transformStatus(status){
             switch(status){
                 case 1:
@@ -366,6 +417,9 @@ export default {
 
                 case 3:
                 return '已取消'
+
+                case 4:
+                return '不通过'
             }
         },
         transformName(key){
@@ -421,36 +475,61 @@ export default {
             })
         },
         queryProject(){
-            queryProject().then( (res) => {
+            queryProject({userId:this.userInfo.UserId,type:'ProductorUserId'}).then( (res) => {
                 console.log(res.data.items)
                 this.projects = Object.freeze(res.data.items)
             })
         },
         addProjectHandler(name){
-            this.$refs[name].validate((valid) => {
-                if (valid) {
-                    let params = {
-                        status:2,
-                        curNode:0,
-                        userId:this.userInfo.UserId,
-                        projectorId:this.modelProject.projector,
-                        operatorId:this.modelProject.opertator,
-                        remarks:this.modelProject.remarks,
-                        proInfo:JSON.stringify(this.modelProject)
+            if(this.isEdit){
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        let params = {
+                            projectId:this.projectId,
+                            status:this.currentNode===-1?0:this.currentNode,
+                            projectorId:this.modelProject.projector,
+                            operatorId:this.modelProject.operator,
+                            remarks:this.modelProject.remarks,
+                            proInfo:JSON.stringify(this.modelProject)
+                        }
+                       
+                        editProject(params).then( () => {
+                            this.queryProject()
+                            this.addProjectStatus = false
+                            this.$refs['formProject'].resetFields();
+                        })
                     }
-                    console.log(params)
-                    // return
-                    addProject(params).then( () => {
-                        this.queryProject()
-                        this.addProjectStatus = false
-                        this.$refs['formProject'].resetFields();
-                    })
-                }
-            })
+                })
+            }else{
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        let params = {
+                            status:2,
+                            curNode:0,
+                            userId:this.userInfo.UserId,
+                            projectorId:this.modelProject.projector,
+                            operatorId:this.modelProject.operator,
+                            remarks:this.modelProject.remarks,
+                            proInfo:JSON.stringify(this.modelProject)
+                        }
+                        
+                        addProject(params).then( () => {
+                            this.queryProject()
+                            this.addProjectStatus = false
+                            this.$refs['formProject'].resetFields();
+                        })
+                    }
+                })
+            }
         },
         operateHandler(type,item){
             switch(type){
                 case 1:
+                console.log(item)
+                    queryUserById({ids:`${this.userInfo.UserId},${item.ProjectorUserId},${item.OperatorUserId}`}).then( (res) => {
+                        console.log(res)
+                        this.approvalUsers = res.data.users
+                    })
                     this.scanProjectStatus = true
                     this.scanProjectInfo = {...this.scanProjectInfo,...item}
                     this.scanProjectInfo.productionInfo = []
@@ -462,12 +541,17 @@ export default {
                         })
                         
                     }
-                    console.log(list)
+            
                 break;
 
                 case 2:
                     this.modalTitle = '编辑项目'
+                    this.isEdit = true
+                    this.projectId = item.ProjectId
                     this.addProjectStatus = true
+                    this.currentNode = item.CurrentNode
+                    
+                    this.modelProject = {...this.modelProject,...JSON.parse(item.ProductionInfo)}
                 break;
             }
         }
@@ -509,14 +593,14 @@ export default {
         display: flex;
         flex-wrap: wrap;
         &>li{
-            width: 50%;
+            width: 100%;
             display: flex;
             height:36px;
             line-height: 36px;
             display: flex;
             justify-content: center;
              &>span:nth-child(1){
-                flex: 1;
+                flex-basis: 160px;
                 text-align: right;
                 font-weight: bold;
                 font-size: 14px;

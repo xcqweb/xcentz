@@ -26,3 +26,39 @@ export function queryRoleUser(params){
         params
     })
 }
+
+// 查询角色用户
+export function queryUserById(params){
+    return request({
+        url:'/project/queryUserById',
+        method:'get',
+        params
+    })
+}
+
+// 编辑项目
+export function editProject(params){
+    return request({
+        url:'/project/editProject',
+        method:'put',
+        data:params
+    })
+}
+
+// 审批项目
+export function approvalProject(params){
+    return request({
+        url:'/project/approvalProject',
+        method:'put',
+        data:params
+    })
+}
+
+// 审批不通过
+export function rejectApproval(params){
+    return request({
+        url:'/project/rejectApproval',
+        method:'put',
+        data:params
+    })
+}
