@@ -6,7 +6,7 @@
             <i-card style="width:42%;margin:30px 30px;min-width:360px;" v-for="(project,index) in approvalProjects">
                 <p slot="title">
                     <i-icon type="ios-film-outline"></i-icon>
-                    审批项目{{index+1}}
+                    审批项目 {{index+1}}{{project.ProjectStatus===1 && isNull(project.EndTime)?'(请填写宇龙编码)':''}}
                 </p>
 
                 <a href="javascript:;" slot="extra" @click="approval(project)">
@@ -169,6 +169,13 @@
                         <span>{{scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1?'审核不通过':scanProjectInfo.CurrentNode===0 || scanProjectInfo.CurrentNode===1 || scanProjectInfo.CurrentNode===-1 ?'等待审批':`审批通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`}}
                             <i-icon v-if='scanProjectInfo.CurrentNode>0 && scanProjectInfo.CurrentNode===2' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
                             <i-icon v-if='scanProjectInfo.ProjectStatus===5' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
+                        </span>
+                    </li>
+
+                    <li style="width:100%;">
+                        <span>填写宇龙编码  ({{ approvalUsers[1] && approvalUsers[1].Cname}}) :</span>
+                        <span>{{isNull(scanProjectInfo.EndTime)?'未填写': `已填写 / ${isNull(scanProjectInfo.EndTime)?'':scanProjectInfo.EndTime}`}}
+                            <i-icon v-if='!isNull(scanProjectInfo.EndTime)' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
                         </span>
                     </li>
                 </ul>

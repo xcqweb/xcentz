@@ -225,6 +225,13 @@
                             <i-icon v-if='scanProjectInfo.ProjectStatus===5' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
                         </span>
                     </li>
+
+                    <li style="width:100%;">
+                        <span>填写宇龙编码  ({{ approvalUsers[1] && approvalUsers[1].Cname}}) :</span>
+                        <span>{{isNull(scanProjectInfo.EndTime)?'未填写': `已填写 / ${isNull(scanProjectInfo.EndTime)?'':scanProjectInfo.EndTime}`}}
+                            <i-icon v-if='!isNull(scanProjectInfo.EndTime)' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                        </span>
+                    </li>
                 </ul>
             </div>
         </i-modal>
