@@ -11,16 +11,26 @@
         </i-breadcrumb>
         <div class="userInfo">
             <i-poptip trigger="hover" placement='top-end' width='360' style="margin:12px 48px 0 0">
-                <i-badge :count='100'>
+                <i-badge :count='count'>
                     <i-icon type="ios-notifications-outline" size="26"></i-icon>
                 </i-badge>
-                <div slot="content" class="msg_content">
+                <div slot="content" class="msg_content" v-if="!msgs.length">
                     <div style="color:rgb(181, 186, 189);">
                         <i-icon type="ios-notifications-outline" size="50"></i-icon>
-                        <p>暂无消息</p> 
+                        <p>暂无消息</p>
                     </div>
-                   
                 </div>
+
+                <div slot="content" style="height:300px;overflow:hidden auto;" v-else>
+                    <div class="msgList">
+                        <li v-for="msg in msgs" :title="msg.Content" @click="goPage(msg)">
+                            <i-icon style="color:rgb(92, 184, 92);font-size:26px;margin-right:12px;" type="md-text" />
+                            {{msg.Content}}
+                            <i-icon style="float:right;margin-top:10px;font-size:18px;color:#ccc;" type="md-close" @click="msgRead(msg.MessageId)"/>
+                        </li>
+                    </div>
+                </div>
+
             </i-poptip>
             
             <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="margin-right:10px;"/>
@@ -51,12 +61,16 @@
 import pathToRegexp from 'path-to-regexp'
 import screenfull from 'screenfull'
 import {loginOut} from '@api'
+import {queryMsg,readMsg} from '@api/message'
 
 export default {
     data(){
         return{
             isDown:false,
-            levelList:[]
+            levelList:[],
+            count:0,
+            msgs:[],
+            timer:null
         }
     },
     watch:{
@@ -68,9 +82,52 @@ export default {
         }
     },
     created(){
+        this.queryMsg()
+        this.timer = setInterval( () => {
+            this.queryMsg()
+        },30000)
         // console.log(this.$route.matched.filter(item => item.meta && item.meta.title))
     },
+    beforeDestroy(){
+        clearInterval(this.timer)
+        this.$root.eventBus.$off('message')
+    },
+    mounted(){
+        this.$root.eventBus.$on('message',(id) => {
+            console.log(id)
+            let index = this.msgs.findIndex( (item) => {
+                return item.ProjectId === id
+            })
+            
+            this.msgs.splice(index,1)
+            this.count>0 && this.count--
+        })
+    },
     methods:{
+        goPage(msg){
+            console.log(msg.MessageType)
+            switch(msg.MessageType){
+                case 0:
+                readMsg({msgId:msg.MessageId}).then( () => {
+                    this.queryMsg()
+                    this.$router.push('/projectApproval')
+                })
+                break;
+            }
+        },
+        msgRead(id){
+            readMsg({msgId:id}).then( () => {
+                this.queryMsg()
+            })
+        },
+        //查询消息
+        queryMsg(){
+            queryMsg({userId:this.userInfo.UserId}).then( ({data:{count,msgs}}) => {
+                this.count = count
+                this.msgs = msgs
+            })
+        },
+        //退出登录
         loginOut(){
             loginOut().then( (res) => {
                 if(res.data.isLogin){
@@ -161,10 +218,23 @@ export default {
             cursor: pointer;
         }
         .msg_content{
-            min-height: 300px;
+            height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        .msgList{
+            text-align: left;
+            list-style: none;
+            &>li{
+                height: 42px;
+                line-height: 42px;
+                border-bottom: 1px solid #f2f2f2;
+                cursor: pointer;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
     }
 </style>

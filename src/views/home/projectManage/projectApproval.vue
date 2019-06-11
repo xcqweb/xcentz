@@ -6,7 +6,7 @@
             <i-card style="width:42%;margin:30px 30px;min-width:360px;" v-for="(project,index) in approvalProjects">
                 <p slot="title">
                     <i-icon type="ios-film-outline"></i-icon>
-                    审批项目 {{index+1}}{{project.ProjectStatus===1 && isNull(project.EndTime)?'(请填写宇龙编码)':''}}
+                    审批项目 {{index+1}}{{project.CurrentNode===2?'(请填写宇龙编码)':''}}
                 </p>
 
                 <a href="javascript:;" slot="extra" @click="approval(project)">
@@ -23,7 +23,7 @@
         </div>
 
         <!-- 项目审批流程 -->
-        <div>
+        <div style="margin-bottom:60px;">
             <i-divider>项目审批流程</i-divider>
             <div class="flow">
                 <div class="flow_item" v-for="(item,index) in projects">
@@ -32,14 +32,15 @@
                         <i-step title="项目立项" :content="item.ProductorRemark"></i-step>
                         <i-step title="项目经理审批" :content="item.ProjectorRemark"></i-step>
                         <i-step title="运营审批" :content="item.OperatorRemark"></i-step>
+                        <i-step title="项目经理填写宇龙编码" :content="item.OperatorRemark"></i-step>
                     </i-steps>
                     <div class="status">
                         <i-circle v-if="item.ProjectStatus===4" :size="36" :percent="100" :stroke-width="8" stroke-color='#ff5500'>
                             <i-icon type="ios-close" size="36" style="color:#ff5500"></i-icon>
                         </i-circle>
 
-                        <i-circle v-else :size="36" :percent="item.CurrentNode ? item.CurrentNode===1?66.6:100:33.3" :stroke-width="8" :stroke-color="item.ProjectStatus===1?'#5cb85c':'#2d8cf0'">
-                            <i-icon v-if="item.CurrentNode===2" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===2?'#5cb85c':'#5cb85c'}"></i-icon>
+                        <i-circle v-else :size="36" :percent="(item.CurrentNode+1)*25" :stroke-width="8" :stroke-color="item.ProjectStatus===1?'#5cb85c':'#2d8cf0'">
+                            <i-icon v-if="item.CurrentNode===3" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===3?'#5cb85c':'#5cb85c'}"></i-icon>
                         </i-circle>
                         <span style="margin-left:6px;">{{transformStatus(item.ProjectStatus)}}</span>
                     </div>
@@ -167,7 +168,7 @@
                     <li style="width:100%;">
                         <span>运营审批  ({{approvalUsers[0] && approvalUsers[0].Cname}}) :</span>
                         <span>{{scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1?'审核不通过':scanProjectInfo.CurrentNode===0 || scanProjectInfo.CurrentNode===1 || scanProjectInfo.CurrentNode===-1 ?'等待审批':`审批通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`}}
-                            <i-icon v-if='scanProjectInfo.CurrentNode>0 && scanProjectInfo.CurrentNode===2' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                            <i-icon v-if='scanProjectInfo.CurrentNode>0 && scanProjectInfo.CurrentNode>=2' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
                             <i-icon v-if='scanProjectInfo.ProjectStatus===5' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
                         </span>
                     </li>
@@ -196,7 +197,11 @@ export default {
     data(){
         return{
             projectOver:false,
-            projectId:'',
+            projectInfo:{
+                projectId:'',
+                operatorId:'',
+                projectorId:''
+            },
             approvalUsers:[],
             projects:[],
             approvalProjects:{ProductiomInfo:[]},
@@ -303,8 +308,7 @@ export default {
             }
         },
         queryApprovalProject(){//查询审批项目
-            queryProject({userId:'9da6e0a5e115474596f3d7e5219fd860',type:'ProjectorUserId',status:this.userInfo.RoleId === 2?1:0,projector:this.userInfo.RoleId === 2?'':'projector'}).then( (res) => {
-                console.log(res)
+            queryProject({userId:'9da6e0a5e115474596f3d7e5219fd860',type:'ProjectorUserId',status:this.userInfo.RoleId === 2?1:20,projector:this.userInfo.RoleId === 2?'':'projector'}).then( (res) => {
                 this.approvalProjects = res.data.items
 
                 for(let i=0; i<this.approvalProjects.length; i++){
@@ -324,15 +328,19 @@ export default {
         queryProject(){
             queryProject({userId:'9da6e0a5e115474596f3d7e5219fd860',type:'ProjectorUserId'}).then( (res) => {
                 console.log(res)
-                this.projects = res.data.items
+                this.projects = Object.freeze(res.data.items)
 
             })
         },
         //审批
         approval(item){
             this.approvalStatus = true
-            this.projectId = item.ProjectId
-            this.projectOver = item.ProjectStatus===1?true:false
+            this.projectInfo = {
+                projectId: item.ProjectId,
+                operatorId: item.OperatorUserId,
+                projectorId: item.ProjectorUserId,
+            }
+            this.projectOver = item.CurrentNode===2?true:false
         },
         //审批通过
         approvalOk(){
@@ -347,24 +355,31 @@ export default {
                             sku:this.formsOp.sku,
                             asin:this.formsOp.asin,
                             parentAsin:this.formsOp.parentAsin,
-                            id:this.projectId
+                            id:this.projectInfo.projectId,
+                            operatorId:this.projectInfo.operatorId,
+                            projectorId:this.projectInfo.projectorId,
+
                         }:
                         {
                             type:'Projector',
                             remark:this.formsPro.message,
                             projectName:this.formsPro.projectName,
-                            id:this.projectId
+                            id:this.projectInfo.projectId,
+                            operatorId:this.projectInfo.operatorId,
+                            projectorId:this.projectInfo.projectorId,
                         }
                     }else{
                         parmas = {
                             type:'ylcode',
-                            ylCode:this.formsPro.ylCode
+                            ylCode:this.formsPro.ylCode,
+                            id:this.projectInfo.projectId,
                         }
                     }
                     
                     approvalProject(parmas).then( (res) => {
                         this.approvalStatus = false
                         this.$refs['formApproval'].resetFields()
+                        this.$root.eventBus.$emit('message',this.projectInfo.projectId)
                         this.queryApprovalProject()
                         this.queryProject()
                     })
@@ -373,7 +388,7 @@ export default {
         },
         //审批不通过
         approvalCancel(){
-            rejectApproval({projectId:this.projectId,status:this.userInfo.RoleId===2?5:4}).then( (res) => {
+            rejectApproval({projectId:this.projectInfo.projectId,status:this.userInfo.RoleId===2?5:4}).then( (res) => {
                 this.approvalStatus = false
                 this.queryApprovalProject()
                 this.queryProject()
@@ -384,7 +399,7 @@ export default {
                 case 1:
                     this.scanProjectStatus = true
                     queryUserById({ids:`${item.ProductorUserId},${item.ProjectorUserId},${item.OperatorUserId}`}).then( (res) => {
-                        this.approvalUsers = res.data.users
+                        this.approvalUsers = Object.freeze(res.data.users)
                     })
                     this.scanProjectInfo = {...this.scanProjectInfo,...item}
                     this.scanProjectInfo.productionInfo = []

@@ -1,6 +1,7 @@
 let {query_blog,query} = require('../database'),
 uuid = require('node-uuid'), //生成唯一id
 moment = require('moment'),//时间工具函数
+{Message} = require('./query'),//时间工具函数
 
 queryProject = (req,res) => {
     let userId = req.query.userId
@@ -8,9 +9,15 @@ queryProject = (req,res) => {
     let status = req.query.status
     let projector = req.query.projector
     let str
+    console.log(req.query)
     if(status){
         if(projector){
-            str = `select * from pub_approval_workflow where (${type} = '${userId}' and CurrentNode = ${status} and (ProjectStatus!=4 and ProjectStatus!=5) ) or (ProjectStatus=1 and YLCode is null )`
+            if(status==20){
+                str = `select * from pub_approval_workflow where (${type} = '${userId}' and (CurrentNode = 2 or CurrentNode = 0) and (ProjectStatus!=4 and ProjectStatus!=5) ) or (ProjectStatus=1 and YLCode is null )`
+            }else{
+                str = `select * from pub_approval_workflow where (${type} = '${userId}' and CurrentNode = ${status} and (ProjectStatus!=4 and ProjectStatus!=5) ) or (ProjectStatus=1 and YLCode is null )`
+            }
+            
         }else{
             str = `select * from pub_approval_workflow where ${type} = '${userId}' and CurrentNode = ${status}`
         }
@@ -30,6 +37,8 @@ addProject = (req,res) => {
     let projectId = uuid.v4().replace(/\-/g,'')
     
     query_blog(`insert into Pub_approval_Workflow(ProjectId,ProjectStatus,ProductorUserId,ProjectorUserId,OperatorUserId,CurrentNode,ProductionInfo,ProductorRemark,CreateTime) values('${projectId}',${reData.status},'${reData.userId}','${reData.projectorId}','${reData.operatorId}',${reData.curNode},'${reData.proInfo}','${reData.remarks}','${moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
+        //发送消息
+        Message.postMessage(reData.projectorId,projectId)
         res.send({
             errorCode:100044,
             message:'项目创建成功!'
@@ -92,11 +101,21 @@ approvalProject = (req,res) => {
     if(reData.type==='Projector'){
         str = `update Pub_approval_Workflow set CurrentNode = 1 ,ProjectName = '${reData.projectName}',ProjectorRemark = '${reData.remark}',ProjectorApprovalTime = '${moment().format('YYYY-MM-DD HH:mm:ss')}' where ProjectId = '${reData.id}'`
     }else if(reData.type==='Operator'){
-        str = `update Pub_approval_Workflow set CurrentNode = 2 ,Sku = '${reData.sku}', Asin = '${reData.asin}',ParentAsin = '${reData.parentAsin}',ProjectStatus=1,ProjectName = '${reData.projectName}',OperatorRemark = '${reData.remark}',OperatorApprovalTime = '${moment().format('YYYY-MM-DD HH:mm:ss')}' where ProjectId = '${reData.id}'`
+        str = `update Pub_approval_Workflow set CurrentNode = 2 ,Sku = '${reData.sku}', Asin = '${reData.asin}',ParentAsin = '${reData.parentAsin}',OperatorRemark = '${reData.remark}',OperatorApprovalTime = '${moment().format('YYYY-MM-DD HH:mm:ss')}' where ProjectId = '${reData.id}'`
     }else{
-        str = `update Pub_approval_Workflow set YLCode = '${reData.ylCode}',EndTime='${moment().format('YYYY-MM-DD HH:mm:ss')}' where ProjectId = '${reData.id}'`
+        str = `update Pub_approval_Workflow set YLCode = '${reData.ylCode}',CurrentNode = 3,ProjectStatus=1,EndTime='${moment().format('YYYY-MM-DD HH:mm:ss')}' where ProjectId = '${reData.id}'`
     }
-    query_blog(str).then( (r) => {
+    query_blog(str).then( (r) => { 
+        Message.updateMessage('',reData.id).then( () => {
+            if(reData.type==='Projector'){
+                //发送消息
+                Message.postMessage(reData.operatorId,reData.id)
+            }else if(reData.type==='Operator'){
+                //发送消息
+                Message.postMessage(reData.projectorId,reData.id,0,'项目审批已完成,请及时填写宇龙编码')
+            }
+        })
+       
         res.send({
             errorCode:100048
         })

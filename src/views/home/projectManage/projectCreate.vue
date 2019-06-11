@@ -253,8 +253,8 @@
                             <i-icon type="ios-close" size="36" style="color:#ff5500"></i-icon>
                         </i-circle>
 
-                        <i-circle v-else :size="36" :percent="item.CurrentNode ? item.CurrentNode===1?66.6:100:33.3" :stroke-width="8" :stroke-color="item.ProjectStatus===1?'#5cb85c':'#2d8cf0'">
-                            <i-icon v-if="item.CurrentNode===2" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===2?'#5cb85c':'#5cb85c'}"></i-icon>
+                        <i-circle v-else :size="36" :percent="(item.CurrentNode+1)*25" :stroke-width="8" :stroke-color="item.ProjectStatus===1?'#5cb85c':'#2d8cf0'">
+                            <i-icon v-if="item.CurrentNode===3" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===3?'#5cb85c':'#5cb85c'}"></i-icon>
                         </i-circle>
                         <span style="margin-left:6px;">{{transformStatus(item.ProjectStatus)}}</span>
                     </div>
@@ -535,7 +535,7 @@ export default {
                 console.log(item)
                     queryUserById({ids:`${this.userInfo.UserId},${item.ProjectorUserId},${item.OperatorUserId}`}).then( (res) => {
                         console.log(res)
-                        this.approvalUsers = res.data.users
+                        this.approvalUsers = Object.freeze(res.data.users)
                     })
                     this.scanProjectStatus = true
                     this.scanProjectInfo = {...this.scanProjectInfo,...item}

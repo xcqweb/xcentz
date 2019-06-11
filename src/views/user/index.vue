@@ -27,7 +27,7 @@ export default {
             this.tab = flag
         }
     },
-    activated(){
+    mounted(){
         this.$nextTick( () => {
             particlesJS.load('particles-js', function() {})
         })

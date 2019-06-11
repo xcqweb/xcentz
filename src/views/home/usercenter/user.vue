@@ -1,5 +1,5 @@
 <template>
-    <i-tabs class="usercenter_info">
+    <i-tabs class="usercenter_info" @on-click='page'>
         <i-tab-pane label="个人信息" icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
             <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="width:260px;height:300px;margin:0 36px;" @click.native='updateAvatar' />
             <i-form ref="form_adduser" :model="addUser" :label-width="120" :rules="ruleInline" style="width:480px;">
@@ -73,13 +73,16 @@
                 </li>
             </ul>
         </i-tab-pane>
-        <i-tab-pane label="系统消息" icon="md-alarm">系统消息</i-tab-pane>
+        <i-tab-pane label="系统消息" icon="md-alarm">
+            <i-table stripe :columns="columnsMsg" :data="msgs"></i-table>
+        </i-tab-pane>
     </i-tabs>
 </template>
 
 <script>
 import { queryUser,editPassword,edituserInfo } from "@api/userCenter";
 import { getEmailCode } from '@api'
+import { queryMsg } from '@api/message'
 export default {
     data(){
                 
@@ -97,6 +100,30 @@ export default {
             }
         };
         return{
+            msgs:[],
+            columnsMsg: Object.freeze([
+                {
+                    title: '序号',
+                    type:'index'
+                },
+                {
+                    title: '消息内容',
+                    key: 'Content'
+                },
+                {
+                    title: '发送时间',
+                    key: 'CreateTime'
+                },
+                {
+                    title: '状态',
+                    key: 'ReadStatus',
+                    render: (h, {row:{ReadStatus}}) => {
+                        return h('div', [
+                            h('span',ReadStatus===0?'未读':'已读')
+                        ]);
+                    }
+                }
+            ]),
             phoneStatus:false,
             cnameStatus:false,
             loading:false,
@@ -141,6 +168,28 @@ export default {
         this.queryUser()
     },
     methods:{
+        page(name){
+            
+            switch(name){
+                case 0:
+                break;
+
+                case 1:
+                break;
+
+                case 2:
+                break;
+
+                case 3:
+                this.queryMsg()
+                break;
+            }
+        },
+        queryMsg(){
+            queryMsg({userId:this.userInfo.UserId,status:1}).then( (res) => {
+                this.msgs = Object.freeze(res.data.msgs)
+            })
+        },
         //查询用户信息
         queryUser(){
             queryUser({userId:this.userInfo.UserId}).then( (res) => {
