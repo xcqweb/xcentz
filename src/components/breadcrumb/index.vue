@@ -43,10 +43,10 @@
                 
                 <div slot="content">
                     <i-dropdown @click.native='itemHandler'>
-                        <i-dropdown-item data-index='1'>主页</i-dropdown-item>
-                        <i-dropdown-item divided data-index='2'>个人中心</i-dropdown-item>
-                        <i-dropdown-item divided data-index='3'>退出登录</i-dropdown-item>
-                        <i-dropdown-item divided data-index='4' v-show="$route.path!=='/usercenter'">消息</i-dropdown-item>
+                        <i-dropdown-item data-index='1'><i-icon type="ios-home" /> 主页</i-dropdown-item>
+                        <i-dropdown-item divided data-index='2'><i-icon type="ios-contacts" /> 个人中心</i-dropdown-item>
+                        <i-dropdown-item divided data-index='3'><i-icon type="md-log-out" /> 退出登录</i-dropdown-item>
+                        <i-dropdown-item divided data-index='4' v-show="$route.path!=='/usercenter'"><i-icon type="ios-chatbubbles" /> 消息</i-dropdown-item>
                     </i-dropdown>
                 </div>
             </i-poptip>

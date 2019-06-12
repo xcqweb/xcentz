@@ -42,7 +42,7 @@
                         <i-circle v-else :size="36" :percent="(item.CurrentNode+1)*25" :stroke-width="8" :stroke-color="item.ProjectStatus===1?'#5cb85c':'#2d8cf0'">
                             <i-icon v-if="item.CurrentNode===3" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===3?'#5cb85c':'#5cb85c'}"></i-icon>
                         </i-circle>
-                        <span style="margin-left:6px;">{{transformStatus(item.ProjectStatus)}}</span>
+                        <span style="margin-left:6px;font-size:14px;">{{transformStatus(item.ProjectStatus)}}</span>
                     </div>
                     <div class="operate">
                         <Operate @operateHandler='operateHandler' :item='item'></Operate>
