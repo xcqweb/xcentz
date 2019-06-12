@@ -3,7 +3,7 @@
     <!-- 项目立项 -->
     <div class="projectCreate">
         <div style="text-align:left;">
-          <i-button type='primary' @click="addProjectStatus = true;isEdit = false;modalTitle='新增项目'" icon='ios-add'>新增项目</i-button>  
+          <i-button type='primary' @click="$refs['formProject'].resetFields();addProjectStatus = true;currentNode=0;isEdit = false;modalTitle='新增项目'" icon='ios-add'>新增项目</i-button>  
         </div>
         
         <!-- 新增或编辑项目 -->
@@ -495,21 +495,26 @@ export default {
                     if (valid) {
                         let params = {
                             projectId:this.projectId,
-                            status:this.currentNode===-1?0:this.currentNode,
+                            status:this.currentNode===-1?0:this.currentNode,//重新立项status = 0 else 编辑
                             projectorId:this.modelProject.projector,
                             operatorId:this.modelProject.operator,
                             remarks:this.modelProject.remarks,
-                            proInfo:JSON.stringify(this.modelProject)
+                            productorName:this.userInfo.Cname,
+                            projectorName:this.roles.find( (item) => { return item.UserId === this.modelProject.projector}).Cname,
+                            operatorName:this.roles.find( (item) => { return item.UserId === this.modelProject.operator}).Cname,
+                            proInfo:JSON.stringify(this.modelProject),
+                            reset:this.currentNode===-1?true:false //重新立项true 编辑false
                         }
                        
                         editProject(params).then( () => {
                             this.queryProject()
                             this.addProjectStatus = false
-                            this.$refs['formProject'].resetFields();
+                            this.$refs['formProject'].resetFields()
                         })
                     }
                 })
             }else{
+                
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         let params = {
@@ -518,6 +523,9 @@ export default {
                             userId:this.userInfo.UserId,
                             projectorId:this.modelProject.projector,
                             operatorId:this.modelProject.operator,
+                            productorName:this.userInfo.Cname,
+                            projectorName:this.roles.find( (item) => { return item.UserId === this.modelProject.projector}).Cname,
+                            operatorName:this.roles.find( (item) => { return item.UserId === this.modelProject.operator}).Cname,
                             remarks:this.modelProject.remarks,
                             proInfo:JSON.stringify(this.modelProject)
                         }
@@ -525,7 +533,7 @@ export default {
                         addProject(params).then( () => {
                             this.queryProject()
                             this.addProjectStatus = false
-                            this.$refs['formProject'].resetFields();
+                            this.$refs['formProject'].resetFields()
                         })
                     }
                 })
@@ -534,6 +542,9 @@ export default {
         operateHandler(type,item){
             switch(type){
                 case 1: //详情
+                    if(!this.roles.length){
+                        this.queryRoleUser()
+                    }
                     this.scanProjectStatus = true
                     this.scanProjectInfo = {...this.scanProjectInfo,...item}
                     this.scanProjectInfo.productionInfo = []

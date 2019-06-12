@@ -36,7 +36,7 @@ addProject = (req,res) => {
     let reData = req.body
     let projectId = uuid.v4().replace(/\-/g,'')
     
-    query_blog(`insert into Pub_approval_Workflow(ProjectId,ProjectStatus,ProductorUserId,ProjectorUserId,OperatorUserId,CurrentNode,ProductionInfo,ProductorRemark,CreateTime) values('${projectId}',${reData.status},'${reData.userId}','${reData.projectorId}','${reData.operatorId}',${reData.curNode},'${reData.proInfo}','${reData.remarks}','${moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
+    query_blog(`insert into Pub_approval_Workflow(ProjectId,ProjectStatus,ProductorUserId,ProjectorUserId,OperatorUserId,ProductorName,ProjectorName,OperatorName,CurrentNode,ProductionInfo,ProductorRemark,CreateTime) values('${projectId}',${reData.status},'${reData.userId}','${reData.projectorId}','${reData.operatorId}','${reData.productorName}','${reData.projectorName}','${reData.operatorName}',${reData.curNode},'${reData.proInfo}','${reData.remarks}','${moment().format('YYYY-MM-DD HH:mm:ss')}')`).then( (r) => {
         //发送消息
         Message.postMessage(reData.projectorId,projectId)
         res.send({
@@ -54,8 +54,13 @@ addProject = (req,res) => {
 
 editProject = (req,res) => {
     let reData = req.body
-    
-    query_blog(`update Pub_approval_Workflow set ProjectStatus=2,ProjectName=null,ProjectorApprovalTime=null,ProjectorRemark=null,CurrentNode=${reData.status} ,ProjectorUserId='${reData.projectorId}',OperatorUserId='${reData.operatorId}',ProductionInfo='${reData.proInfo}',ProductorRemark='${reData.remarks}' where ProjectId = '${reData.projectId}'`).then( (r) => {
+    let str = ''
+    if(reData.reset){
+        str = `update Pub_approval_Workflow set ProjectStatus=2,ProjectName=null,ProjectorApprovalTime=null,ProjectorRemark=null,CurrentNode=${reData.status} ,ProjectorUserId='${reData.projectorId}',OperatorUserId='${reData.operatorId}',ProductorName='${reData.productorName}',ProjectorName='${reData.projectorName}',OperatorName='${reData.operatorName}',ProductionInfo='${reData.proInfo}',ProductorRemark='${reData.remarks}' where ProjectId = '${reData.projectId}'`
+    }else{
+        str = `update Pub_approval_Workflow set ProjectStatus=2,CurrentNode=${reData.status} ,ProjectorUserId='${reData.projectorId}',OperatorUserId='${reData.operatorId}',ProductorName='${reData.productorName}',ProjectorName='${reData.projectorName}',OperatorName='${reData.operatorName}',ProductionInfo='${reData.proInfo}',ProductorRemark='${reData.remarks}' where ProjectId = '${reData.projectId}'`
+    }
+    query_blog(str).then( (r) => {
         res.send({
             errorCode:100046,
             message:'项目修改成功!'
