@@ -21,12 +21,12 @@
                     </div>
                 </div>
 
-                <div slot="content" style="height:300px;overflow:hidden auto;" v-else>
+                <div slot="content" style="height:300px;overflow:hidden auto;" class="scrollBarStyle" v-else>
                     <div class="msgList">
                         <li v-for="msg in msgs" :title="msg.Content" @click="goPage(msg)">
                             <i-icon style="color:rgb(92, 184, 92);font-size:26px;margin-right:12px;" type="md-text" />
                             {{msg.Content}}
-                            <i-icon style="float:right;margin-top:10px;font-size:18px;color:#ccc;" type="md-close" @click="msgRead(msg.MessageId)"/>
+                            <i-icon style="float:right;margin-top:10px;font-size:18px;color:#ccc;position:absolute;right:8px;" type="md-close" @click="msgRead(msg.MessageId)"/>
                         </li>
                     </div>
                 </div>
@@ -230,6 +230,7 @@ export default {
             &>li{
                 height: 42px;
                 line-height: 42px;
+                padding-right: 36px;
                 border-bottom: 1px solid #f2f2f2;
                 cursor: pointer;
                 white-space: nowrap;
@@ -241,3 +242,10 @@ export default {
 </style>
 
 
+<style lang='less'>
+.userInfo{
+    .ivu-poptip-body{
+        padding: 0 0 0 16px;
+    }
+}
+</style>

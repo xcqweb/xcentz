@@ -99,6 +99,7 @@ export default {
                callback()
             }
         };
+        
         return{
             tab:'0',
             msgs:[],
@@ -242,6 +243,12 @@ export default {
         },
         //更新信息
         editUser(type){
+            if(!/^1(3|4|5|7|8)\d{9}$/.test(this.addUser.phone)){
+                this.$Message.error({
+                    content:'手机号格式不正确!'
+                })
+                return
+            }
             this[`${type}Status`] = true
             let params = {phone:this.addUser.phone,cname:this.addUser.cname,userId:this.userInfo.UserId}
             edituserInfo(params).then( (res) => {

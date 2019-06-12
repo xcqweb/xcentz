@@ -10,16 +10,27 @@ let instance = axios.create({
     timeout: 20000 // request timeout
 })
 
+
+let pending = []; 
+let cancelToken = axios.CancelToken;
+let removePending = (config) => {
+    for(let p in pending){
+        if(pending[p].u === config.url + '&' + config.method + '&'+JSON.stringify(config.params)) {
+            pending[p].f(); 
+            pending.splice(p, 1); 
+        }
+    }
+}
+
+
 instance.interceptors.request.use( (config) => {
+    //防重复请求
+    removePending(config)
+     config.cancelToken = new cancelToken((c)=>{
+        pending.push({ u: config.url + '&' + config.method + '&'+JSON.stringify(config.params), f: c });  
+    });
+    
 	let token = localStorage.getItem('token')
-	// if(config.method === 'post'){
-    //     let _data = ''
-    //     for(let it in config.data){
-    //         _data += encodeURIComponent(it) + '=' + encodeURIComponent(config.data[it]) + '&';
-    //     }
-    //     config.data = _data
-    // }
-	
 	if(token){
 		config.headers['Authorization'] = 'Bearer__'+token; 
 	}
@@ -30,12 +41,10 @@ instance.interceptors.request.use( (config) => {
 
 
 instance.interceptors.response.use( (response) => {
+	removePending(response.config);
 	
-	// console.log(response)
 	response.data && response.data.errorCode && Message.message('success',{
 		content:errorCodes[response.data.errorCode],
-		top: 50,
-		duration: 3
 	})
 	return response
 	
@@ -44,15 +53,11 @@ instance.interceptors.response.use( (response) => {
 	if(!error.response){
 		Message.message('error',{	
 			content: '请求超时!',
-			top: 50,
-			duration: 3
 		})
 		return Promise.reject(error)
 	}
 	error.response && error.response.data && error.response.data.errorCode && Message.message('error',{
 		content: errorCodes[error.response.data.errorCode],
-		top: 50,
-		duration: 3
 	})
 
 	if(error.response && error.response.status==401){
