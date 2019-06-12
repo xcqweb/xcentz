@@ -62,3 +62,12 @@ export function rejectApproval(params){
         data:params
     })
 }
+
+// 通知审批
+export function notifyApproval(params){
+    return request({
+        url:'/project/notifyApproval',
+        method:'get',
+        params
+    })
+}

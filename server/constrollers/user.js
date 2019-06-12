@@ -139,7 +139,7 @@ let {query} = require('../database'),
                         message:"重置密码失败!"
                     })
                 }else{
-                    updateUserList()
+                       updateUserList()
                         res.send({
                             errorCode:100037,
                             message:"重置密码成功!"
@@ -583,6 +583,7 @@ let {query} = require('../database'),
     assignRole = (req,res) => {
         let reData = req.body
         query(`UPDATE Pub_User SET RoleId=${reData.roleId},Token='' WHERE UserId='${reData.userId}'`).then( (r) => {
+          updateUserList()//跟新redis缓存
           res.send({
             errorCode:100021,
             message:'角色分配成功!'
@@ -671,6 +672,7 @@ let {query} = require('../database'),
       query(`DELETE FROM Pub_Role_Moudule WHERE RoleId = ${roleId}`).then( () => {
         if(!str){
           query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+            updateUserList()//跟新redis缓存
             res.json({
               errorCode:100034,
               message:'模块权限配置成功!'
@@ -679,6 +681,7 @@ let {query} = require('../database'),
         }else{
           query(`INSERT INTO Pub_Role_Moudule(RoleId,ModuleId) VALUES${str}`).then( () => {
             query(`UPDATE Pub_User SET Token='' WHERE RoleId=${roleId}`).then( () => {
+              updateUserList()//跟新redis缓存
               res.json({
                 errorCode:100034,
                 message:'模块权限配置成功!'

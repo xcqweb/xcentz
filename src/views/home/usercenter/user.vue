@@ -1,6 +1,6 @@
 <template>
-    <i-tabs class="usercenter_info" @on-click='page'>
-        <i-tab-pane label="个人信息" icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
+    <i-tabs class="usercenter_info" v-model="tab" @on-click='page'>
+        <i-tab-pane label="个人信息" name='0' icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
             <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="width:260px;height:300px;margin:0 36px;" @click.native='updateAvatar' />
             <i-form ref="form_adduser" :model="addUser" :label-width="120" :rules="ruleInline" style="width:480px;">
                 <i-form-item prop="user" style="height:40px;" label='用户名'>
@@ -38,7 +38,7 @@
                 </i-form-item>              
             </i-form>
         </i-tab-pane>
-        <i-tab-pane label="修改密码" icon="md-create">
+        <i-tab-pane label="修改密码" name='1' icon="md-create">
             <i-form ref="form_adduser" :model="addUser" :label-width="120" :rules="ruleInline" style="width:480px;">
                 <i-form-item prop="old_password" style="margin:26px 0;" label='原密码'>
                     <i-input type="password" size="large" style="width:100%;" v-model="addUser.old_password" placeholder="请输入原密码" />
@@ -65,7 +65,7 @@
             </i-form>
             <i-button type="primary" @click="handlerSubmit('form_adduser')" style="float:left;margin-left:120px;width:360px;" :disabled='!(addUser.old_password && addUser.password && addUser.confirmPsw && addUser.code)'>确认</i-button>
         </i-tab-pane>
-        <i-tab-pane label="用户设置" icon="logo-tux">
+        <i-tab-pane label="用户设置" name='2' icon="logo-tux">
             <ul style="margin-top:20px;">
                 <li style="display:flex;align-items:center;width:100%;padding:20px 0;border-bottom:1px solid rgb(245, 238, 238);" v-for="i in 10">
                     <span style="flex:1;text-align:left;font-size:16px;">消息接收设置</span>
@@ -73,7 +73,7 @@
                 </li>
             </ul>
         </i-tab-pane>
-        <i-tab-pane label="系统消息" icon="md-alarm">
+        <i-tab-pane label="系统消息" name='3' icon="md-alarm">
             <i-table stripe :columns="columnsMsg" :data="msgs"></i-table>
         </i-tab-pane>
     </i-tabs>
@@ -100,6 +100,7 @@ export default {
             }
         };
         return{
+            tab:'0',
             msgs:[],
             columnsMsg: Object.freeze([
                 {
@@ -166,21 +167,24 @@ export default {
     },
     activated(){
         this.queryUser()
+        if(this.$route.query.tab){
+            this.tab = this.$route.query.tab
+            this.queryMsg()
+        }
     },
     methods:{
         page(name){
-            
             switch(name){
-                case 0:
+                case '0':
                 break;
 
-                case 1:
+                case '1':
                 break;
 
-                case 2:
+                case '2':
                 break;
 
-                case 3:
+                case '3':
                 this.queryMsg()
                 break;
             }

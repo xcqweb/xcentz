@@ -255,6 +255,8 @@ export default {
                     roleDirection:''
                 }
                 this.getRoleList()
+            },error => {
+                this.loading = false
             })
         },
         //编辑角色
@@ -272,6 +274,8 @@ export default {
                 this.editRoleStatus = false
                 this.$set(this.dataRole[this.roleEdit.index],'RoleName',this.roleEdit.roleName)
                 this.$set(this.dataRole[this.roleEdit.index],'Directions',this.roleEdit.roleDirection)
+            },error => {
+                this.loading = false
             })
         },
         //获取角色列表
@@ -308,6 +312,8 @@ export default {
                     delRole({id:data.row.RoleId}).then( (res) => {
                         this.$Modal.remove()
                         this.dataRole.splice(data.index,1)
+                    },error => {
+                        this.$Modal.remove()
                     })
                 }
             })
@@ -386,6 +392,8 @@ export default {
                 if(this.currentRoleId === this.userInfo.RoleId){
                   this.$root.eventBus.$emit('getMenu')  
                 }
+            },error => {
+                this.loading = false
             })
         },
         //分页

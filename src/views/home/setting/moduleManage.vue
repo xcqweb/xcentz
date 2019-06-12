@@ -200,6 +200,8 @@ export default {
                     delModule({id:data.row.ModuleId}).then( (res) => {
                         this.$Modal.remove()
                         this.dataModule.splice(data.index,1)
+                    },error => {
+                            this.$Modal.remove()
                     })
                 }
             })

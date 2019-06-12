@@ -14,8 +14,9 @@
 </template>
 
 <script>
-    import '../../../static/particles'
-    import data from '../../../static/particles/particles.json'
+
+import '../../../static/particles'
+import data from '../../../static/particles/particles.json'
 export default {
     data(){
         return{

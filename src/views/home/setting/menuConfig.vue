@@ -235,9 +235,11 @@ import {addMenu,queryMenu,removeMenu,editMenu} from '@api'
                         let ids = loop(node.node)
 
                         removeMenu({ids:this.createIds(ids)}).then( (res) => {
-                            this.$Modal.remove();
+                            this.$Modal.remove()
                             this.queryMenu()
                             this.$root.eventBus.$emit('getMenu')
+                        },error => {
+                            this.$Modal.remove()
                         })
                     },
                 });

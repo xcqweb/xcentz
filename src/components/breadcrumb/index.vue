@@ -46,7 +46,7 @@
                         <i-dropdown-item data-index='1'>主页</i-dropdown-item>
                         <i-dropdown-item divided data-index='2'>个人中心</i-dropdown-item>
                         <i-dropdown-item divided data-index='3'>退出登录</i-dropdown-item>
-                        <i-dropdown-item divided data-index='4'>消息</i-dropdown-item>
+                        <i-dropdown-item divided data-index='4' v-show="$route.path!=='/usercenter'">消息</i-dropdown-item>
                     </i-dropdown>
                 </div>
             </i-poptip>
@@ -98,7 +98,7 @@ export default {
             let index = this.msgs.findIndex( (item) => {
                 return item.ProjectId === id
             })
-            
+
             this.msgs.splice(index,1)
             this.count>0 && this.count--
         })
@@ -158,6 +158,7 @@ export default {
                 break;
 
                 case '4':
+                this.$router.push('/usercenter?tab=3')
                 break;
             }
         },

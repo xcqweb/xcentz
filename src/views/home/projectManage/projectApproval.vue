@@ -26,16 +26,16 @@
         <div style="margin-bottom:60px;">
             <i-divider>项目审批流程</i-divider>
             <div class="flow">
-                <div class="flow_item" v-for="(item,index) in projects">
-                    <span>项目{{index+1}}</span>
+                <div class="flow_item" v-for="(item,index) in projects" :key="item.ProjectId">
+                    <span>{{item.ProjectName?item.ProjectName:`项目${index+1}`}}</span>
                     <i-steps :current="item.CurrentNode+1">
-                        <i-step title="项目立项" :content="item.ProductorRemark"></i-step>
-                        <i-step title="项目经理审批" :content="item.ProjectorRemark"></i-step>
-                        <i-step title="运营审批" :content="item.OperatorRemark"></i-step>
-                        <i-step title="项目经理填写宇龙编码" :content="item.OperatorRemark"></i-step>
+                        <i-step :title="'产品立项 '+' ('+item.ProductorName+')'" :content="item.ProductorRemark"></i-step>
+                        <i-step :title="'项目经理审批 '+' ('+item.ProjectorName+')'" :content="item.ProjectorRemark"></i-step>
+                        <i-step :title="'运营审批 '+' ('+item.OperatorName+')'" :content="item.OperatorRemark"></i-step>
+                        <i-step :title="'填写宇龙编码 '+' ('+item.ProjectorName+')'"></i-step>
                     </i-steps>
                     <div class="status">
-                        <i-circle v-if="item.ProjectStatus===4" :size="36" :percent="100" :stroke-width="8" stroke-color='#ff5500'>
+                        <i-circle v-if="item.ProjectStatus===4 || item.ProjectStatus===5" :size="36" :percent="100" :stroke-width="8" stroke-color='#ff5500'>
                             <i-icon type="ios-close" size="36" style="color:#ff5500"></i-icon>
                         </i-circle>
 
@@ -135,7 +135,7 @@
 
                      <li>
                         <span>创建人:</span>
-                        <span>{{approvalUsers[2] && approvalUsers[2].Cname}}</span>
+                        <span>{{scanProjectInfo.ProductorName}}</span>
                     </li>
                     <li>
                         <span>创建时间:</span>
@@ -159,22 +159,22 @@
                 <i-divider>审批信息</i-divider>
                 <ul class="approval_item">
                     <li style="width:100%;">
-                        <span>项目经理审批 ({{ approvalUsers[1] && approvalUsers[1].Cname}}) :</span>
-                        <span>{{scanProjectInfo.ProjectStatus===4 && scanProjectInfo.CurrentNode===-1?'审核不通过':scanProjectInfo.CurrentNode===0?'等待审批':`审批通过 / ${isNull(scanProjectInfo.ProjectorApprovalTime)?'':scanProjectInfo.ProjectorApprovalTime}`}}
-                            <i-icon v-if='scanProjectInfo.CurrentNode>0' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                        <span>项目经理审批 ({{ scanProjectInfo.ProjectorName}}) :</span>
+                        <span>{{scanProjectInfo.ProjectStatus===4 && scanProjectInfo.CurrentNode===-1?`审核不通过 / ${isNull(scanProjectInfo.ProjectorApprovalTime)?'':scanProjectInfo.ProjectorApprovalTime}`:scanProjectInfo.CurrentNode===0?'等待审批':`审批通过 / ${isNull(scanProjectInfo.ProjectorApprovalTime)?'':scanProjectInfo.ProjectorApprovalTime}`}}
+                            <i-icon v-if='scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1 || scanProjectInfo.CurrentNode>0' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
                             <i-icon v-if='scanProjectInfo.ProjectStatus===4' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
                         </span>
                     </li>
                     <li style="width:100%;">
-                        <span>运营审批  ({{approvalUsers[0] && approvalUsers[0].Cname}}) :</span>
-                        <span>{{scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1?'审核不通过':scanProjectInfo.CurrentNode===0 || scanProjectInfo.CurrentNode===1 || scanProjectInfo.CurrentNode===-1 ?'等待审批':`审批通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`}}
+                        <span>运营审批  ({{scanProjectInfo.OperatorName}}) :</span>
+                        <span>{{scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1?`审核不通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`:scanProjectInfo.CurrentNode===0 || scanProjectInfo.CurrentNode===1 || scanProjectInfo.CurrentNode===-1 ?'等待审批':`审批通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`}}
                             <i-icon v-if='scanProjectInfo.CurrentNode>0 && scanProjectInfo.CurrentNode>=2' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
                             <i-icon v-if='scanProjectInfo.ProjectStatus===5' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
                         </span>
                     </li>
 
                     <li style="width:100%;">
-                        <span>填写宇龙编码  ({{ approvalUsers[1] && approvalUsers[1].Cname}}) :</span>
+                        <span>填写宇龙编码  ({{ scanProjectInfo.ProjectorName}}) :</span>
                         <span>{{isNull(scanProjectInfo.EndTime)?'未填写': `已填写 / ${isNull(scanProjectInfo.EndTime)?'':scanProjectInfo.EndTime}`}}
                             <i-icon v-if='!isNull(scanProjectInfo.EndTime)' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
                         </span>
@@ -189,7 +189,6 @@
 import Operate from './components/operatePop'
 import {
     queryProject,
-    queryUserById,
     approvalProject,
     rejectApproval
 } from '@api/project'
@@ -202,7 +201,6 @@ export default {
                 operatorId:'',
                 projectorId:''
             },
-            approvalUsers:[],
             projects:[],
             approvalProjects:{ProductiomInfo:[]},
             scanProjectInfo:[],
@@ -260,6 +258,9 @@ export default {
 
                 case 4:
                 return '不通过'
+
+                case 5:
+                return '不通过'
             }
         },
         transformName(key){
@@ -277,7 +278,7 @@ export default {
                 return '供应商'
 
                 case 'sellStatu':
-                return '项目立项'
+                return '项目状态'
 
                 case 'pack':
                 return '包装'
@@ -308,7 +309,7 @@ export default {
             }
         },
         queryApprovalProject(){//查询审批项目
-            queryProject({userId:'9da6e0a5e115474596f3d7e5219fd860',type:'ProjectorUserId',status:this.userInfo.RoleId === 2?1:20,projector:this.userInfo.RoleId === 2?'':'projector'}).then( (res) => {
+            queryProject({userId:this.userInfo.UserId,type:this.userInfo.RoleId === 2?'OperatorUserId':'ProjectorUserId',status:this.userInfo.RoleId === 2?1:20,projector:this.userInfo.RoleId === 2?'':'projector'}).then( (res) => {
                 this.approvalProjects = res.data.items
 
                 for(let i=0; i<this.approvalProjects.length; i++){
@@ -326,7 +327,7 @@ export default {
             })
         },
         queryProject(){
-            queryProject({userId:'9da6e0a5e115474596f3d7e5219fd860',type:'ProjectorUserId'}).then( (res) => {
+            queryProject({userId:this.userInfo.UserId,type:this.userInfo.RoleId === 2?'OperatorUserId':'ProjectorUserId'}).then( (res) => {
                 console.log(res)
                 this.projects = Object.freeze(res.data.items)
 
@@ -390,6 +391,7 @@ export default {
         approvalCancel(){
             rejectApproval({projectId:this.projectInfo.projectId,status:this.userInfo.RoleId===2?5:4}).then( (res) => {
                 this.approvalStatus = false
+                this.$root.eventBus.$emit('message',this.projectInfo.projectId)
                 this.queryApprovalProject()
                 this.queryProject()
             })
@@ -398,9 +400,6 @@ export default {
             switch(type){
                 case 1:
                     this.scanProjectStatus = true
-                    queryUserById({ids:`${item.ProductorUserId},${item.ProjectorUserId},${item.OperatorUserId}`}).then( (res) => {
-                        this.approvalUsers = Object.freeze(res.data.users)
-                    })
                     this.scanProjectInfo = {...this.scanProjectInfo,...item}
                     this.scanProjectInfo.productionInfo = []
                     let list = JSON.parse(item.ProductionInfo)

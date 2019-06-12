@@ -44,7 +44,7 @@ addProject = (req,res) => {
             message:'项目创建成功!'
         })
     },error => {
-        res.send({
+        res.status(500).send({
             errorCode:100045,
             message:'项目创建失败!'
         })
@@ -55,13 +55,13 @@ addProject = (req,res) => {
 editProject = (req,res) => {
     let reData = req.body
     
-    query_blog(`update Pub_approval_Workflow set ProjectStatus=2,CurrentNode=${reData.status} ,ProjectorUserId='${reData.projectorId}',OperatorUserId='${reData.operatorId}',ProductionInfo='${reData.proInfo}',ProductorRemark='${reData.remarks}' where ProjectId = '${reData.projectId}'`).then( (r) => {
+    query_blog(`update Pub_approval_Workflow set ProjectStatus=2,ProjectName=null,ProjectorApprovalTime=null,ProjectorRemark=null,CurrentNode=${reData.status} ,ProjectorUserId='${reData.projectorId}',OperatorUserId='${reData.operatorId}',ProductionInfo='${reData.proInfo}',ProductorRemark='${reData.remarks}' where ProjectId = '${reData.projectId}'`).then( (r) => {
         res.send({
             errorCode:100046,
             message:'项目修改成功!'
         })
     },error => {
-        res.send({
+        res.status(500).send({
             errorCode:100047,
             message:'项目修改失败!'
         })
@@ -120,7 +120,7 @@ approvalProject = (req,res) => {
             errorCode:100048
         })
     },error => {
-        res.send({
+        res.status(500).send({
             errorCode:100049
         })
     })
@@ -129,13 +129,36 @@ approvalProject = (req,res) => {
 rejectApproval = (req,res) => {
     let projectId = req.body.projectId
     let status = req.body.status
-    query_blog(`update Pub_approval_Workflow set CurrentNode=-1,ProjectStatus=${status} where ProjectId = '${projectId}'`).then( (r) => {
+    let str = ''
+    if(status == 4){
+        str = `update Pub_approval_Workflow set CurrentNode=-1,ProjectStatus=${status}, ProjectorApprovalTime = '${moment().format('YYYY-MM-DD HH:mm:ss')}' where ProjectId = '${projectId}'`
+    }else{
+        str = `update Pub_approval_Workflow set CurrentNode=-1,ProjectStatus=${status}, OperatorApprovalTime = '${moment().format('YYYY-MM-DD HH:mm:ss')}' where ProjectId = '${projectId}'`
+    }
+    query_blog(str).then( (r) => {
         res.send({
             errorCode:100050
         })
     },error => {
-        res.send({
+        res.status(500).send({
             errorCode:100051
+        })
+    })
+},
+
+notifyApproval = (req,res) => {
+    let reData = req.query
+    //发送消息
+    Message.postMessage(reData.userId,reData.projectId,0,'您有一个待审批项目,请及时处理!').then( () => {
+        Message.updateMessage('',reData.projectId).then( () => {
+            res.send({
+                errorCode:100052
+            })
+        })
+        
+    },error => {
+        res.status(500).send({
+            errorCode:100053
         })
     })
 }
@@ -147,5 +170,6 @@ module.exports = {
     queryUserById,
     editProject,
     approvalProject,
-    rejectApproval
+    rejectApproval,
+    notifyApproval
 }

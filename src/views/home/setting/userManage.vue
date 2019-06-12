@@ -304,6 +304,8 @@ export default {
                         onOk: () => {
                             resetPassword({userId:row.UserId,email:row.Email}).then( () => {
                                 this.$Modal.remove()
+                            },error => {
+                                this.$Modal.remove()
                             })
                         },
                     });
@@ -327,6 +329,8 @@ export default {
                             delUser({userId:row.UserId}).then( (res) => {
                                 this.$Modal.remove()
                                 this.userData.splice(row._index,1)
+                            },error => {
+                                this.$Modal.remove()
                             })
                         },
                     });
@@ -347,6 +351,8 @@ export default {
                 }).Directions
 
                 this.selectRole = ''
+            },error => {
+                this.loading = false
             })
         },
         //添加用户
@@ -367,6 +373,8 @@ export default {
                         this.addUserStatus = false
                         this.$refs['form_adduser'].resetFields();
                         this.getUserList()
+                    },error => {
+                        this.loading = false
                     })
                 }
             })
@@ -380,6 +388,8 @@ export default {
                     this.userData = res.data.userList
                     this.totalCount = res.data.total
                 }
+            },error => {
+                this.isLoading = false
             })
         }
     }

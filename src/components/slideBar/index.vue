@@ -22,6 +22,10 @@
                <i-icon type="ios-refresh" style="color:#ccc;font-size:20px;"  />
                重新加载
             </span>
+            <i-spin v-show="loading" fix style="background-color:rgba(0,0,0,0.2)">
+                <i-icon type="ios-loading" class="demo-spin-icon-load" size=30></i-icon>
+                <div>Loading</div>
+            </i-spin>
             <!-- collapse -->
             <p class="collapse" @click="collapseHandler">
                 <i-icon type="ios-rewind" :style="{transform:isCollapse?'rotateZ(180deg)':''}" />
@@ -39,6 +43,7 @@ import authRoute from '@/router/modules/authRoute'
 export default {
     data(){
         return{
+            loading:false,
             err:false,
             visible:false,
             isCollapse:false,
@@ -80,8 +85,10 @@ export default {
             return newRoute
         },
         queryMenu(){
+            this.err = false
+            this.loading = true
             queryMenu({roleId:this.userInfo.RoleId}).then( (res) => {
-                this.err = false
+                this.loading = false
                 let menuList = res.data.menuList
                 this.menus = Object.freeze(menuList[0].children)
                 //配置权限动态路由
@@ -89,6 +96,7 @@ export default {
                 this.$router.matcher.addRoutes(filterAuthRoutes)
             },error => {
                 this.err = true
+                this.loading = false
             })
         },
         selectItem(name){
