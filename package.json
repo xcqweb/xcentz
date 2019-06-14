@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "cross-env USER_ENV=development vue-cli-service serve",
     "build": "cross-env USER_ENV=production vue-cli-service build",
-    "test": "cross-env USER_ENV=test vue-cli-service build",
+    "build:test": "cross-env USER_ENV=test vue-cli-service build",
     "build:report": "cross-env USER_ENV=test report=true vue-cli-service build",
     "lint": "vue-cli-service lint",
     "copy": "node copy"

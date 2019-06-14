@@ -43,7 +43,7 @@
         return Object.prototype.toString.call(obj) === '[object Null]' || obj==='null'
     },
 
-    //清楚redis key 
+    //clear redis key 
     clearRedis = function(key,fix){
         return new Promise((reslove,reject) => {
             let str = ''
