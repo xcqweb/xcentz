@@ -67,9 +67,9 @@
         </i-tab-pane>
         <i-tab-pane label="用户设置" name='2' icon="logo-tux">
             <ul style="margin-top:20px;">
-                <li style="display:flex;align-items:center;width:100%;padding:20px 0;border-bottom:1px solid rgb(245, 238, 238);" v-for="i in 10">
-                    <span style="flex:1;text-align:left;font-size:16px;">消息接收设置</span>
-                    <i-switch size="large" />
+                <li style="display:flex;align-items:center;width:100%;padding:20px 0;border-bottom:1px solid rgb(245, 238, 238);">
+                    <span style="flex:0.96;text-align:left;font-size:16px;">消息接收设置</span>
+                    <i-switch size="large" style="transform:scale(1.5);" />
                 </li>
             </ul>
         </i-tab-pane>
@@ -120,9 +120,27 @@ export default {
                     title: '状态',
                     key: 'ReadStatus',
                     render: (h, {row:{ReadStatus}}) => {
-                        return h('div', [
-                            h('span',ReadStatus===0?'未读':'已读')
-                        ]);
+                        if(ReadStatus===0){
+                            return h('i-badge',{
+                                props:{
+                                    'dot':true
+                                },
+                                style:{
+                                    marginTop:'6px'
+                                }
+                            }, [
+                                h('span','未读')
+                            ]);
+                        }else{
+                            return h('i-badge',{
+                                style:{
+                                    marginTop:'6px'
+                                }
+                            }, [
+                                h('span','已读')
+                            ]);
+                        }
+                        
                     }
                 }
             ]),

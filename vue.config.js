@@ -2,11 +2,10 @@ const path = require('path');
 const webpack = require('webpack')
 const CommpressionPlugin = require('compression-webpack-plugin');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
-
+const envs = require('./src/env')
 function resolve (dir) {
     return path.join(__dirname, dir)
 }
-
 const cdn = {
 	js: [
 		'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
@@ -19,6 +18,7 @@ const cdn = {
 }
 
 module.exports = {
+    publicPath:'/',
     lintOnSave: false,
     devServer: {
         clientLogLevel: 'warning',
@@ -33,11 +33,11 @@ module.exports = {
             errors: true,
         },
         proxy: {
-                '/api':{
-                    target:"https://localhost",
-                    changeOrigin:true,
-                }
-            },
+            '/api':{
+                target:"https://localhost",
+                changeOrigin:true,
+            }
+        },
         quiet: true, 
         watchOptions: {
             poll: true,
@@ -66,6 +66,14 @@ module.exports = {
                 return args
             })
 
+            config.plugin('define').tap(args => {
+                let keys = envs[process.env.USER_ENV]
+                for (let i in keys) {
+                    args[0]['process.env'][i] = `"${keys[i]}"`
+                }
+                return args
+            })
+    
         config.when(process.env.NODE_ENV !== 'development',config => {
 
             config.externals({
@@ -107,7 +115,7 @@ module.exports = {
 
     //gzip压缩
     configureWebpack: config => {
-        if(process.env.NODE_ENV==='production'){
+        if(process.env.NODE_ENV!=='development'){
             var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
                     config.plugins.push(
                         new CommpressionPlugin({
@@ -132,8 +140,13 @@ module.exports = {
                                 }
                             }
                         })
-                    // new BundleAnalyzerPlugin(),
                     )
+                    
+                    if(process.env.report){
+                        config.plugins.push(
+                            new BundleAnalyzerPlugin(),
+                        )
+                    }
         }
     },	
 };

@@ -1,7 +1,7 @@
 let {query_blog,query} = require('../database'),
 uuid = require('node-uuid'), //生成唯一id
 moment = require('moment'),//时间工具函数
-{Message} = require('./query'),//时间工具函数
+{Message} = require('./query'),
 
 queryProject = (req,res) => {
     let userId = req.query.userId
@@ -154,8 +154,8 @@ rejectApproval = (req,res) => {
 notifyApproval = (req,res) => {
     let reData = req.query
     //发送消息
-    Message.postMessage(reData.userId,reData.projectId,0,'您有一个待审批项目,请及时处理!').then( () => {
-        Message.updateMessage('',reData.projectId).then( () => {
+    Message.updateMessage('',reData.projectId).then( () => {
+        Message.postMessage(reData.userId,reData.projectId,0,'您有一个待审批项目,请及时处理!').then( () => {
             res.send({
                 errorCode:100052
             })

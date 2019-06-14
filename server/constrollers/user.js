@@ -8,6 +8,7 @@ let {query} = require('../database'),
     uuid = require('node-uuid'), //生成唯一id
     {buildTree,isNull,clearRedis,updateUserList} = require('../common/untl'),
     moment = require('moment'),//时间工具函数
+    {Message} = require('./query'),
 
     login = (req,res) => {
         let username = req.body.username,
@@ -53,6 +54,7 @@ let {query} = require('../database'),
                         delete r.Token
                         //更新登录时间
                         query(`update Pub_User set LoatLoginTime='${ moment().format('YYYY-MM-DD HH:mm:ss')}',Token='${token}' WHERE (UserName='${username}' OR Email='${username}')`)
+                        
                         res.status(200).json({
                             message:'登录成功！',
                             token:token,

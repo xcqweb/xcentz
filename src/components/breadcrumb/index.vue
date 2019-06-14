@@ -10,7 +10,7 @@
             </i-breadcrumb-item>
         </i-breadcrumb>
         <div class="userInfo">
-            <i-poptip trigger="hover" placement='top-end' width='360' style="margin:12px 48px 0 0">
+            <i-poptip class="userInfo_tip" trigger="hover" placement='top-end' width='360' style="margin:12px 48px 0 0">
                 <i-badge :count='count'>
                     <i-icon type="ios-notifications-outline" size="26"></i-icon>
                 </i-badge>
@@ -26,6 +26,7 @@
                         <li v-for="msg in msgs" :title="msg.Content" @click="goPage(msg)">
                             <i-icon style="color:rgb(92, 184, 92);font-size:26px;margin-right:12px;" type="md-text" />
                             {{msg.Content}}
+                            <span>{{msg.CreateTime}}</span>
                             <i-icon style="float:right;margin-top:10px;font-size:18px;color:#ccc;position:absolute;right:8px;" type="md-close" @click="msgRead(msg.MessageId)"/>
                         </li>
                     </div>
@@ -228,14 +229,20 @@ export default {
             text-align: left;
             list-style: none;
             &>li{
-                height: 42px;
+                height: 56px;
                 line-height: 42px;
                 padding-right: 36px;
                 border-bottom: 1px solid #f2f2f2;
+                position: relative;
                 cursor: pointer;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                &>span{
+                    position: absolute;
+                    bottom: -8px;
+                    right: 30px;
+                }
             }
         }
     }
@@ -243,7 +250,7 @@ export default {
 
 
 <style lang='less'>
-.userInfo{
+.userInfo_tip{
     .ivu-poptip-body{
         padding: 0 0 0 16px;
     }

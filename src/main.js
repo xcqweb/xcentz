@@ -12,7 +12,7 @@ import {throttle,debounce} from 'lodash'
 window.throttle = throttle
 window.debounce = debounce
 Vue.config.productionTip = false
-
+console.log(process.env)
 Vue.mixin({
   data(){
     return{
