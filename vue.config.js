@@ -117,36 +117,36 @@ module.exports = {
     configureWebpack: config => {
         if(process.env.NODE_ENV!=='development'){
             var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-                    config.plugins.push(
-                        new CommpressionPlugin({
-                            test:/\.js$|\.html$|\.css/,
-                            threshold:10240,
-                            deleteOriginalAssets: false
-                        }),
-                        new ParallelUglifyPlugin({
-                            test:/.js$/g,
-                            exclude: /[\\/]node_modules[\\/]/,
-                            cacheDir:'cache',
-                            uglifyES:{
-                                output: {
-                                    beautify: false,
-                                    comments: false
-                                },
-                                compress: {
-                                    warnings: false,
-                                    drop_console: true,
-                                    collapse_vars: true,
-                                    reduce_vars: true
-                                }
-                            }
-                        })
-                    )
-                    
-                    if(process.env.report){
-                        config.plugins.push(
-                            new BundleAnalyzerPlugin(),
-                        )
+            config.plugins.push(
+                new CommpressionPlugin({
+                    test:/\.js$|\.html$|\.css/,
+                    threshold:10240,
+                    deleteOriginalAssets: false
+                }),
+                new ParallelUglifyPlugin({
+                    test:/.js$/g,
+                    exclude: /[\\/]node_modules[\\/]/,
+                    cacheDir:'cache',
+                    uglifyES:{
+                        output: {
+                            beautify: false,
+                            comments: false
+                        },
+                        compress: {
+                            warnings: false,
+                            drop_console: true,
+                            collapse_vars: true,
+                            reduce_vars: true
+                        }
                     }
+                })
+            )
+            
+            if(process.env.report){
+                config.plugins.push(
+                    new BundleAnalyzerPlugin(),
+                )
+            }
         }
     },	
 };

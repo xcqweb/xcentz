@@ -18,9 +18,7 @@
             </div>
             <i-divider>产品信息{{isEdit?'修改':'录入'}}</i-divider>
             <i-form ref="formProject" :model="modelProject" :rules="ruleProject" :label-width="120" style="display:flex;flex-direction:column;align-items:center;margin:20px 0;">
-                <!-- <i-form-item label="项目名称" prop="projectName" class="pro_item">
-                    <i-input ref="input" v-model="modelProject.projectName" />
-                </i-form-item> -->
+                
                 <i-form-item label="品类" prop="product" class="pro_item">
                     <i-select 
                         clearable
@@ -117,11 +115,6 @@
                 </i-form-item>
 
                 <i-form-item label="电池容量(mAh)" prop="battery" class="pro_item" v-if="modelProject.product==='Charger'">
-                    <!-- <i-select 
-                        clearable
-                        v-model="modelProject.battery">
-                        <i-option v-for="option in batterys" :value="option" :key="option">{{option}}</i-option>
-                    </i-select> -->
                     <i-input v-model="modelProject.battery" clearable placeholder="请输入电池容量"></i-input>
                 </i-form-item>
 
@@ -204,7 +197,7 @@
 
                 <i-divider>产品信息</i-divider>
                 <ul class="approval_item">
-                    <li v-for="item in scanProjectInfo.productionInfo " v-show='item.value && transformName(item.name)'>
+                    <li v-for="item in scanProjectInfo.productionInfo " v-show='item.value && transformName(item.name)' :key="item.name">
                         <span>{{transformName(item.name)}}:</span>
                         <span>{{item.value}}</span>
                     </li>
@@ -240,9 +233,10 @@
         <!-- 项目审批流程 -->
         <div style="margin-bottom:60px;">
             <i-divider>项目审批流程</i-divider>
+             <p><i-input search enter-button v-model="searchKey" size="large" @on-search='queryProject' @on-enter='queryProject' style="width:100%;margin-right:30px;" placeholder="项目名称 产品经理 项目经理 运营..." /></p>
             <div class="flow">
-                <div class="flow_item" v-for="(item,index) in projects" :key="item.ProjectId">
-                    <span>{{item.ProjectName?item.ProjectName:`项目${index+1}`}}</span>
+                <div class="flow_item" v-for="item in projects" :key="item.ProjectId">
+                    <span>{{item.ProjectName?item.ProjectName:''}}</span>
                     <i-steps :current="item.CurrentNode+1">
                         <i-step :title="'产品立项 '+' ('+item.ProductorName+')'" :content="item.ProductorRemark"></i-step>
                         <i-step :title="'项目经理审批 '+' ('+item.ProjectorName+')'" :content="item.ProjectorRemark"></i-step>
@@ -264,6 +258,7 @@
                     </div>
                 </div>
             </div>
+            <i-page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
         </div>
     </div>
 </template>
@@ -281,6 +276,10 @@ import {
 export default {
     data(){
         return{
+            pageSize:10,
+            totalCount:0,
+            currentPage:1,
+            searchKey:'',
             currentNode:0,
             projectId:'',
             isEdit:false,
@@ -483,10 +482,22 @@ export default {
                 this.roles = Object.freeze(res.data.roles)
             })
         },
+        goPage(page){
+            this.currentPage = page
+            this.queryProject()
+        },
         queryProject(){
-            queryProject({userId:this.userInfo.UserId,type:'ProductorUserId'}).then( (res) => {
+            let params = {
+                userId:this.userInfo.UserId,
+                type:'ProductorUserId',
+                currentPage:this.currentPage,
+                pageSize:this.pageSize,
+                key:this.searchKey
+            }
+            queryProject(params).then( (res) => {
                 console.log(res.data.items)
                 this.projects = Object.freeze(res.data.items)
+                this.totalCount = res.data.total
             })
         },
         addProjectHandler(name){

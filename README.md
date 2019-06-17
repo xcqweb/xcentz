@@ -42,7 +42,6 @@
 - 查看进程运行参数 pm2 monit
 - 查看日志 pm2 logs
 
-
 ## [redis window 下载地址](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2FMSOpenTech%2Fredis%2Freleases%2Fdownload%2Fwin-3.2.100%2FRedis-x64-3.2.100.msi)
 
 ```
@@ -102,7 +101,7 @@ open in http://localhost:8008/
     │
     ├──────────────────────────────────────────assets
     │                                            |
-    ├───components//组件库                        |───api
+    ├───components//组件                         |───api
     │                                            |───js
     ├─router─────────|                           |───images
     │                |──module //权限路由         |───styles  

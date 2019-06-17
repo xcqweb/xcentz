@@ -3,20 +3,48 @@
         <!-- 审批 -->
         <i-divider>待审批流程</i-divider>
         <div class="approval">
-            <i-card style="width:42%;margin:30px 30px;min-width:360px;" v-for="(project,index) in approvalProjects">
+            <i-card style="width:42%;margin:30px 30px;min-width:360px;" v-for="project in approvalProjects" :key="project.ProjectId">
                 <p slot="title">
                     <i-icon type="ios-film-outline"></i-icon>
-                    审批项目 {{index+1}}{{project.CurrentNode===2?'(请填写宇龙编码)':''}}
+                    审批项目{{project.ProjectName?`-${project.ProjectName}`:''}} {{project.CurrentNode===2?'( 填写宇龙编码 )':''}}
                 </p>
 
                 <a href="javascript:;" slot="extra" @click="approval(project)">
-                    <i-icon type></i-icon>
+                    <i-icon type='ios-create'></i-icon>
                     审批
+                </a>
+                <a href="javascript:;" slot="extra" @click="detail(project)">
+                    <i-icon type="md-alert" />
+                    详情
                 </a>
                 <ul class="approval_item">
                    <li v-for="item in project.ProductionInfo" :key="item.name" v-show='item.value && transformName(item.name)'>
                         <span>{{transformName(item.name)}}:</span>
                         <span>{{item.value}}</span>
+                    </li>
+                </ul>
+                <i-divider>审批信息</i-divider>
+                <ul class="approval_item">
+                    <li style="width:100%;">
+                        <span>项目经理审批 ({{ project.ProjectorName}}) :</span>
+                        <span>{{project.ProjectStatus===4 && project.CurrentNode===-1?`审核不通过 / ${isNull(project.ProjectorApprovalTime)?'':project.ProjectorApprovalTime}`:project.CurrentNode===0?'等待审批':`审批通过 / ${isNull(project.ProjectorApprovalTime)?'':project.ProjectorApprovalTime}`}}
+                            <i-icon v-if='project.ProjectStatus===5 && project.CurrentNode===-1 || project.CurrentNode>0' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                            <i-icon v-if='project.ProjectStatus===4' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
+                        </span>
+                    </li>
+                    <li style="width:100%;">
+                        <span>运营审批  ({{project.OperatorName}}) :</span>
+                        <span>{{project.ProjectStatus===5 && project.CurrentNode===-1?`审核不通过 / ${isNull(project.OperatorApprovalTime)?'':project.OperatorApprovalTime}`:project.CurrentNode===0 || project.CurrentNode===1 || project.CurrentNode===-1 ?'等待审批':`审批通过 / ${isNull(project.OperatorApprovalTime)?'':project.OperatorApprovalTime}`}}
+                            <i-icon v-if='project.CurrentNode>0 && project.CurrentNode>=2' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                            <i-icon v-if='project.ProjectStatus===5' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
+                        </span>
+                    </li>
+
+                    <li style="width:100%;">
+                        <span>填写宇龙编码  ({{ project.ProjectorName}}) :</span>
+                        <span>{{isNull(project.EndTime)?'未填写': `已填写 / ${isNull(project.EndTime)?'':project.EndTime}`}}
+                            <i-icon v-if='!isNull(project.EndTime)' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
+                        </span>
                     </li>
                 </ul>
             </i-card>
@@ -25,9 +53,10 @@
         <!-- 项目审批流程 -->
         <div style="margin-bottom:60px;">
             <i-divider>项目审批流程</i-divider>
+            <p><i-input search enter-button v-model="searchKey" size="large" @on-search='queryProject' @on-enter='queryProject' style="width:100%;margin-right:30px;" placeholder="项目名称 产品经理 项目经理 运营..." /></p>
             <div class="flow">
-                <div class="flow_item" v-for="(item,index) in projects" :key="item.ProjectId">
-                    <span>{{item.ProjectName?item.ProjectName:`项目${index+1}`}}</span>
+                <div class="flow_item" v-for="item in projects" :key="item.ProjectId">
+                    <span>{{item.ProjectName?item.ProjectName:''}}</span>
                     <i-steps :current="item.CurrentNode+1">
                         <i-step :title="'产品立项 '+' ('+item.ProductorName+')'" :content="item.ProductorRemark"></i-step>
                         <i-step :title="'项目经理审批 '+' ('+item.ProjectorName+')'" :content="item.ProjectorRemark"></i-step>
@@ -49,6 +78,7 @@
                     </div>
                 </div>
             </div>
+            <i-page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
         </div>
 
         <!-- 审核 -->
@@ -150,7 +180,7 @@
 
                 <i-divider>产品信息</i-divider>
                 <ul class="approval_item">
-                    <li v-for="item in scanProjectInfo.productionInfo " v-show='item.value && transformName(item.name)'>
+                    <li v-for="item in scanProjectInfo.productionInfo " v-show='item.value && transformName(item.name)' :key="item.name">
                         <span>{{transformName(item.name)}}:</span>
                         <span>{{item.value}}</span>
                     </li>
@@ -195,6 +225,10 @@ import {
 export default {
     data(){
         return{
+            pageSize:10,
+            totalCount:0,
+            currentPage:1,
+            searchKey:'',
             projectOver:false,
             projectInfo:{
                 projectId:'',
@@ -308,8 +342,20 @@ export default {
                 // return '口数'
             }
         },
+        goPage(page){
+            this.currentPage = page
+            this.queryProject()
+        },
         queryApprovalProject(){//查询审批项目
-            queryProject({userId:this.userInfo.UserId,type:this.userInfo.RoleId === 2?'OperatorUserId':'ProjectorUserId',status:this.userInfo.RoleId === 2?1:20,projector:this.userInfo.RoleId === 2?'':'projector'}).then( (res) => {
+        let params = {
+            userId:this.userInfo.UserId,
+            type:this.userInfo.RoleId === 2?'OperatorUserId':'ProjectorUserId',
+            status:this.userInfo.RoleId === 2?1:20,
+            projector:this.userInfo.RoleId === 2?'':'projector',
+            
+        }
+            queryProject(params).then( (res) => {
+                console.log(res.data)
                 this.approvalProjects = res.data.items
 
                 for(let i=0; i<this.approvalProjects.length; i++){
@@ -327,9 +373,17 @@ export default {
             })
         },
         queryProject(){
-            queryProject({userId:this.userInfo.UserId,type:this.userInfo.RoleId === 2?'OperatorUserId':'ProjectorUserId'}).then( (res) => {
+            let params = {
+                userId:this.userInfo.UserId,
+                type:this.userInfo.RoleId === 2?'OperatorUserId':'ProjectorUserId',
+                currentPage:this.currentPage,
+                pageSize:this.pageSize,
+                key:this.searchKey
+            }
+            queryProject(params).then( (res) => {
                 console.log(res)
                 this.projects = Object.freeze(res.data.items)
+                this.totalCount = res.data.total
 
             })
         },
@@ -396,20 +450,28 @@ export default {
                 this.queryProject()
             })
         },
+        detail(item){
+            this.scanProjectStatus = true
+            this.scanProjectInfo = {...this.scanProjectInfo,...item}
+            this.scanProjectInfo.productionInfo = []
+            if(Array.isArray(item.ProductionInfo)){
+                this.scanProjectInfo.productionInfo = item.ProductionInfo
+                return
+            }
+            
+            let list = JSON.parse(item.ProductionInfo)
+            for(let key in list){
+                this.scanProjectInfo.productionInfo.push({
+                    name:key,
+                    value:list[key]
+                })
+                
+            }
+        },
         operateHandler(type,item){
             switch(type){
                 case 1:
-                    this.scanProjectStatus = true
-                    this.scanProjectInfo = {...this.scanProjectInfo,...item}
-                    this.scanProjectInfo.productionInfo = []
-                    let list = JSON.parse(item.ProductionInfo)
-                    for(let key in list){
-                        this.scanProjectInfo.productionInfo.push({
-                            name:key,
-                            value:list[key]
-                        })
-                        
-                    }
+                    this.detail(item)
                 break;
             }
         }

@@ -66,11 +66,6 @@ export default {
                     type: 'index',
                     render: (h, params) => {
                         return h('div', [
-                            h('Icon', {
-                                props: {
-                                    type: 'person'
-                                }
-                            }),
                             h('strong', params.row.name)
                         ]);
                     }
@@ -201,7 +196,7 @@ export default {
                         this.$Modal.remove()
                         this.dataModule.splice(data.index,1)
                     },error => {
-                            this.$Modal.remove()
+                        this.$Modal.remove()
                     })
                 }
             })

@@ -9,7 +9,9 @@ queryProject = (req,res) => {
     let status = req.query.status
     let projector = req.query.projector
     let str
-    console.log(req.query)
+    let key = req.query.key || ''
+    let curPage = Number(req.query.currentPage) || 1
+    let pageSize = Number(req.query.pageSize) || 15
     if(status){
         if(projector){
             if(status==20){
@@ -23,12 +25,22 @@ queryProject = (req,res) => {
         }
         
     }else{
-        str = `select * from pub_approval_workflow where ${type} = '${userId}'`
+        str = `select * from pub_approval_workflow where ${type} = '${userId}' AND CONCAT(pub_approval_workflow.ProductorName,pub_approval_workflow.ProjectorName,pub_approval_workflow.OperatorName,pub_approval_workflow.ProjectName) LIKE '%${key}%'
+        LIMIT ${(curPage-1)*pageSize},${pageSize};
+        SELECT COUNT(*) AS total FROM pub_approval_workflow where ${type} = '${userId}'`
     }
     query_blog(str).then( (r) => {
-        res.send({
-            items:r
-        })
+        if(req.query.currentPage || req.query.pageSize){
+            res.send({
+                items:r[0],
+                total:r[1][0].total
+            })
+        }else{
+           res.send({
+                items:r,
+            }) 
+        }
+        
     })
 },
 
