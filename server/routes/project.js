@@ -15,6 +15,7 @@ router.get('/queryProject',constroller.queryProject)//查询项目信息
       .put('/approvalProject',constroller.approvalProject)// 审批项目
       .put('/rejectApproval',constroller.rejectApproval)// 审批不通过
       .get('/notifyApproval',constroller.notifyApproval)// 审批不通过
+      .get('/validateName',constroller.validateName)// 校验项目名称
 
 
       

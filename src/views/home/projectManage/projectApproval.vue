@@ -220,10 +220,24 @@ import Operate from './components/operatePop'
 import {
     queryProject,
     approvalProject,
-    rejectApproval
+    rejectApproval,
+    validateName
 } from '@api/project'
 export default {
     data(){
+        const validateProjectName = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入项目名称!'));
+            } else {
+                validateName({name:value}).then( ({data:{valid}}) => {
+                    if(valid){
+                        callback(new Error('项目名称已存在!'));
+                    }else{
+                        callback()
+                    }
+                })
+            }
+        };
         return{
             pageSize:10,
             totalCount:0,
@@ -250,7 +264,7 @@ export default {
                     { required: true, message: '请输入宇龙编码', trigger: 'blur' }
                 ],
                 projectName:[
-                    { required: true, message: '请输入项目名称', trigger: 'blur' }
+                    { required: true,validator:validateProjectName, trigger: 'blur' }
                 ]
             }),
             formsOp:{
@@ -355,7 +369,6 @@ export default {
             
         }
             queryProject(params).then( (res) => {
-                console.log(res.data)
                 this.approvalProjects = res.data.items
 
                 for(let i=0; i<this.approvalProjects.length; i++){
@@ -369,7 +382,6 @@ export default {
                     }
                     this.$set(this.approvalProjects[i],'ProductionInfo',arr)
                 }
-                console.log(this.approvalProjects)
             })
         },
         queryProject(){
@@ -381,7 +393,6 @@ export default {
                 key:this.searchKey
             }
             queryProject(params).then( (res) => {
-                console.log(res)
                 this.projects = Object.freeze(res.data.items)
                 this.totalCount = res.data.total
 

@@ -180,6 +180,16 @@ notifyApproval = (req,res) => {
     })
 }
 
+validateName = (req,res) => {
+    let name = req.query.name
+    query_blog(`select ProjectName from Pub_approval_Workflow Where ProjectName='${name}'`).then( (r) => {
+        res.send({
+            valid:r.length?true:false
+        })
+    })
+}
+
+
 module.exports = {
     queryProject,
     addProject,
@@ -188,5 +198,6 @@ module.exports = {
     editProject,
     approvalProject,
     rejectApproval,
-    notifyApproval
+    notifyApproval,
+    validateName
 }

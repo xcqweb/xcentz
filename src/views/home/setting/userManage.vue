@@ -89,7 +89,6 @@ export default {
                     callback(new Error('邮箱格式不正确!'));
                 }
                 checkUser({username:value}).then( (res) => {
-                    console.log(res.data.user)
                     let user = res.data.user
                     if(user.length>0){
                         callback(new Error('邮箱已注册!'));
@@ -116,7 +115,6 @@ export default {
                 callback(new Error('请输入用户名或邮箱!'));
             } else {
                 checkUser({username:value}).then( (res) => {
-                    console.log(res.data.user)
                     let user = res.data.user
                     if(user.length>0){
                         callback(new Error('用户名或邮箱太受欢迎!'));

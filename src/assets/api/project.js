@@ -71,3 +71,12 @@ export function notifyApproval(params){
         params
     })
 }
+
+// 校验项目名称是否存在
+export function validateName(params){
+    return request({
+        url:'/project/validateName',
+        method:'get',
+        params
+    })
+}

@@ -275,6 +275,7 @@ import {
 
 export default {
     data(){
+        
         return{
             pageSize:10,
             totalCount:0,
@@ -495,7 +496,6 @@ export default {
                 key:this.searchKey
             }
             queryProject(params).then( (res) => {
-                console.log(res.data.items)
                 this.projects = Object.freeze(res.data.items)
                 this.totalCount = res.data.total
             })
