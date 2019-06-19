@@ -229,43 +229,14 @@
             </div>
         </i-modal>
 
-        
-        <!-- 项目审批流程 -->
-        <div style="margin-bottom:60px;">
-            <i-divider>项目审批流程</i-divider>
-             <p><i-input search enter-button v-model="searchKey" size="large" @on-search='queryProject' @on-enter='queryProject' style="width:100%;margin-right:30px;" placeholder="项目名称 产品经理 项目经理 运营..." /></p>
-            <div class="flow">
-                <div class="flow_item" v-for="item in projects" :key="item.ProjectId">
-                    <span>{{item.ProjectName?item.ProjectName:''}}</span>
-                    <i-steps :current="item.CurrentNode+1">
-                        <i-step :title="'产品立项 '+' ('+item.ProductorName+')'" :content="item.ProductorRemark"></i-step>
-                        <i-step :title="'项目经理审批 '+' ('+item.ProjectorName+')'" :content="item.ProjectorRemark"></i-step>
-                        <i-step :title="'运营审批 '+' ('+item.OperatorName+')'" :content="item.OperatorRemark"></i-step>
-                        <i-step :title="'填写宇龙编码 '+' ('+item.ProjectorName+')'"></i-step>
-                    </i-steps>
-                    <div class="status">
-                        <i-circle v-if="item.ProjectStatus===4 || item.ProjectStatus===5" :size="36" :percent="100" :stroke-width="8" stroke-color='#ff5500'>
-                            <i-icon type="ios-close" size="36" style="color:#ff5500"></i-icon>
-                        </i-circle>
-
-                        <i-circle v-else :size="36" :percent="(item.CurrentNode+1)*25" :stroke-width="8" :stroke-color="item.ProjectStatus===1?'#5cb85c':'#2d8cf0'">
-                            <i-icon v-if="item.CurrentNode===3" type="ios-checkmark" size="36" :style="{color:item.CurrentNode===3?'#5cb85c':'#5cb85c'}"></i-icon>
-                        </i-circle>
-                        <span style="margin-left:6px;font-size:14px;">{{transformStatus(item.ProjectStatus)}}</span>
-                    </div>
-                    <div class="operate">
-                        <Operate @operateHandler='operateHandler' :item='item'></Operate>
-                    </div>
-                </div>
-            </div>
-            <i-page @on-change='goPage' :total="totalCount" :cureent='currentPage' show-total :page-size='pageSize' show-elevator style='margin:20px 0;' />
-        </div>
+         <!-- 项目审批流程 -->
+        <Approval-list  @updateKey=" val => this.searchKey = val " @queryProject='queryProject' @operateHandler="operateHandler" :projects='projects' :goPage='goPage' :totalCount='totalCount' :currentPage='currentPage' :pageSize='pageSize'></Approval-list>
     </div>
 </template>
 
 <script>
 import {product,productChild,supplier,sellStatus,packs,lineLengths,portMaterials,outMaterials,colors,ports,charges,batterys} from './products.json'
-import Operate from './components/operatePop'
+import ApprovalList from './components/approvalList'
 import {
     queryProject,
     addProject,
@@ -360,7 +331,7 @@ export default {
             })
         }
     },
-    components:{Operate},
+    components:{ApprovalList},
     computed:{
         products(){
             return Object.freeze(product)
@@ -413,70 +384,7 @@ export default {
             this.modelProject.supplier = ''
         },
        
-        transformStatus(status){
-            switch(status){
-                case 1:
-                return '已完成'
-
-                case 2:
-                return '进行中'
-
-                case 3:
-                return '已取消'
-
-                case 4:
-                return '不通过'
-
-                case 5:
-                return '不通过'
-            }
-        },
-        transformName(key){
-            switch(key){
-                case 'projectName':
-                return '项目名称'
-
-                case 'product':
-                return '品类'
-
-                case 'productChild':
-                return '子品类'
-
-                case 'supplier':
-                return '供应商'
-
-                case 'sellStatu':
-                return '项目状态'
-
-                case 'pack':
-                return '包装'
-
-                case 'color':
-                return '颜色'
-
-                case 'lineLength':
-                return '线材长度'
-
-                case 'outMaterial':
-                return '外被材质'
-
-                case 'portMaterial':
-                return '端子材质'
-
-                case 'port':
-                return '口数'
-
-                case 'charge':
-                return '充电技术'
-
-                case 'battery':
-                return '电池容量(mAh)'
-
-                // case 'remarks':
-                // return '口数'
-            }
-
-        },
+        
         //查询角色用户
         queryRoleUser(){
             queryRoleUser({roles:'10,2'}).then( (res) => {

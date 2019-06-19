@@ -5,7 +5,8 @@
             <i-dropdown-item data-index='1'><i-icon type="md-information-circle" /> 详情</i-dropdown-item>
             <i-dropdown-item data-index='2' divided v-if="userInfo.RoleId === 6 && item.ProjectStatus===2 || userInfo.RoleId === 6 && item.CurrentNode===-1 "><i-icon type="md-create" /> {{item.CurrentNode===-1?'立项':'编辑'}}</i-dropdown-item>
             <i-dropdown-item data-index='3' divided v-if="userInfo.RoleId === 6 && item.ProjectStatus!==1 && item.CurrentNode===0" ><i-icon type="ios-trash" /> 删除</i-dropdown-item>
-            <i-dropdown-item data-index='4' divided v-if="((userInfo.RoleId !== 2 && item.CurrentNode === 1)  || (userInfo.RoleId !== 10 && item.CurrentNode === 0) ) && item.ProjectStatus===2"><i-icon type="md-notifications" /> 通知</i-dropdown-item>
+            <i-dropdown-item data-index='4' divided v-if="((userInfo.RoleId !== 2 && item.CurrentNode === 1)  || (userInfo.RoleId !== 10 && item.CurrentNode === 0 || item.CurrentNode === 2) ) && item.ProjectStatus===2"><i-icon type="md-notifications" /> 通知</i-dropdown-item>
+            <i-dropdown-item data-index='5' divided v-if="(userInfo.RoleId === 2 && item.CurrentNode === 1) || (userInfo.RoleId === 10 && item.CurrentNode === 0)" ><i-icon type="md-create" /> 审批</i-dropdown-item>
         </i-dropdown>
     </i-poptip>
 </template>
@@ -71,6 +72,9 @@ export default {
                             })
                         }
                     });
+                break;
+                case '5':
+                this.$emit('operateHandler',5,this.item)
                 break;
             }
         }
