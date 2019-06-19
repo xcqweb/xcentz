@@ -19,7 +19,6 @@ import {
 export default {
     data(){
         return{
-
         }
     },
     props:{
@@ -55,7 +54,7 @@ export default {
                 break;
 
                 case '4'://通知审批
-                    console.log(this.item)
+                    // console.log(this.item)
                     this.$Modal.confirm({
                         title: '提示',
                         loading: true,
@@ -67,14 +66,16 @@ export default {
                             }else if(this.item.CurrentNode===1){
                                 userId = this.item.OperatorUserId
                             }
+
                             notifyApproval({userId,projectId:this.item.ProjectId}).then( () => {
                                 this.$Modal.remove()
                             })
                         }
                     });
                 break;
+
                 case '5':
-                this.$emit('operateHandler',5,this.item)
+                    this.$emit('operateHandler',5,this.item)
                 break;
             }
         }

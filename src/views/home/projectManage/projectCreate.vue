@@ -230,7 +230,7 @@
         </i-modal>
 
          <!-- 项目审批流程 -->
-        <Approval-list  @updateKey=" val => this.searchKey = val " @queryProject='queryProject' @operateHandler="operateHandler" :projects='projects' :goPage='goPage' :totalCount='totalCount' :currentPage='currentPage' :pageSize='pageSize'></Approval-list>
+        <Approval-list  @updateKey=" val => this.searchKey = val " @queryProject='queryProject' :projects='projects' :goPage='goPage' :totalCount='totalCount' :currentPage='currentPage' :pageSize='pageSize'></Approval-list>
     </div>
 </template>
 
@@ -384,7 +384,6 @@ export default {
             this.modelProject.supplier = ''
         },
        
-        
         //查询角色用户
         queryRoleUser(){
             queryRoleUser({roles:'10,2'}).then( (res) => {
@@ -458,38 +457,6 @@ export default {
                 })
             }
         },
-        operateHandler(type,item){
-            switch(type){
-                case 1: //详情
-                    if(!this.roles.length){
-                        this.queryRoleUser()
-                    }
-                    this.scanProjectStatus = true
-                    this.scanProjectInfo = {...this.scanProjectInfo,...item}
-                    this.scanProjectInfo.productionInfo = []
-                    let list = JSON.parse(item.ProductionInfo)
-                    for(let key in list){
-                        this.scanProjectInfo.productionInfo.push({
-                            name:key,
-                            value:list[key]
-                        })
-                        
-                    }
-            
-                break;
-
-                case 2://编辑
-                    this.modalTitle = '编辑项目'
-                    this.isEdit = true
-                    this.projectId = item.ProjectId
-                    this.addProjectStatus = true
-                    this.currentNode = item.CurrentNode
-                    
-                    this.modelProject = {...this.modelProject,...JSON.parse(item.ProductionInfo)}
-                break;
-            }
-        }
-        
     }
 }
 </script>

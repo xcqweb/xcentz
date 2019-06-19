@@ -155,10 +155,10 @@ export default {
         operateHandler(type,item){
             switch(type){
                 case 1:
-                    this.detail(item)
+                    this.detail(item)//详情
                 break;
                 case 5:
-                    this.$emit('approval',item)
+                    this.$emit('approval',item)//审批
                     break;
             }
         },
