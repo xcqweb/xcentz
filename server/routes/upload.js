@@ -4,9 +4,7 @@ const fs = require('fs');
 const router = express.Router();
 const xlsx = require('node-xlsx').default;
 const FormData = require('form-data');
-const multipart = require('connect-multiparty');
 const multer  = require('multer')
-const multipartMiddleware = multipart();
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {

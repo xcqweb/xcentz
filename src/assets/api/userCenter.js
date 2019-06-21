@@ -26,3 +26,12 @@ export function edituserInfo(params){
         data:params
     })
 }
+
+//上传用户头像
+export function uploadAvatar(params){
+    return request({
+        url:'/userCenter/uploadAvatar',
+        method:'post',
+        data:params
+    })
+}

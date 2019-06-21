@@ -8,11 +8,14 @@ import 'iview/dist/styles/iview.css';
 import '@/assets/styles/main.less'
 
 import {throttle,debounce} from 'lodash'
+import imageCropper from '@@/imageCropper/index.js'
 
 window.throttle = throttle
 window.debounce = debounce
 Vue.config.productionTip = false
-console.log(process.env)
+
+Vue.use(imageCropper)
+
 Vue.mixin({
   data(){
     return{

@@ -46,7 +46,11 @@ instance.interceptors.response.use( (response) => {
 	response.data && response.data.errorCode && Message.message('success',{
 		content:errorCodes[response.data.errorCode],
 	})
-	return response
+	return new Promise( (re) => {
+        re (response)
+    }).catch( (err)=>{
+        console.log(err)
+    })
 	
 }, error => {
 	if(error.code==='ECONNABORTED'){

@@ -1,3 +1,19 @@
+
+const multer  = require('multer')
+const uuid = require('node-uuid') //生成唯一id
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './upload')
+    },
+    filename: function (req, file, cb) {
+        let prefix = file.mimetype.split('/')[1]
+        let id = uuid.v4()
+        // console.log(file.mimetype.split('/')[1])
+        cb(null, `${id}.${prefix}`)
+    }
+}),
+upload = multer({ storage:storage});
+
 let {query} = require('../database'),
 
     queryUser =  (req,res) => {
@@ -64,9 +80,26 @@ let {query} = require('../database'),
         })
     }
 
+    uploadAvatar = (req,res) =>{
+        upload.single('file')(req,res,function(err){
+            if (err instanceof multer.MulterError) {
+            // 发生错误
+            } else if (err) {
+                // 发生错误
+            }else{
+                console.log(req.file.filename)
+                res.send({
+                    message:'上传成功!',
+                    path:'https://localhost/'+req.file.filename
+                })
+            }
+        })
+    }
+
 
 module.exports = {
     queryUser,
     editPassword,
-    edituserInfo
+    edituserInfo,
+    uploadAvatar
 }

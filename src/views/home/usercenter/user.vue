@@ -1,7 +1,7 @@
 <template>
     <i-tabs class="usercenter_info" v-model="tab" @on-click='page'>
         <i-tab-pane label="个人信息" name='0' icon="ios-contact" style="display:flex;margin:30px 0 0 0;cursor:pointer;">
-            <i-avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="width:260px;height:300px;margin:0 36px;" @click.native='updateAvatar' />
+            <i-avatar :src="avatar" class="avatar" @click.native='updateAvatar' />
             <i-form ref="form_adduser" :model="addUser" :label-width="120" :rules="ruleInline" style="width:480px;">
                 <i-form-item prop="user" style="height:40px;" label='用户名'>
                     <i-input type="text" size="large" style="width:100%;" v-model="addUser.user" disabled/>
@@ -83,6 +83,7 @@
 import { queryUser,editPassword,edituserInfo } from "@api/userCenter";
 import { getEmailCode } from '@api'
 import { queryMsg } from '@api/message'
+import {Bus} from '@/assets/js/until'
 export default {
     data(){
                 
@@ -144,6 +145,7 @@ export default {
                     }
                 }
             ]),
+            avatar:'https://i.loli.net/2017/08/21/599a521472424.jpg',
             phoneStatus:false,
             cnameStatus:false,
             loading:false,
@@ -185,6 +187,7 @@ export default {
         }
     },
     activated(){
+        
         this.queryUser()
         if(this.$route.query.tab){
             this.tab = this.$route.query.tab
@@ -268,7 +271,7 @@ export default {
                 return
             }
             this[`${type}Status`] = true
-            let params = {phone:this.addUser.phone,cname:this.addUser.cname,userId:this.userInfo.UserId}
+            let params = type === 'phone'?{phone:this.addUser.phone,userId:this.userInfo.UserId}:{cname:this.addUser.cname,userId:this.userInfo.UserId}
             edituserInfo(params).then( (res) => {
                 this[`${type}Status`] = false
             },error => {
@@ -277,7 +280,12 @@ export default {
         },
         //更新头像
         updateAvatar(){
-            alert('正在加紧开发中...`')
+            this.$imageCropper.upload().then(() => {
+                Bus.$on('uploadImage',(src) => {
+                    this.avatar = src
+                    Bus.$off('uploadImage')
+                })
+            })
         }
     }
 }
@@ -285,6 +293,15 @@ export default {
 
 <style lang="less" scoped>
 .usercenter_info{
+    .avatar{
+        width:260px;
+        height:300px;
+        margin:0 36px;
+        box-shadow: 0 1px 6px rgba(0,0,0,.2);  
+        &:hover>{
+          box-shadow: 0 2px 12px rgba(0,0,0,.2);  
+        }
+    }
 }
 
 </style>

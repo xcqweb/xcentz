@@ -283,7 +283,6 @@ export default {
             queryProject(params).then( (res) => {
                 this.projects = Object.freeze(res.data.items)
                 this.totalCount = res.data.total
-
             })
         },
         //审批

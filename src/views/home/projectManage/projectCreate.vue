@@ -145,92 +145,9 @@
             
         </i-modal>
 
-        <!-- 查看项目 -->
-        <i-modal
-            v-model="scanProjectStatus"
-            width='700'
-            :styles="{marginBottom:'60px'}"
-            footer-hide
-            title="项目详情">
-            <div style="margin:20px;">
-                <i-divider>项目详情</i-divider>
-                <ul class="approval_item">
-                    <li v-if="scanProjectInfo.ProjectName">
-                        <span>项目名称:</span>
-                        <span>{{scanProjectInfo.ProjectName}}</span>
-                    </li>
-
-                     <li v-if="scanProjectInfo.YLCode">
-                        <span>宇龙编码:</span>
-                        <span>{{scanProjectInfo.YLCode}}</span>
-                    </li>
-
-                    <li v-if="scanProjectInfo.Sku">
-                        <span>Sku:</span>
-                        <span>{{scanProjectInfo.Sku}}</span>
-                    </li>
-
-                    <li v-if="scanProjectInfo.Asin">
-                        <span>Asin:</span>
-                        <span>{{scanProjectInfo.Asin}}</span>
-                    </li>
-
-                    <li v-if="scanProjectInfo.ParentAsin">
-                        <span>ParentAsin:</span>
-                        <span>{{scanProjectInfo.ParentAsin}}</span>
-                    </li>
-
-                     <li>
-                        <span>创建人:</span>
-                        <span>{{scanProjectInfo.ProductorName}}</span>
-                    </li>
-                    <li>
-                        <span>创建时间:</span>
-                        <span>{{scanProjectInfo.CreateTime}}</span>
-                    </li>
-
-                    <li v-if="!isNull(scanProjectInfo.EndTime)">
-                        <span>结束时间:</span>
-                        <span>{{isNull(scanProjectInfo.EndTime)?'':scanProjectInfo.EndTime}}</span>
-                    </li>
-                </ul>
-
-                <i-divider>产品信息</i-divider>
-                <ul class="approval_item">
-                    <li v-for="item in scanProjectInfo.productionInfo " v-show='item.value && transformName(item.name)' :key="item.name">
-                        <span>{{transformName(item.name)}}:</span>
-                        <span>{{item.value}}</span>
-                    </li>
-                </ul>
-                <i-divider>审批信息</i-divider>
-                <ul class="approval_item">
-                    <li style="width:100%;">
-                        <span>项目经理审批 ({{ scanProjectInfo.ProjectorName}}) :</span>
-                        <span>{{scanProjectInfo.ProjectStatus===4 && scanProjectInfo.CurrentNode===-1?`审核不通过 / ${isNull(scanProjectInfo.ProjectorApprovalTime)?'':scanProjectInfo.ProjectorApprovalTime}`:scanProjectInfo.CurrentNode===0?'等待审批':`审批通过 / ${isNull(scanProjectInfo.ProjectorApprovalTime)?'':scanProjectInfo.ProjectorApprovalTime}`}}
-                            <i-icon v-if='scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1 || scanProjectInfo.CurrentNode>0' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
-                            <i-icon v-if='scanProjectInfo.ProjectStatus===4' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
-                        </span>
-                    </li>
-                    <li style="width:100%;">
-                        <span>运营审批  ({{scanProjectInfo.OperatorName}}) :</span>
-                        <span>{{scanProjectInfo.ProjectStatus===5 && scanProjectInfo.CurrentNode===-1?`审核不通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`:scanProjectInfo.CurrentNode===0 || scanProjectInfo.CurrentNode===1 || scanProjectInfo.CurrentNode===-1 ?'等待审批':`审批通过 / ${isNull(scanProjectInfo.OperatorApprovalTime)?'':scanProjectInfo.OperatorApprovalTime}`}}
-                            <i-icon v-if='scanProjectInfo.CurrentNode>0 && scanProjectInfo.CurrentNode>=2' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
-                            <i-icon v-if='scanProjectInfo.ProjectStatus===5' style="color:#5cb85c;font-size:30px;color:#ff5500" type="ios-close" />
-                        </span>
-                    </li>
-
-                    <li style="width:100%;">
-                        <span>填写宇龙编码  ({{ scanProjectInfo.ProjectorName}}) :</span>
-                        <span>{{isNull(scanProjectInfo.EndTime)?'未填写': `已填写 / ${isNull(scanProjectInfo.EndTime)?'':scanProjectInfo.EndTime}`}}
-                            <i-icon v-if='!isNull(scanProjectInfo.EndTime)' style="color:#5cb85c;font-size:30px;" type="ios-checkmark" />
-                        </span>
-                    </li>
-                </ul>
-            </div>
-        </i-modal>
 
          <!-- 项目审批流程 -->
-        <Approval-list  @updateKey=" val => this.searchKey = val " @queryProject='queryProject' :projects='projects' :goPage='goPage' :totalCount='totalCount' :currentPage='currentPage' :pageSize='pageSize'></Approval-list>
+        <Approval-list  @updateKey=" val => this.searchKey = val " @queryProject='queryProject' @operateHandlers='operateHandler' :projects='projects' :goPage='goPage' :totalCount='totalCount' :currentPage='currentPage' :pageSize='pageSize'></Approval-list>
     </div>
 </template>
 
@@ -457,6 +374,17 @@ export default {
                 })
             }
         },
+        operateHandler(type,item){
+            if(type === 2){
+                this.modalTitle = item.CurrentNode ===-1 ?'重新立项':'编辑项目'
+                this.isEdit = true
+                this.projectId = item.ProjectId
+                this.addProjectStatus = true
+                this.currentNode = item.CurrentNode
+                
+                this.modelProject = {...this.modelProject,...JSON.parse(item.ProductionInfo)}
+            }
+        }
     }
 }
 </script>

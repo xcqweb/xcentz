@@ -238,6 +238,9 @@ export default {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                &:hover{
+                    opacity:0.7;
+                }
                 &>span{
                     position: absolute;
                     bottom: -8px;

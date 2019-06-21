@@ -1,7 +1,7 @@
 const mysql = require('mysql')
 const config = require('./config')
 
-var poolCluster = mysql.createPoolCluster();
+var poolCluster = mysql.createPoolCluster(); //连接多个数据库
 
 let masterConfig = {
     host:'localhost',
@@ -14,7 +14,7 @@ let masterConfig = {
     connectionLimit:30
 }
 
-poolCluster.add('project',config);
+poolCluster.add('PROJECT',config);
 poolCluster.add('MASTER', masterConfig); 
 
 // const pool = mysql.createPool({
@@ -30,7 +30,7 @@ poolCluster.add('MASTER', masterConfig);
 
 let query = function(sql, values) {
 	return new Promise((resolve, reject) => {
-        poolCluster.getConnection('project',function(err, connection) {
+        poolCluster.getConnection('PROJECT',function(err, connection) {
             if (err) {
                 reject(err)
             } else {

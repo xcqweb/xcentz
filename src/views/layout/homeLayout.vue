@@ -1,7 +1,7 @@
 <template>
     <div style="width:100%;overflow:hidden;">
         <slide-bar @collapseMenu='collapseMenu' @collapse='collapse' :style="{width:iscollapse?'40px':'',paddingRight:iscollapse?'50px':'',marginLeft:iscollapse?'-10px':''}" style="overflow:hidden;transition: width 1s;"/>
-        <div class="home_left" :style="{marginLeft:iscollapse?'40px':'240px',width:iscollapse?'calc(100% - 40px)':'calc(100% - 240px)'}">
+        <div class="home_left" id="homeLayout" :style="{marginLeft:iscollapse?'40px':'240px',width:iscollapse?'calc(100% - 40px)':'calc(100% - 240px)'}">
             <top-bar />
             <div class="home_view">
                 <keep-alive>

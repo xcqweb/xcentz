@@ -4,7 +4,7 @@
         <p><i-input search enter-button v-model="searchKey" size="large" @on-search='$emit("queryProject")' @on-enter='$emit("queryProject")' style="width:100%;margin-right:30px;" placeholder="项目名称 产品经理 项目经理 运营..." /></p>
         <div class="flow">
             <div class="flow_item" v-for="item in projects" :key="item.ProjectId">
-                <span>{{item.ProjectName?item.ProjectName:''}}</span>
+                <span style='font-size:14px;'>{{item.ProjectName?item.ProjectName:''}}</span>
                 <i-steps :current="item.CurrentNode+1">
                     <i-step :title="'产品立项 '+' ('+item.ProductorName+')'" :content="item.ProductorRemark"></i-step>
                     <i-step :title="'项目经理审批 '+' ('+item.ProjectorName+')'" :content="item.ProjectorRemark"></i-step>
@@ -156,6 +156,9 @@ export default {
             switch(type){
                 case 1:
                     this.detail(item)//详情
+                break;
+                case 2://编辑
+                    this.$emit('operateHandlers',2,item)
                 break;
                 case 5:
                     this.$emit('approval',item)//审批

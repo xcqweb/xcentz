@@ -1,3 +1,4 @@
+import Vue from 'vue'
 
 //扁平化数组
 export  function flatten(arr) {  
@@ -66,3 +67,5 @@ export function transformStatus(status){
         return '已取消'
     }
 }
+
+export let Bus = new Vue()
