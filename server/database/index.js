@@ -13,7 +13,6 @@ let masterConfig = {
     connectTimeout:30000,
     connectionLimit:30
 }
-
 poolCluster.add('PROJECT',config);
 poolCluster.add('MASTER', masterConfig); 
 

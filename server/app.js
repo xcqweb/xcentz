@@ -123,7 +123,6 @@ app.set('views', path.join(__dirname, 'views'))
         res.status(err.status || 500);
         res.render('error');
     });
-    
     var options = {
         key: fs.readFileSync(__dirname + '/keys/server.key'),
         cert: fs.readFileSync(__dirname + '/keys/server.crt'),

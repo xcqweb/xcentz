@@ -1,6 +1,7 @@
 
 const multer  = require('multer')
 const uuid = require('node-uuid') //生成唯一id
+const {updateUserList} = require('../common/untl')
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './upload')
@@ -46,6 +47,7 @@ let {query} = require('../database'),
             query(`SELECT PassWord FROM Pub_User WHERE UserId='${userId}'`).then( (re) => {
                 if(user.old_password === re[0].PassWord){
                     query(`UPDATE Pub_User SET PassWord='${user.confirmPsw}' WHERE UserId='${userId}'`).then( (r) => {
+                        updateUserList()
                         res.send({
                             errorCode:100038
                         })
@@ -70,6 +72,7 @@ let {query} = require('../database'),
     edituserInfo = (req,res) => {
         let user = req.body
         query(`UPDATE Pub_User SET Phone='${user.phone}',Cname='${user.cname}' WHERE UserId='${user.userId}'`).then( (r) => {
+            updateUserList()
             res.send({
                 errorCode:100041
             })

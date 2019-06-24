@@ -271,7 +271,7 @@ export default {
                 return
             }
             this[`${type}Status`] = true
-            let params = type === 'phone'?{phone:this.addUser.phone,userId:this.userInfo.UserId}:{cname:this.addUser.cname,userId:this.userInfo.UserId}
+            let params = {phone:this.addUser.phone,cname:this.addUser.cname,userId:this.userInfo.UserId}
             edituserInfo(params).then( (res) => {
                 this[`${type}Status`] = false
             },error => {

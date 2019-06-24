@@ -67,6 +67,9 @@ export default {
                     cropmove(event) {
                         _self.getImg()
                     },
+                    zoom(){
+                        _self.getImg()
+                    }
                 })
             })
             if(this.cropper){
