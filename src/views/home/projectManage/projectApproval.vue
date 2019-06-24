@@ -6,7 +6,8 @@
             <i-card style="width:42%;margin:30px 30px;min-width:360px;" v-for="project in approvalProjects" :key="project.ProjectId">
                 <p slot="title">
                     <i-icon type="ios-film-outline"></i-icon>
-                    审批项目{{project.ProjectName?`-${project.ProjectName}`:''}} {{project.CurrentNode===2?'( 填写宇龙编码 )':''}}
+                    
+                    审批项目{{project.ProjectName?`-${project.ProjectName}`:''}} <span style="color:#17233d;font-size:12px;">{{project.CurrentNode===2?'( 填写宇龙编码 )':''}}</span>
                 </p>
 
                 <a href="javascript:;" slot="extra" @click="approval(project)">
