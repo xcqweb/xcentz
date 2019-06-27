@@ -36,7 +36,7 @@
 
 ## start 运行方式
 
-- 启动 pm2 start server.js 或 pm2 start server.js -i max 
+- 启动 pm2 start server.js 或 pm2 start server.js -i max (详细参见pm2文档)
 - 重启 pm2 restart all 或 pm2 restart id(进程id) 
 - 杀死进程 delete all 或 delete id(进程id)
 - 查看进程运行参数 pm2 monit

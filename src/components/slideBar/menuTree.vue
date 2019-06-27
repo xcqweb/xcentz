@@ -35,7 +35,7 @@ export default {
         }
     },
     watch:{
-        '$route'(val){ //动态响应展开菜单
+        '$route'(val){ //动态响应展开菜单(点击tag菜单会自动展开收起)
             let _this = this
             let ids = []
             function findParent(menus,pId){ //查找上级节点id

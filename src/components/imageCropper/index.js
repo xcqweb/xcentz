@@ -1,3 +1,4 @@
+//图片上传插件
 import ImageCropper from './index.vue'
 
 let vm

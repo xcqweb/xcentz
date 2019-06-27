@@ -14,6 +14,7 @@ router.get('/queryUser',constroller.queryUser)
 
         //用户修改个人信息
         .put('/edituserInfo',constroller.edituserInfo)
+        //上传用户头像
         .post('/uploadAvatar',constroller.uploadAvatar)
 
 

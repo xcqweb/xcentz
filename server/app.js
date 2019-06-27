@@ -20,7 +20,6 @@ let createError = require('http-errors'),
     Redis = require('redis'),
     schedule = require('./common/scheduleTask'),
     spdy = require('spdy');
-    vhost = require('vhost');
 
     global.redis = Redis.createClient()
 
@@ -46,7 +45,7 @@ app.set('views', path.join(__dirname, 'views'))
       ]
     }))
     .use(logger('dev'))
-    // app.use(logger('combined'));
+    // app.use(logger('combined'));//日志
     .use(express.json())
     .use(express.urlencoded({ extended: false }))
     .use(cookieParser())
@@ -60,12 +59,13 @@ app.set('views', path.join(__dirname, 'views'))
         httpOnly: true,
         resave:true,
         saveUninitialized:true,
-        store: new RedisStore({host:'localhost',port:6379,maxAge : 60*60*1000}) //解决多进程session不能共享的问题
+        store: new RedisStore({host:'localhost',port:6379,maxAge : 60*60*1000}) //redis解决多进程session不能共享的问题
     }))
 
     .use(jwtAuth)
 
     .use('/',function(req, res, next) {
+        res.setHeader('Cache-Control', `public, max-age=${60*60*20}`);
         let path = req.path
         let unLessPath = [
             "/api/xcentz/v1/users/login", 
@@ -123,6 +123,7 @@ app.set('views', path.join(__dirname, 'views'))
         res.status(err.status || 500);
         res.render('error');
     });
+    //http2.0
     var options = {
         key: fs.readFileSync(__dirname + '/keys/server.key'),
         cert: fs.readFileSync(__dirname + '/keys/server.crt'),

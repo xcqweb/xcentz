@@ -1,4 +1,4 @@
-let auto = require('autocannon')
+let auto = require('autocannon') //接口并发测试
 
 let token ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoYXNlLnh1IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJub3ciOjE1NTk1Mjk3NzcyMjUsImlhdCI6MTU1OTUyOTc3NywiZXhwIjoxNTU5NTMzMzc3fQ.31-ROzV7O1Dczzhj6l2DIEZ4pO85Gyqp1D2Gl9P8cPg'
 

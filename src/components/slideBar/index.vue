@@ -106,6 +106,7 @@ export default {
                 this.$router.push(`/${name}`)
             }
         },
+        //展开收起
         collapseHandler(){
             let menuChilds = this.$refs.menu.$children
             this.isCollapse = !this.isCollapse
