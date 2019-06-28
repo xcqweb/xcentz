@@ -7,7 +7,7 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>xcentz</title>
     <% for(var js of htmlWebpackPlugin.options.cdn.js) { %>
-      <script src="<%=js%>" rel='prefetch' ></script>
+      <script src="<%=js%>"></script>
     <% } %>
 
   </head>

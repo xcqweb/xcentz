@@ -93,6 +93,7 @@ export default {
                 this.menus = Object.freeze(menuList[0].children)
                 //配置权限动态路由
                 let filterAuthRoutes = this.fliterRoute(flatten(menuList))
+                console.log(filterAuthRoutes)
                 this.$router.matcher.addRoutes(filterAuthRoutes)
             },error => {
                 this.err = true
@@ -190,5 +191,6 @@ export default {
             }
         }
 </style>
+
 
 

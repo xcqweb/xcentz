@@ -6,7 +6,7 @@
     5. 后台采用pm2 进行进程管理 和nginx代理服务器;
     6. 采用redis和mysql结合的方式提高查询效率;
     7. 可以时间邮件的发送功能;
-    8. 采用session和redis解决多台服务器session不共享的问题;
+    8. 采用session和redis解决多台服务器session不共享的问题,多进程连接多条数据库;
 
 ## 登录页面
 
@@ -59,56 +59,60 @@ open in http://localhost:8008/
 
 
 目录结构:
-│  .babelrc //babel配置
 │  .gitignore
+│  .tgitconfig
+│  babel.config.js
+│  copy.js //拷贝文件或目录方法
+│  deploy.yaml //pm2部署文件
 │  package-lock.json
 │  package.json
 │  README.md
-│  copy.js //拷贝文件目录
-
-│－static   //webpack前端静态资源打包输出目录
+│  vue.config.js //vue-cli3 配置文件
 │
-|── vue.config
-│      
-│
-├─server  // node服务侧目录
-│  │  app.js
-│  │  app2.js
-│  │  server.js //启动多个进程服务
-│  │
-│  ├─bin
-│  │
-│  ├─public 
-│  │
-│  ├─database //数据库
-│  │
-│  ├─middleware //中间件
-│  │
-|  ├─upload //文件上传目录
-|  |
-│  ├─nginx //代理服务器
-│  │
-│  ├─routes //路由接口
+├─dist
+├─public
+├─remade
+├─server //服务端目录
+│  │  app.js //主入口文件1
+│  │  app2.js //主入口文件2
+│  │  auto.js //node 并发测试
+│  │  babelrc
+│  │  package-lock.json
+│  │  package.json
+│  │  server.js //入口文件支持同时进行多个主入口文件运行
 │  │
 │  ├─common //工具库
-|  |
-|  ├─controllers 
-│  │
+│  ├─constrollers //接口数据库操作
+│  ├─database //数据库操作
+│  ├─keys //https 证书
+│  ├─middleware //中间件
+│  ├─nginx //nginx 代理服务器
+│  ├─routes //路由
+│  ├─upload //上传文件目录
 │  └─views //视图模板
-│
-└─src //前端项目目录
-    │
-    │
-    ├──────────────────────────────────────────assets
-    │                                            |
-    ├───components//组件                         |───api
-    │                                            |───js
-    ├─router─────────|                           |───images
-    │                |──module //权限路由         |───styles  
-    │                |                               
-    |                |──index  //基础路由             
-    │
-    └─views //视图
+├─src //前端主目录
+│  │  App.vue
+│  │  env.js //环境参数
+│  │  main.js
+│  │
+│  ├─assets //主资源库
+│  │  ├─api //接口文件
+│  │  ├─images //图片
+│  │  ├─js // js工具库
+│  │  └─styles //样式表
+│  ├─components //组件库
+│  ├─router //路由
+│  │  │  index.js //主路由
+│  │  │
+│  │  └─modules // 模块权限路由(根据后台返回的菜单动态生成路由)
+│  │          authRoute.js
+│  │
+│  └─views //视图
+│      ├─errorPage //错误页面(401,404)
+│      ├─home //主页(包括系统设置,用户中心)
+│      ├─layout //前端路由渲染模板
+│      └─user //用户登录注册页面
+└─static //静态资源库
 
 
 

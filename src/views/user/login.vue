@@ -118,7 +118,8 @@ import {login,getCode,checkCode} from '@api'
 		methods:{
 			blurFix(){
 				this.chooseTipUser()
-			},
+            },
+            //补全tips
 			appendFix(){
 				if(this.formInline.user){
 					if(this.formInline.user.indexOf('@') >= 0){
@@ -151,7 +152,8 @@ import {login,getCode,checkCode} from '@api'
 						this.verifyImg = e.target.result
 					}; 
 				})
-			},
+            },
+            //login 
 			handleSubmit(name) {
 				this.$refs[name].validate((valid) => {
 					if (valid) {
@@ -175,10 +177,10 @@ import {login,getCode,checkCode} from '@api'
 </script>
 
 <style scoped="scoped" lang="less">
-		.con{
-			position: absolute;
-			top: 88px;
-		}
+    .con{
+        position: absolute;
+        top: 88px;
+    }
 		
 	.el-input__inner{
 		background-color: #000 !important;

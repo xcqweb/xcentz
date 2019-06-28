@@ -106,7 +106,6 @@ export default {
     },
     methods:{
         goPage(msg){
-            console.log(msg.MessageType)
             switch(msg.MessageType){
                 case 0:
                 readMsg({msgId:msg.MessageId}).then( () => {
@@ -116,6 +115,7 @@ export default {
                 break;
             }
         },
+        //已读
         msgRead(id){
             readMsg({msgId:id}).then( () => {
                 this.queryMsg()
@@ -173,7 +173,7 @@ export default {
             if (!this.isHome(first)) {
                 matched = [{ path: '/home', meta: { title: 'home' }}].concat(matched)
             }
-            this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
+            this.levelList = matched.filter(item => item.meta && item.meta.title)
         },
         isHome(route) {
             const name = route && route.name

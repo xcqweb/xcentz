@@ -65,7 +65,6 @@ app.set('views', path.join(__dirname, 'views'))
     .use(jwtAuth)
 
     .use('/',function(req, res, next) {
-        res.setHeader('Cache-Control', `public, max-age=${60*60*20}`);
         let path = req.path
         let unLessPath = [
             "/api/xcentz/v1/users/login", 

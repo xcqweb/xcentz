@@ -11,9 +11,9 @@ const cdn = {
 		'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
 		'https://cdn.bootcss.com/vue-router/3.0.6/vue-router.min.js',
 		'https://cdn.bootcss.com/axios/0.18.0/axios.min.js',
-		'https://cdn.bootcss.com/echarts/4.2.1/echarts.min.js',
-		'https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.js',
-		'https://cdn.bootcss.com/xlsx/0.14.3/xlsx.full.min.js'
+		// 'https://cdn.bootcss.com/echarts/4.2.1/echarts.min.js',
+		// 'https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.js',
+		// 'https://cdn.bootcss.com/xlsx/0.14.3/xlsx.full.min.js'
 	]
 }
 
@@ -49,6 +49,7 @@ module.exports = {
     productionSourceMap:false,
     
     chainWebpack: config => {
+        config.plugins.delete('prefetch')
         config.resolve.alias
             .set('@', resolve('src'))
             .set('@api',resolve('src/assets/api'))
@@ -65,7 +66,7 @@ module.exports = {
                 args[0].cdn = process.env.NODE_ENV !== 'development'?cdn:{js:[]}
                 return args
             })
-
+            //定义变量
             config.plugin('define').tap(args => {
                 let keys = envs[process.env.USER_ENV]
                 for (let i in keys) {
@@ -77,12 +78,12 @@ module.exports = {
         config.when(process.env.NODE_ENV !== 'development',config => {
 
             config.externals({
-                'xlsx':'XLS',
+                // 'xlsx':'XLS',
                 'vue': 'Vue',
                 'axios': 'axios',
                 'vue-router': 'VueRouter',
-                'echarts':'echarts',
-                'chart.js':'Chart'
+                // 'echarts':'echarts',
+                // 'chart.js':'Chart'
             })
 
             config.optimization.splitChunks({
@@ -99,6 +100,16 @@ module.exports = {
                         priority: 20, 
                         test: /[\\/]node_modules[\\/]_?iview(.*)/
                     },
+                    xlsx: {
+                        name: 'chunk-xlsx',
+                        priority: 20, 
+                        test: /[\\/]node_modules[\\/]_?xlsx(.*)/
+                    },
+                    echarts: {
+                        name: 'chunk-echarts',
+                        priority: 20, 
+                        test: /[\\/]node_modules[\\/]_?echarts(.*)/
+                    },
                     commons: {
                         name: 'chunk-commons',
                         test: resolve('src/components'),
@@ -108,7 +119,7 @@ module.exports = {
                     }
                 }
             })
-                
+            
             config.optimization.runtimeChunk('single')
         })
     },

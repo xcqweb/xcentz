@@ -8,7 +8,7 @@
 export default {
   watch:{
       '$route'(to){
-        sessionStorage.setItem('currentRoute',to.path)
+        sessionStorage.setItem('currentRoute',to.path)//动态路由刷新时需保存当前页面的路径
       }
   },
 }
