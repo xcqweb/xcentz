@@ -1,6 +1,6 @@
   var {query} = require('../database')          
-            
-    var buildTree = function(list){
+    //生成树状结构
+    var buildTree = function(list=[]){
         var temp = {};
         var trees = [];
         for(let i in list){

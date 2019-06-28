@@ -63,7 +63,7 @@ module.exports = {
 
         config.plugin('html')
             .tap(args => {
-                args[0].cdn = process.env.NODE_ENV !== 'development'?cdn:{js:[]}
+                args[0].cdn = process.env.NODE_ENV !== 'development'?cdn:{js:[]} //动态插入cdn到index.html
                 return args
             })
             //定义变量

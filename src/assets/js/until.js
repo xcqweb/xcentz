@@ -49,23 +49,12 @@ export function transformName(key){
         case 'battery':
         return '电池容量(mAh)'
 
-        // case 'remarks':
-        // return '口数'
     }
 
 }
 
 export function transformStatus(status){
-    switch(status){
-        case 1:
-        return '已完成'
-
-        case 2:
-        return '进行中'
-
-        case 3:
-        return '已取消'
-    }
+    return ['已完成','进行中','已取消'][status-1]
 }
 
 export let Bus = new Vue()

@@ -22,7 +22,7 @@ let removePending = (config) => {
     }
 }
 
-
+//请求拦截器
 instance.interceptors.request.use( (config) => {
     //防重复请求
     removePending(config)
@@ -39,7 +39,7 @@ instance.interceptors.request.use( (config) => {
 	Promise.reject(error)
 })
 
-
+//响应拦截器
 instance.interceptors.response.use( (response) => {
 	removePending(response.config);
 	

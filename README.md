@@ -69,9 +69,9 @@ open in http://localhost:8008/
 │  README.md
 │  vue.config.js //vue-cli3 配置文件
 │
-├─dist
+├─dist //打包上线项目文件
 ├─public
-├─remade
+├─remade //markdown images
 ├─server //服务端目录
 │  │  app.js //主入口文件1
 │  │  app2.js //主入口文件2
